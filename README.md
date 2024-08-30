@@ -1,4 +1,4 @@
-# mykpix-backend
+# mykpi-backend
 
 Para rodar a API localmente, você precisa executar o script Python que contém sua aplicação FastAPI.
 
@@ -18,7 +18,7 @@ Se você tiver qualquer problema ou dúvida ao rodar a API localmente, não hesi
 
 # docker-compose
 
-Para rodar a API localmente com o Docker, você pode executar o seguinte comando no terminal partindo da raiz da aplicação, ou seja, no diretório `app-backend`.:
+Para rodar a API localmente com o Docker, você pode executar o seguinte comando no terminal partindo da raiz da aplicação, ou seja, no diretório `mykpi-backend`.:
 
 ```bash
 docker-compose up --build
