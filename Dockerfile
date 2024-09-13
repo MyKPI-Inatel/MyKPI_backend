@@ -10,7 +10,6 @@ RUN pip install -r requirements.txt
 
 # Copie todo o código fonte para o contêiner
 COPY ./app /app
-COPY ./db /app/db
 
 # Expõe a porta 8000 para que a aplicação possa ser acessada externamente
 EXPOSE 8000

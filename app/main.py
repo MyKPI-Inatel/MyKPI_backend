@@ -32,7 +32,7 @@ appServer.add_middleware(
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 # Configurações do banco de dados
-DATABASE_URL = os.environ.get("PGURL", "postgres://postgres:postgres@db:5432/agendinha") 
+DATABASE_URL = os.environ.get("PGURL", "postgres://postgres:postgres@db:5432/mykpi") 
 # Configurações do JWT
 SECRET_KEY = os.environ.get("SECRET_KEY", "09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7")
 ALGORITHM = "HS256"
