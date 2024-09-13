@@ -1,11 +1,11 @@
-# drop tables
-DROP TABLE IF EXISTS QuestionScore;
-DROP TABLE IF EXISTS SurveyQuestions;
-DROP TABLE IF EXISTS Question;
-DROP TABLE IF EXISTS Survey;
-DROP TABLE IF EXISTS "User";
-DROP TABLE IF EXISTS Department;
-DROP TABLE IF EXISTS Organization;
+
+DROP TABLE IF EXISTS questionscore;
+DROP TABLE IF EXISTS surveyquestions;
+DROP TABLE IF EXISTS question;
+DROP TABLE IF EXISTS survey;
+DROP TABLE IF EXISTS user;
+DROP TABLE IF EXISTS department;
+DROP TABLE IF EXISTS organization;
 
 
 CREATE TABLE organization (
