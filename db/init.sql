@@ -42,7 +42,7 @@ CREATE TABLE "question" (
 
 CREATE TABLE "surveyquestions" (
     surveyId INT REFERENCES "survey"(id) ON DELETE CASCADE,
-    questionId INT REFERENCES "questionscoreuestion"(id) ON DELETE CASCADE,
+    questionId INT REFERENCES "question"(id) ON DELETE CASCADE,
     PRIMARY KEY (surveyId, questionId)
 );
 
