@@ -13,11 +13,15 @@ CREATE TABLE "organization" (
     name VARCHAR(255) NOT NULL
 );
 
+INSERT INTO "organization" (name) VALUES ('Org 1');
+
 CREATE TABLE "department" (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     orgId INT REFERENCES "organization"(id)
 );
+
+INSERT INTO "department" (name, orgId) VALUES ('Dept 1', 1);
 
 CREATE TABLE "user" (
     id SERIAL PRIMARY KEY,
@@ -26,7 +30,7 @@ CREATE TABLE "user" (
     orgId INT REFERENCES "organization"(id),
     email VARCHAR(255) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
-    type VARCHAR(50) CHECK (type IN ('employee', 'admin')) NOT NULL
+    usertype VARCHAR(50) CHECK (usertype IN ('employee', 'admin')) NOT NULL
 );
 
 CREATE TABLE "survey" (
