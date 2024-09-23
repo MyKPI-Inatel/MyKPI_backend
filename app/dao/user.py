@@ -1,12 +1,12 @@
 from fastapi import HTTPException
 from model.user import User
 from passlib.context import CryptContext
+import secrets
 import asyncpg
 import os
 
-# Usaremos este exemplo apenas para fins de demonstração.
-# Em um ambiente de produção, você deve armazenar as senhas de forma segura,
-# como usando hash e salt.
+
+# Crie o contexto de segurança para o hash da senha
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 class UserDAO:
@@ -21,11 +21,11 @@ class UserDAO:
 
         try:
             query = """
-                INSERT INTO "user" (email, username, password, usertype)
-                VALUES ($1, $2, $3, $4)
+                INSERT INTO "user" (email, name, password, usertype, orgId, deptId)
+                VALUES ($1, $2, $3, $4, $5, $6)
             """
             async with conn.transaction():
-                result = await conn.execute(query, user.email, user.username, hashed_password, user.usertype)
+                result = await conn.execute(query, user.email, user.name, hashed_password, user.usertype, user.orgId, user.deptId)
                 return result
             
         except Exception as e:
