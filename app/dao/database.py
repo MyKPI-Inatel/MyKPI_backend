@@ -24,5 +24,4 @@ async def get_database():
         DATABASE_URL = os.environ.get("PGURL", "postgres://postgres:postgres@db:5432/mykpi") 
         return await asyncpg.connect(DATABASE_URL)
     except Exception as e:
-        print(e)
         raise e

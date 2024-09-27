@@ -13,10 +13,8 @@ class SurveyDAO:
                 VALUES ($1, $2)
                 RETURNING id, title, orgid
             """
-            print(survey.dict())
             async with conn.transaction():
                 record = await conn.fetchrow(query, survey.title, survey.orgid)
-                print(record)
                 return SurveyBase(**record)
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Failed to insert survey: {str(e)}")

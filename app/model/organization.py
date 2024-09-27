@@ -3,16 +3,16 @@ from typing import Optional
 
 # Base model for organization
 class OrganizationBase(BaseModel):
-    id: Optional[int] = None
+    id: int
     name: str
 
 # Model for creating an organization
 class OrganizationCreate(OrganizationBase):
-    pass
+    name: str
 
 # Model for updating an organization (all fields optional)
 class OrganizationUpdate(BaseModel):
-    name: Optional[str] = None
+    name: str = None
 
 # Organization class to represent the table and handle JSON serialization
 class Organization:

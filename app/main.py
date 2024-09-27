@@ -123,9 +123,7 @@ async def get_users():
 # Endpoints para Survey
 @appServer.post("/api/v1/surveys/", response_model=SurveyBase)
 async def create_survey(survey: SurveyCreate):
-    print(survey)
     result = await SurveyDAO.insert(survey)
-    print(result)
     if result is None:
         raise HTTPException(status_code=400, detail="Error creating survey")
     return result
