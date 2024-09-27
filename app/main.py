@@ -11,8 +11,8 @@ from dao.user import UserDAO
 from dao.database import Database
 
 from typing import List
-from model.schedule import ScheduleBase, ScheduleCreate, ScheduleUpdate  # Importar os modelos de schedule
-from dao.schedule import ScheduleDAO  # Importar o DAO de schedule
+from model.survey import SurveyBase, SurveyCreate, SurveyUpdate  # Importar os modelos de survey
+from dao.survey import SurveyDAO  # Importar o DAO de survey
 
 
 appServer = FastAPI()
@@ -106,35 +106,35 @@ async def login_user(user: UserLogin):
 async def healthcheck():
     return {"status": "ok"}
 
-@appServer.post("/api/v1/schedules/", response_model=ScheduleBase)
-async def create_schedule(schedule: ScheduleCreate):
-    result = await ScheduleDAO.insert(schedule)
+@appServer.post("/api/v1/surveys/", response_model=SurveyBase)
+async def create_survey(survey: SurveyCreate):
+    result = await SurveyDAO.insert(survey)
     if result is None:
-        raise HTTPException(status_code=400, detail="Error creating schedule")
+        raise HTTPException(status_code=400, detail="Error creating survey")
     return result
 
-@appServer.get("/api/v1/schedules/", response_model=List[ScheduleBase])
-async def get_schedules():
-    schedules = await ScheduleDAO.get_all()
-    return schedules
+@appServer.get("/api/v1/surveys/", response_model=List[SurveyBase])
+async def get_surveys():
+    surveys = await SurveyDAO.get_all()
+    return surveys
 
-@appServer.get("/api/v1/schedules/{schedule_id}", response_model=ScheduleBase)
-async def get_schedule(schedule_id: int):
-    schedule = await ScheduleDAO.get(schedule_id)
-    if schedule is None:
-        raise HTTPException(status_code=404, detail="Schedule not found")
-    return schedule
+@appServer.get("/api/v1/surveys/{survey_id}", response_model=SurveyBase)
+async def get_survey(survey_id: int):
+    survey = await SurveyDAO.get(survey_id)
+    if survey is None:
+        raise HTTPException(status_code=404, detail="Survey not found")
+    return survey
 
-@appServer.put("/api/v1/schedules/{schedule_id}", response_model=ScheduleBase)
-async def update_schedule(schedule_id: int, schedule: ScheduleUpdate):
-    result = await ScheduleDAO.update(schedule_id, schedule)
+@appServer.put("/api/v1/surveys/{survey_id}", response_model=SurveyBase)
+async def update_survey(survey_id: int, survey: SurveyUpdate):
+    result = await SurveyDAO.update(survey_id, survey)
     if result is None:
-        raise HTTPException(status_code=400, detail="Error updating schedule")
+        raise HTTPException(status_code=400, detail="Error updating survey")
     return result
 
-@appServer.delete("/api/v1/schedules/{schedule_id}")
-async def delete_schedule(schedule_id: int):
-    result = await ScheduleDAO.delete(schedule_id)
+@appServer.delete("/api/v1/surveys/{survey_id}")
+async def delete_survey(survey_id: int):
+    result = await SurveyDAO.delete(survey_id)
     if not result:
-        raise HTTPException(status_code=404, detail="Schedule not found")
-    return {"message": "Schedule deleted successfully"}
+        raise HTTPException(status_code=404, detail="Survey not found")
+    return {"message": "Survey deleted successfully"}

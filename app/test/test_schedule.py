@@ -1,12 +1,12 @@
 import pytest
 from unittest.mock import patch, AsyncMock
 from datetime import datetime
-from model.schedule import ScheduleCreate, ScheduleUpdate, ScheduleBase
-from dao.schedule import ScheduleDAO
+from model.survey import SurveyCreate, SurveyUpdate, SurveyBase
+from dao.survey import SurveyDAO
 
 @pytest.mark.asyncio
-@patch("dao.schedule.get_database", new_callable=AsyncMock)
-async def test_get_schedule(mock_get_database):
+@patch("dao.survey.get_database", new_callable=AsyncMock)
+async def test_get_survey(mock_get_database):
     mock_conn = mock_get_database.return_value
     mock_conn.fetchrow.return_value = {
         "id": 1,
@@ -16,7 +16,7 @@ async def test_get_schedule(mock_get_database):
         "start_time": datetime(2023, 1, 1, 10, 0)
     }
 
-    result = await ScheduleDAO.get(1)
+    result = await SurveyDAO.get(1)
 
     assert result.id == 1
     assert result.customer_id == 1
@@ -25,8 +25,8 @@ async def test_get_schedule(mock_get_database):
     assert result.start_time == datetime(2023, 1, 1, 10, 0)
 
 @pytest.mark.asyncio
-@patch("dao.schedule.get_database", new_callable=AsyncMock)
-async def test_get_all_schedules(mock_get_database):
+@patch("dao.survey.get_database", new_callable=AsyncMock)
+async def test_get_all_surveys(mock_get_database):
     # Arrange
     mock_conn = mock_get_database.return_value
     mock_conn.fetch.return_value = [
@@ -46,7 +46,7 @@ async def test_get_all_schedules(mock_get_database):
         }
     ]
 
-    result = await ScheduleDAO.get_all()
+    result = await SurveyDAO.get_all()
 
     assert len(result) == 2
     assert result[0].id == 1
