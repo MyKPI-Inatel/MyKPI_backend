@@ -2,18 +2,20 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from passlib.context import CryptContext
-from typing import Optional
+from typing import Optional, List
 from jose import jwt
 from datetime import datetime, timedelta
 import os
+
 from model.user import UserBase, UserLogin
 from dao.user import UserDAO
 from dao.database import Database
 
-from typing import List
-from model.survey import SurveyBase, SurveyCreate, SurveyUpdate  # Importar os modelos de survey
-from dao.survey import SurveyDAO  # Importar o DAO de survey
+from model.survey import SurveyBase, SurveyCreate, SurveyUpdate
+from dao.survey import SurveyDAO
 
+from model.organization import OrganizationBase, OrganizationCreate, OrganizationUpdate
+from dao.organization import OrganizationDAO
 
 appServer = FastAPI()
 
@@ -32,7 +34,7 @@ appServer.add_middleware(
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 # Configurações do banco de dados
-DATABASE_URL = os.environ.get("PGURL", "postgres://postgres:postgres@db:5432/mykpi") 
+DATABASE_URL = os.environ.get("PGURL", "postgres://postgres:postgres@db:5432/mykpi")
 # Configurações do JWT
 SECRET_KEY = os.environ.get("SECRET_KEY", "09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7")
 ALGORITHM = "HS256"
@@ -68,7 +70,7 @@ async def register_user(user: UserBase):
         try:
             user = await UserDAO.get(email=user.email)
             user = user[0]
-            #remove password from response
+            # Remove password from response
             user = {key: value for key, value in user.items() if key != "password"}
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Failed to get user: {str(e)}")
@@ -90,22 +92,24 @@ async def login_user(user: UserLogin):
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Login failed: {str(e)}")
-    #pick username, usertype and id
+    
+    # Pick username, usertype and id
     try:
         user = await UserDAO.get(email=user.email)
         user = user[0]
-        #remove password from response
+        # Remove password from response
         user = {key: value for key, value in user.items() if key != "password"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to get user: {str(e)}")
 
     return {"access_token": access_token, "token_type": "bearer", "user": user}
 
-# função para healthcheck
+# Função para healthcheck
 @appServer.get("/")
 async def healthcheck():
     return {"status": "ok"}
 
+# Endpoints para Survey
 @appServer.post("/api/v1/surveys/", response_model=SurveyBase)
 async def create_survey(survey: SurveyCreate):
     result = await SurveyDAO.insert(survey)
@@ -138,3 +142,37 @@ async def delete_survey(survey_id: int):
     if not result:
         raise HTTPException(status_code=404, detail="Survey not found")
     return {"message": "Survey deleted successfully"}
+
+# Endpoints para Organization
+@appServer.post("/api/v1/organizations/", response_model=OrganizationBase)
+async def create_organization(organization: OrganizationCreate):
+    result = await OrganizationDAO.insert(organization)
+    if result is None:
+        raise HTTPException(status_code=400, detail="Error creating organization")
+    return result
+
+@appServer.get("/api/v1/organizations/", response_model=List[OrganizationBase])
+async def get_organizations():
+    organizations = await OrganizationDAO.get_all()
+    return organizations
+
+@appServer.get("/api/v1/organizations/{org_id}", response_model=OrganizationBase)
+async def get_organization(org_id: int):
+    organization = await OrganizationDAO.get(org_id)
+    if organization is None:
+        raise HTTPException(status_code=404, detail="Organization not found")
+    return organization
+
+@appServer.put("/api/v1/organizations/{org_id}", response_model=OrganizationBase)
+async def update_organization(org_id: int, organization: OrganizationUpdate):
+    result = await OrganizationDAO.update(org_id, organization)
+    if result is None:
+        raise HTTPException(status_code=400, detail="Error updating organization")
+    return result
+
+@appServer.delete("/api/v1/organizations/{org_id}")
+async def delete_organization(org_id: int):
+    result = await OrganizationDAO.delete(org_id)
+    if not result:
+        raise HTTPException(status_code=404, detail="Organization not found")
+    return {"message": "Organization deleted successfully"}

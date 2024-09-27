@@ -1,7 +1,6 @@
 from fastapi import HTTPException
 from model.user import User
 from passlib.context import CryptContext
-import secrets
 import asyncpg
 import os
 
