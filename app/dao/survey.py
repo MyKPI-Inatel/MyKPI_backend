@@ -10,7 +10,7 @@ class SurveyDAO:
         try:
             query = """
                 INSERT INTO survey (title, orgId)
-                VALUES ($1, $2, $3, $4)
+                VALUES ($1, $2)
                 RETURNING id, title, orgId
             """
             async with conn.transaction():
