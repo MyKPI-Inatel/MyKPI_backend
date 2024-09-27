@@ -3,15 +3,15 @@ from pydantic import BaseModel
 
 class SurveyBase(BaseModel):
     id: int
-    service: str
+    title: str
     org_id: int
 
 class SurveyCreate(BaseModel):
-    service: str
+    title: str
     org_id: int
 
 class SurveyUpdate(BaseModel):
-    service: str = None
+    title: str = None
     org_id: int = None
 
 class Survey(json.JSONEncoder):
