@@ -123,7 +123,9 @@ async def get_users():
 # Endpoints para Survey
 @appServer.post("/api/v1/surveys/", response_model=SurveyBase)
 async def create_survey(survey: SurveyCreate):
+    print(survey)
     result = await SurveyDAO.insert(survey)
+    print(result)
     if result is None:
         raise HTTPException(status_code=400, detail="Error creating survey")
     return result
@@ -133,23 +135,23 @@ async def get_surveys():
     surveys = await SurveyDAO.get_all()
     return surveys
 
-@appServer.get("/api/v1/surveys/{survey_id}", response_model=SurveyBase)
-async def get_survey(survey_id: int):
-    survey = await SurveyDAO.get(survey_id)
+@appServer.get("/api/v1/surveys/{surveyid}", response_model=SurveyBase)
+async def get_survey(surveyid: int):
+    survey = await SurveyDAO.get(surveyid)
     if survey is None:
         raise HTTPException(status_code=404, detail="Survey not found")
     return survey
 
-@appServer.put("/api/v1/surveys/{survey_id}", response_model=SurveyBase)
-async def update_survey(survey_id: int, survey: SurveyUpdate):
-    result = await SurveyDAO.update(survey_id, survey)
+@appServer.put("/api/v1/surveys/{surveyid}", response_model=SurveyBase)
+async def update_survey(surveyid: int, survey: SurveyUpdate):
+    result = await SurveyDAO.update(surveyid, survey)
     if result is None:
         raise HTTPException(status_code=400, detail="Error updating survey")
     return result
 
-@appServer.delete("/api/v1/surveys/{survey_id}")
-async def delete_survey(survey_id: int):
-    result = await SurveyDAO.delete(survey_id)
+@appServer.delete("/api/v1/surveys/{surveyid}")
+async def delete_survey(surveyid: int):
+    result = await SurveyDAO.delete(surveyid)
     if not result:
         raise HTTPException(status_code=404, detail="Survey not found")
     return {"message": "Survey deleted successfully"}
@@ -167,23 +169,23 @@ async def get_organizations():
     organizations = await OrganizationDAO.get_all()
     return organizations
 
-@appServer.get("/api/v1/organizations/{org_id}", response_model=OrganizationBase)
-async def get_organization(org_id: int):
-    organization = await OrganizationDAO.get(org_id)
+@appServer.get("/api/v1/organizations/{orgid}", response_model=OrganizationBase)
+async def get_organization(orgid: int):
+    organization = await OrganizationDAO.get(orgid)
     if organization is None:
         raise HTTPException(status_code=404, detail="Organization not found")
     return organization
 
-@appServer.put("/api/v1/organizations/{org_id}", response_model=OrganizationBase)
-async def update_organization(org_id: int, organization: OrganizationUpdate):
-    result = await OrganizationDAO.update(org_id, organization)
+@appServer.put("/api/v1/organizations/{orgid}", response_model=OrganizationBase)
+async def update_organization(orgid: int, organization: OrganizationUpdate):
+    result = await OrganizationDAO.update(orgid, organization)
     if result is None:
         raise HTTPException(status_code=400, detail="Error updating organization")
     return result
 
-@appServer.delete("/api/v1/organizations/{org_id}")
-async def delete_organization(org_id: int):
-    result = await OrganizationDAO.delete(org_id)
+@appServer.delete("/api/v1/organizations/{orgid}")
+async def delete_organization(orgid: int):
+    result = await OrganizationDAO.delete(orgid)
     if not result:
         raise HTTPException(status_code=404, detail="Organization not found")
     return {"message": "Organization deleted successfully"}

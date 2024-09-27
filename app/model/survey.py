@@ -4,32 +4,32 @@ from pydantic import BaseModel
 class SurveyBase(BaseModel):
     id: int
     title: str
-    org_id: int
+    orgid: int
 
 class SurveyCreate(BaseModel):
     title: str
-    org_id: int
+    orgid: int
 
 class SurveyUpdate(BaseModel):
     title: str = None
-    org_id: int = None
+    orgid: int = None
 
 class Survey(json.JSONEncoder):
-    def __init__(self, id, title, orgId):
+    def __init__(self, id, title, orgid):
         self.id = id
         self.title = title
-        self.orgId = orgId
+        self.orgid = orgid
 
     # init but all fields are optional
-    def __init__(self, id=None, title=None, orgId=None):
+    def __init__(self, id=None, title=None, orgid=None):
         self.id = id
         self.title = title
-        self.orgId = orgId
+        self.orgid = orgid
 
     def toJSON(self):
         return {
             "id": self.id,
             "title": self.title,
-            "orgId": self.orgId
+            "orgid": self.orgid
         }
     

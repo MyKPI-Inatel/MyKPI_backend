@@ -20,11 +20,11 @@ class UserDAO:
 
         try:
             query = """
-                INSERT INTO "user" (email, name, password, usertype, orgId, deptId)
+                INSERT INTO "user" (email, name, password, usertype, orgid, deptId)
                 VALUES ($1, $2, $3, $4, $5, $6)
             """
             async with conn.transaction():
-                result = await conn.execute(query, user.email, user.name, hashed_password, user.usertype, user.orgId, user.deptId)
+                result = await conn.execute(query, user.email, user.name, hashed_password, user.usertype, user.orgid, user.deptId)
                 return result
             
         except Exception as e:
@@ -64,7 +64,7 @@ class UserDAO:
         conn = await get_database()
         try:
             query = """
-                SELECT id, email, name, usertype, orgId, deptId 
+                SELECT id, email, name, usertype, orgid, deptId 
                 FROM "user"
             """
             result = await conn.fetch(query)

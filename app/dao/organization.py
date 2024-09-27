@@ -36,13 +36,13 @@ class OrganizationDAO:
             await conn.close()
 
     @staticmethod
-    async def get(org_id: int):
+    async def get(orgid: int):
         conn = await get_database()
         try:
             query = """
                 SELECT id, name FROM organization WHERE id = $1
             """
-            record = await conn.fetchrow(query, org_id)
+            record = await conn.fetchrow(query, orgid)
             if record:
                 return OrganizationBase(**record)
             else:
@@ -53,7 +53,7 @@ class OrganizationDAO:
             await conn.close()
 
     @staticmethod
-    async def update(org_id: int, organization: OrganizationUpdate):
+    async def update(orgid: int, organization: OrganizationUpdate):
         conn = await get_database()
         try:
             update_data = organization.dict(exclude_unset=True)
@@ -63,7 +63,7 @@ class OrganizationDAO:
                 RETURNING id, name
             """
 
-            values = [org_id] + list(update_data.values())
+            values = [orgid] + list(update_data.values())
             async with conn.transaction():
                 record = await conn.fetchrow(query, *values)
                 if record:
@@ -76,7 +76,7 @@ class OrganizationDAO:
             await conn.close()
 
     @staticmethod
-    async def delete(org_id: int):
+    async def delete(orgid: int):
         conn = await get_database()
         try:
             query = """
@@ -84,7 +84,7 @@ class OrganizationDAO:
                 RETURNING id
             """
             async with conn.transaction():
-                record = await conn.fetchrow(query, org_id)
+                record = await conn.fetchrow(query, orgid)
                 if record:
                     return True
                 else:
@@ -136,13 +136,13 @@ class OrganizationDAO:
             await conn.close()
 
     @staticmethod
-    async def get(org_id: int):
+    async def get(orgid: int):
         conn = await get_database()
         try:
             query = """
                 SELECT id, name FROM organization WHERE id = $1
             """
-            record = await conn.fetchrow(query, org_id)
+            record = await conn.fetchrow(query, orgid)
             if record:
                 return OrganizationBase(**record)
             else:
@@ -153,7 +153,7 @@ class OrganizationDAO:
             await conn.close()
 
     @staticmethod
-    async def update(org_id: int, organization: OrganizationUpdate):
+    async def update(orgid: int, organization: OrganizationUpdate):
         conn = await get_database()
         try:
             update_data = organization.dict(exclude_unset=True)
@@ -163,7 +163,7 @@ class OrganizationDAO:
                 RETURNING id, name
             """
 
-            values = [org_id] + list(update_data.values())
+            values = [orgid] + list(update_data.values())
             async with conn.transaction():
                 record = await conn.fetchrow(query, *values)
                 if record:
@@ -176,7 +176,7 @@ class OrganizationDAO:
             await conn.close()
 
     @staticmethod
-    async def delete(org_id: int):
+    async def delete(orgid: int):
         conn = await get_database()
         try:
             query = """
@@ -184,7 +184,7 @@ class OrganizationDAO:
                 RETURNING id
             """
             async with conn.transaction():
-                record = await conn.fetchrow(query, org_id)
+                record = await conn.fetchrow(query, orgid)
                 if record:
                     return True
                 else:

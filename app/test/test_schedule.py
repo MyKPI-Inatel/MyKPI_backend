@@ -12,7 +12,7 @@ async def test_get_survey(mock_get_database):
     mock_conn.fetchrow.return_value = {
         "id": 1,
         "title": "Survey 1",
-        "orgId": 1
+        "orgid": 1
     }
 
     # Act
@@ -21,7 +21,7 @@ async def test_get_survey(mock_get_database):
     # Assert
     assert result.id == 1
     assert result.title == "Survey 1"
-    assert result.orgId == 1
+    assert result.orgid == 1
 
 @pytest.mark.asyncio
 @patch("dao.survey.get_database", new_callable=AsyncMock)
@@ -32,12 +32,12 @@ async def test_get_all_surveys(mock_get_database):
         {
             "id": 1,
             "title": "Survey 1",
-            "orgId": 1
+            "orgid": 1
         },
         {
             "id": 2,
             "title": "Survey 2",
-            "orgId": 2
+            "orgid": 2
         }
     ]
 

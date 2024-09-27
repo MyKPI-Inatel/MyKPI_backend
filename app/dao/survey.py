@@ -9,12 +9,14 @@ class SurveyDAO:
         conn = await get_database()
         try:
             query = """
-                INSERT INTO survey (title, orgId)
+                INSERT INTO survey (title, orgid)
                 VALUES ($1, $2)
-                RETURNING id, title, orgId
+                RETURNING id, title, orgid
             """
+            print(survey.dict())
             async with conn.transaction():
-                record = await conn.fetchrow(query, survey.title, survey.org_id)
+                record = await conn.fetchrow(query, survey.title, survey.orgid)
+                print(record)
                 return SurveyBase(**record)
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Failed to insert survey: {str(e)}")
@@ -26,7 +28,7 @@ class SurveyDAO:
         conn = await get_database()
         try:
             query = """
-                SELECT id, title, orgId FROM survey
+                SELECT id, title, orgid FROM survey
             """
             records = await conn.fetch(query)
             return [SurveyBase(**record) for record in records]
@@ -36,13 +38,13 @@ class SurveyDAO:
             await conn.close()
 
     @staticmethod
-    async def get(survey_id: int):
+    async def get(surveyid: int):
         conn = await get_database()
         try:
             query = """
-                SELECT id, title, orgId FROM survey WHERE id = $1
+                SELECT id, title, orgid FROM survey WHERE id = $1
             """
-            record = await conn.fetchrow(query, survey_id)
+            record = await conn.fetchrow(query, surveyid)
             if record:
                 return SurveyBase(**record)
             else:
@@ -53,17 +55,17 @@ class SurveyDAO:
             await conn.close()
 
     @staticmethod
-    async def update(survey_id: int, survey: SurveyUpdate):
+    async def update(surveyid: int, survey: SurveyUpdate):
         conn = await get_database()
         try:
             update_data = survey.dict(exclude_unset=True)
             set_clause = ", ".join([f"{key} = ${i+2}" for i, key in enumerate(update_data.keys())])
             query = f"""
                 UPDATE survey SET {set_clause} WHERE id = $1
-                RETURNING id, title, orgId
+                RETURNING id, title, orgid
             """
 
-            values = [survey_id] + list(update_data.values())
+            values = [surveyid] + list(update_data.values())
             async with conn.transaction():
                 record = await conn.fetchrow(query, *values)
                 if record:
@@ -76,7 +78,7 @@ class SurveyDAO:
             await conn.close()
 
     @staticmethod
-    async def delete(survey_id: int):
+    async def delete(surveyid: int):
         conn = await get_database()
         try:
             query = """
@@ -84,7 +86,7 @@ class SurveyDAO:
                 RETURNING id
             """
             async with conn.transaction():
-                record = await conn.fetchrow(query, survey_id)
+                record = await conn.fetchrow(query, surveyid)
                 if record:
                     return True
                 else:

@@ -18,16 +18,16 @@ INSERT INTO "organization" (name) VALUES ('Org 1');
 CREATE TABLE "department" (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
-    orgId INT REFERENCES "organization"(id)
+    orgid INT REFERENCES "organization"(id)
 );
 
-INSERT INTO "department" (name, orgId) VALUES ('Dept 1', 1);
+INSERT INTO "department" (name, orgid) VALUES ('Dept 1', 1);
 
 CREATE TABLE "user" (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     deptId INT REFERENCES "department"(id),
-    orgId INT REFERENCES "organization"(id),
+    orgid INT REFERENCES "organization"(id),
     email VARCHAR(255) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
     usertype VARCHAR(50) CHECK (usertype IN ('employee', 'admin')) NOT NULL
@@ -36,7 +36,7 @@ CREATE TABLE "user" (
 CREATE TABLE "survey" (
     id SERIAL PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
-    orgId INT REFERENCES "organization"(id)
+    orgid INT REFERENCES "organization"(id)
 );
 
 CREATE TABLE "question" (
@@ -45,9 +45,9 @@ CREATE TABLE "question" (
 );
 
 CREATE TABLE "surveyquestions" (
-    surveyId INT REFERENCES "survey"(id) ON DELETE CASCADE,
+    surveyid INT REFERENCES "survey"(id) ON DELETE CASCADE,
     questionId INT REFERENCES "question"(id) ON DELETE CASCADE,
-    PRIMARY KEY (surveyId, questionId)
+    PRIMARY KEY (surveyid, questionId)
 );
 
 CREATE TABLE "questionscore" (
@@ -57,6 +57,6 @@ CREATE TABLE "questionscore" (
     PRIMARY KEY (employeeId, questionId)
 );
 
-CREATE INDEX idx_user_orgId ON "user"(orgId);
+CREATE INDEX idx_user_orgid ON "user"(orgid);
 CREATE INDEX idx_user_deptId ON "user"(deptId);
-CREATE INDEX idx_survey_orgId ON "survey"(orgId);
+CREATE INDEX idx_survey_orgid ON "survey"(orgid);
