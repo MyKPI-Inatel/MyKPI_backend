@@ -109,6 +109,17 @@ async def login_user(user: UserLogin):
 async def healthcheck():
     return {"status": "ok"}
 
+# Endpoint para listar todos os usuários
+@appServer.get("/api/v1/users/", response_model=List[UserBase])
+async def get_users():
+    try:
+        users = await UserDAO.get_all()
+        # Remove senhas dos usuários na resposta
+        users = [{key: value for key, value in user.items() if key != "password"} for user in users]
+        return users
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error fetching users: {str(e)}")
+
 # Endpoints para Survey
 @appServer.post("/api/v1/surveys/", response_model=SurveyBase)
 async def create_survey(survey: SurveyCreate):

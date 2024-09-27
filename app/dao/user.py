@@ -60,6 +60,21 @@ class UserDAO:
             await conn.close()
 
     @staticmethod
+    async def get_all():
+        conn = await get_database()
+        try:
+            query = """
+                SELECT id, email, name, usertype, orgId, deptId 
+                FROM "user"
+            """
+            result = await conn.fetch(query)
+            return [dict(record) for record in result]  # Converte o resultado para uma lista de dicionários
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Failed to fetch users: {str(e)}")
+        finally:
+            await conn.close()
+
+    @staticmethod
     async def delete(id: int):
         conn = await get_database()
         try:
