@@ -13,50 +13,65 @@ CREATE TABLE "organization" (
     name VARCHAR(255) NOT NULL
 );
 
-INSERT INTO "organization" (name) VALUES ('Org 1');
 
 CREATE TABLE "department" (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
-    orgId INT REFERENCES "organization"(id)
+    orgid INT REFERENCES "organization"(id)
 );
-
-INSERT INTO "department" (name, orgId) VALUES ('Dept 1', 1);
 
 CREATE TABLE "user" (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
-    deptId INT REFERENCES "department"(id),
-    orgId INT REFERENCES "organization"(id),
+    deptid INT REFERENCES "department"(id),
+    orgid INT REFERENCES "organization"(id),
     email VARCHAR(255) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
-    usertype VARCHAR(50) CHECK (usertype IN ('employee', 'admin')) NOT NULL
+    usertype VARCHAR(50) CHECK (usertype IN ('employee', 'orgadmin', 'superadmin')) NOT NULL
 );
 
 CREATE TABLE "survey" (
     id SERIAL PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
-    orgId INT REFERENCES "organization"(id)
+    orgid INT REFERENCES "organization"(id)
 );
 
 CREATE TABLE "question" (
     id SERIAL PRIMARY KEY,
-    title VARCHAR(255) NOT NULL
+    title VARCHAR(255) NOT NULL,
+    scorefactor INT NOT NULL
 );
 
 CREATE TABLE "surveyquestions" (
-    surveyId INT REFERENCES "survey"(id) ON DELETE CASCADE,
-    questionId INT REFERENCES "question"(id) ON DELETE CASCADE,
-    PRIMARY KEY (surveyId, questionId)
+    surveyid INT REFERENCES "survey"(id) ON DELETE CASCADE,
+    questionid INT REFERENCES "question"(id) ON DELETE CASCADE,
+    PRIMARY KEY (surveyid, questionid)
 );
 
 CREATE TABLE "questionscore" (
-    employeeId INT REFERENCES "user"(id),
-    questionId INT REFERENCES "question"(id),
+    employeeid INT REFERENCES "user"(id),
+    questionid INT REFERENCES "question"(id),
     score INT NOT NULL,
-    PRIMARY KEY (employeeId, questionId)
+    PRIMARY KEY (employeeid, questionid)
 );
 
-CREATE INDEX idx_user_orgId ON "user"(orgId);
-CREATE INDEX idx_user_deptId ON "user"(deptId);
-CREATE INDEX idx_survey_orgId ON "survey"(orgId);
+CREATE INDEX idx_user_orgid ON "user"(orgid);
+CREATE INDEX idx_user_deptid ON "user"(deptid);
+CREATE INDEX idx_survey_orgid ON "survey"(orgid);
+
+
+INSERT INTO "organization" (name) VALUES ('MY-KPI');
+INSERT INTO "organization" (name) VALUES ('INATEL');
+INSERT INTO "organization" (name) VALUES ('4Intelligence');
+
+INSERT INTO "department" (name, orgid) VALUES ('Geral', 1);
+INSERT INTO "department" (name, orgid) VALUES ('Recursos Humanos', 2);
+INSERT INTO "department" (name, orgid) VALUES ('Desenvolvimento', 2);
+INSERT INTO "department" (name, orgid) VALUES ('Engenharia', 2);
+INSERT INTO "department" (name, orgid) VALUES ('Recursos Dos Manos', 3);
+INSERT INTO "department" (name, orgid) VALUES ('Limpeza', 3);
+INSERT INTO "department" (name, orgid) VALUES ('Carcereiros', 3);
+
+INSERT INTO "user" (name, deptid, orgid, email, password, usertype) VALUES ('Master Admin', 1, 1, 'admin@mykpi.online', '$2b$12$bwv0FxKSn0V1SznFi7Irb.C0CMoF67mxaDUK2ZBQ9LPm6WUTmrQXW', 'superadmin');
+INSERT INTO "user" (name, deptid, orgid, email, password, usertype) VALUES ('Admin do INATEL ', 2, 2, 'admin@inatel.br', '$2b$12$bwv0FxKSn0V1SznFi7Irb.C0CMoF67mxaDUK2ZBQ9LPm6WUTmrQXW', 'orgadmin');
+INSERT INTO "user" (name, deptid, orgid, email, password, usertype) VALUES ('Admin da 4Intelligence ', 3, 3, 'admin@4intelligence.com', '$2b$12$bwv0FxKSn0V1SznFi7Irb.C0CMoF67mxaDUK2ZBQ9LPm6WUTmrQXW', 'orgadmin');

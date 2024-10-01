@@ -1,7 +1,6 @@
 from fastapi import HTTPException
-from model.user import User
+from model.user import User, UserBase
 from passlib.context import CryptContext
-import secrets
 import asyncpg
 import os
 
@@ -21,11 +20,11 @@ class UserDAO:
 
         try:
             query = """
-                INSERT INTO "user" (email, name, password, usertype, orgId, deptId)
+                INSERT INTO "user" (email, name, password, usertype, orgid, deptid)
                 VALUES ($1, $2, $3, $4, $5, $6)
             """
             async with conn.transaction():
-                result = await conn.execute(query, user.email, user.name, hashed_password, user.usertype, user.orgId, user.deptId)
+                result = await conn.execute(query, user.email, user.name, hashed_password, user.usertype, user.orgid, user.deptid)
                 return result
             
         except Exception as e:
@@ -59,6 +58,7 @@ class UserDAO:
             raise HTTPException(status_code=500, detail=f"Failed to get user: {str(e)}")
         finally:
             await conn.close()
+
 
     @staticmethod
     async def delete(id: int):

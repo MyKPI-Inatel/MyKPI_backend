@@ -2,18 +2,22 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from passlib.context import CryptContext
-from typing import Optional
+from typing import Optional, List
 from jose import jwt
 from datetime import datetime, timedelta
 import os
+
 from model.user import UserBase, UserLogin
 from dao.user import UserDAO
 from dao.database import Database
 
-from typing import List
-from model.schedule import ScheduleBase, ScheduleCreate, ScheduleUpdate  # Importar os modelos de schedule
-from dao.schedule import ScheduleDAO  # Importar o DAO de schedule
+from model.survey import SurveyBase, SurveyCreate, SurveyUpdate
+from dao.survey import SurveyDAO
 
+from model.organization import OrganizationBase, OrganizationCreate, OrganizationUpdate
+from model.department import DepartmentBase, DepartmentCreate, DepartmentUpdate
+from dao.organization import OrganizationDAO
+from dao.department import DepartmentDAO
 
 appServer = FastAPI()
 
@@ -32,7 +36,7 @@ appServer.add_middleware(
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 # Configurações do banco de dados
-DATABASE_URL = os.environ.get("PGURL", "postgres://postgres:postgres@db:5432/mykpi") 
+DATABASE_URL = os.environ.get("PGURL", "postgres://postgres:postgres@db:5432/mykpi")
 # Configurações do JWT
 SECRET_KEY = os.environ.get("SECRET_KEY", "09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7")
 ALGORITHM = "HS256"
@@ -68,7 +72,7 @@ async def register_user(user: UserBase):
         try:
             user = await UserDAO.get(email=user.email)
             user = user[0]
-            #remove password from response
+            # Remove password from response
             user = {key: value for key, value in user.items() if key != "password"}
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Failed to get user: {str(e)}")
@@ -90,51 +94,124 @@ async def login_user(user: UserLogin):
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Login failed: {str(e)}")
-    #pick username, usertype and id
+    
+    # Pick username, usertype and id
     try:
         user = await UserDAO.get(email=user.email)
         user = user[0]
-        #remove password from response
+        # Remove password from response
         user = {key: value for key, value in user.items() if key != "password"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to get user: {str(e)}")
 
     return {"access_token": access_token, "token_type": "bearer", "user": user}
 
-# função para healthcheck
+# Função para healthcheck
 @appServer.get("/")
 async def healthcheck():
     return {"status": "ok"}
 
-@appServer.post("/api/v1/schedules/", response_model=ScheduleBase)
-async def create_schedule(schedule: ScheduleCreate):
-    result = await ScheduleDAO.insert(schedule)
+# Endpoints para Survey
+@appServer.post("/api/v1/surveys/", response_model=SurveyBase)
+async def create_survey(survey: SurveyCreate):
+    result = await SurveyDAO.insert(survey)
     if result is None:
-        raise HTTPException(status_code=400, detail="Error creating schedule")
+        raise HTTPException(status_code=400, detail="Error creating survey")
     return result
 
-@appServer.get("/api/v1/schedules/", response_model=List[ScheduleBase])
-async def get_schedules():
-    schedules = await ScheduleDAO.get_all()
-    return schedules
+@appServer.get("/api/v1/surveys/", response_model=List[SurveyBase])
+async def get_surveys():
+    surveys = await SurveyDAO.get_all()
+    return surveys
 
-@appServer.get("/api/v1/schedules/{schedule_id}", response_model=ScheduleBase)
-async def get_schedule(schedule_id: int):
-    schedule = await ScheduleDAO.get(schedule_id)
-    if schedule is None:
-        raise HTTPException(status_code=404, detail="Schedule not found")
-    return schedule
+@appServer.get("/api/v1/surveys/{surveyid}", response_model=SurveyBase)
+async def get_survey(surveyid: int):
+    survey = await SurveyDAO.get(surveyid)
+    if survey is None:
+        raise HTTPException(status_code=404, detail="Survey not found")
+    return survey
 
-@appServer.put("/api/v1/schedules/{schedule_id}", response_model=ScheduleBase)
-async def update_schedule(schedule_id: int, schedule: ScheduleUpdate):
-    result = await ScheduleDAO.update(schedule_id, schedule)
+@appServer.put("/api/v1/surveys/{surveyid}", response_model=SurveyBase)
+async def update_survey(surveyid: int, survey: SurveyUpdate):
+    result = await SurveyDAO.update(surveyid, survey)
     if result is None:
-        raise HTTPException(status_code=400, detail="Error updating schedule")
+        raise HTTPException(status_code=400, detail="Error updating survey")
     return result
 
-@appServer.delete("/api/v1/schedules/{schedule_id}")
-async def delete_schedule(schedule_id: int):
-    result = await ScheduleDAO.delete(schedule_id)
+@appServer.delete("/api/v1/surveys/{surveyid}")
+async def delete_survey(surveyid: int):
+    result = await SurveyDAO.delete(surveyid)
     if not result:
-        raise HTTPException(status_code=404, detail="Schedule not found")
-    return {"message": "Schedule deleted successfully"}
+        raise HTTPException(status_code=404, detail="Survey not found")
+    return {"message": "Survey deleted successfully"}
+
+# Endpoints para Organization
+@appServer.post("/api/v1/organizations/", response_model=OrganizationBase)
+async def create_organization(organization: OrganizationCreate):
+    result = await OrganizationDAO.insert(organization)
+    if result is None:
+        raise HTTPException(status_code=400, detail="Error creating organization")
+    return result
+
+@appServer.get("/api/v1/organizations/", response_model=List[OrganizationBase])
+async def get_organizations():
+    organizations = await OrganizationDAO.get_all()
+    return organizations
+
+@appServer.get("/api/v1/organizations/{orgid}", response_model=OrganizationBase)
+async def get_organization(orgid: int):
+    organization = await OrganizationDAO.get(orgid)
+    if organization is None:
+        raise HTTPException(status_code=404, detail="Organization not found")
+    return organization
+
+@appServer.put("/api/v1/organizations/{orgid}", response_model=OrganizationBase)
+async def update_organization(orgid: int, organization: OrganizationUpdate):
+    result = await OrganizationDAO.update(orgid, organization)
+    if result is None:
+        raise HTTPException(status_code=400, detail="Error updating organization")
+    return result
+
+@appServer.delete("/api/v1/organizations/{orgid}")
+async def delete_organization(orgid: int):
+    result = await OrganizationDAO.delete(orgid)
+    if not result:
+        raise HTTPException(status_code=404, detail="Organization not found")
+    return {"message": "Organization deleted successfully"}
+
+
+
+# Endpoints para Department
+@appServer.post("/api/v1/departments/", response_model=DepartmentBase)
+async def create_department(department: DepartmentCreate):
+    result = await DepartmentDAO.insert( department)
+    if result is None:
+        raise HTTPException(status_code=400, detail="Error creating department")
+    return result
+
+# get department by orgid
+@appServer.get("/api/v1/departments/org/{orgid}", response_model=List[DepartmentBase])
+async def get_department_by_org(orgid: int):
+    departments = await DepartmentDAO.get_by_org(orgid)
+    return departments
+
+@appServer.get("/api/v1/departments/org/{orgid}/{deptid}", response_model=DepartmentBase)
+async def get_department(orgid: int, deptid: int):
+    department = await DepartmentDAO.get(orgid, deptid)
+    if department is None:
+        raise HTTPException(status_code=404, detail="Department not found")
+    return department
+
+@appServer.put("/api/v1/departments/org/{orgid}/{deptid}", response_model=DepartmentBase)
+async def update_department(orgid: int, deptid: int, department: DepartmentUpdate):
+    result = await DepartmentDAO.update(orgid, deptid, department)
+    if result is None:
+        raise HTTPException(status_code=400, detail="Error updating department")
+    return result
+
+@appServer.delete("/api/v1/departments/org/{orgid}/{deptid}")
+async def delete_department( orgid: int, deptid: int):
+    result = await DepartmentDAO.delete(orgid, deptid)
+    if not result:
+        raise HTTPException(status_code=404, detail="Department not found")
+    return {"message": "Department deleted successfully"}
