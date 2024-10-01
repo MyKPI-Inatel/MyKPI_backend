@@ -1,5 +1,5 @@
 from fastapi import HTTPException
-from model.user import User
+from model.user import User, UserBase
 from passlib.context import CryptContext
 import asyncpg
 import os
@@ -20,11 +20,11 @@ class UserDAO:
 
         try:
             query = """
-                INSERT INTO "user" (email, name, password, usertype, orgid, deptId)
+                INSERT INTO "user" (email, name, password, usertype, orgid, deptid)
                 VALUES ($1, $2, $3, $4, $5, $6)
             """
             async with conn.transaction():
-                result = await conn.execute(query, user.email, user.name, hashed_password, user.usertype, user.orgid, user.deptId)
+                result = await conn.execute(query, user.email, user.name, hashed_password, user.usertype, user.orgid, user.deptid)
                 return result
             
         except Exception as e:
@@ -59,20 +59,6 @@ class UserDAO:
         finally:
             await conn.close()
 
-    @staticmethod
-    async def get_all():
-        conn = await get_database()
-        try:
-            query = """
-                SELECT id, email, name, usertype, orgid, deptId 
-                FROM "user"
-            """
-            result = await conn.fetch(query)
-            return [dict(record) for record in result]  # Converte o resultado para uma lista de dicionários
-        except Exception as e:
-            raise HTTPException(status_code=500, detail=f"Failed to fetch users: {str(e)}")
-        finally:
-            await conn.close()
 
     @staticmethod
     async def delete(id: int):

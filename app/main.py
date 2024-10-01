@@ -15,7 +15,9 @@ from model.survey import SurveyBase, SurveyCreate, SurveyUpdate
 from dao.survey import SurveyDAO
 
 from model.organization import OrganizationBase, OrganizationCreate, OrganizationUpdate
+from model.department import DepartmentBase, DepartmentCreate, DepartmentUpdate
 from dao.organization import OrganizationDAO
+from dao.department import DepartmentDAO
 
 appServer = FastAPI()
 
@@ -109,17 +111,6 @@ async def login_user(user: UserLogin):
 async def healthcheck():
     return {"status": "ok"}
 
-# Endpoint para listar todos os usuários
-@appServer.get("/api/v1/users/", response_model=List[UserBase])
-async def get_users():
-    try:
-        users = await UserDAO.get_all()
-        # Remove senhas dos usuários na resposta
-        users = [{key: value for key, value in user.items() if key != "password"} for user in users]
-        return users
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error fetching users: {str(e)}")
-
 # Endpoints para Survey
 @appServer.post("/api/v1/surveys/", response_model=SurveyBase)
 async def create_survey(survey: SurveyCreate):
@@ -187,3 +178,45 @@ async def delete_organization(orgid: int):
     if not result:
         raise HTTPException(status_code=404, detail="Organization not found")
     return {"message": "Organization deleted successfully"}
+
+
+
+# Endpoints para Department
+@appServer.post("/api/v1/departments/", response_model=DepartmentBase)
+async def create_department(department: DepartmentCreate):
+    result = await DepartmentDAO.insert(department)
+    if result is None:
+        raise HTTPException(status_code=400, detail="Error creating department")
+    return result
+
+@appServer.get("/api/v1/departments/", response_model=List[DepartmentBase])
+async def get_departments():
+    departments = await DepartmentDAO.get_all()
+    return departments
+
+# get department by orgid
+@appServer.get("/api/v1/departments/org/{orgid}", response_model=List[DepartmentBase])
+async def get_department_by_org(orgid: int):
+    departments = await DepartmentDAO.get_by_org(orgid)
+    return departments
+
+@appServer.get("/api/v1/departments/{deptid}", response_model=DepartmentBase)
+async def get_department(deptid: int):
+    department = await DepartmentDAO.get(deptid)
+    if department is None:
+        raise HTTPException(status_code=404, detail="Department not found")
+    return department
+
+@appServer.put("/api/v1/departments/{deptid}", response_model=DepartmentBase)
+async def update_department(deptid: int, department: DepartmentUpdate):
+    result = await DepartmentDAO.update(deptid, department)
+    if result is None:
+        raise HTTPException(status_code=400, detail="Error updating department")
+    return result
+
+@appServer.delete("/api/v1/departments/{deptid}")
+async def delete_department(deptid: int):
+    result = await DepartmentDAO.delete(deptid)
+    if not result:
+        raise HTTPException(status_code=404, detail="Department not found")
+    return {"message": "Department deleted successfully"}

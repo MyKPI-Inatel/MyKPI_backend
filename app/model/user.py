@@ -7,30 +7,31 @@ class UserBase(BaseModel):
     password: str
     usertype: str
     orgid: int
-    deptId: int
+    deptid: int
 
 class UserLogin(BaseModel):
     email: str
     password: str
 
 class User(json.JSONEncoder):
-    def __init__(self, id, email, name, password, usertype, orgid, deptId):
+    def __init__(self, id, email, name, password, usertype, orgid, deptid):
         self.id = id
         self.email = email
         self.name = name
         self.password = password
         self.usertype = usertype
         self.orgid = orgid
-        self.deptId = deptId
+        self.deptid = deptid
 
     # init but all fields are optional
-    def __init__(self, email=None, name=None, password=None, usertype=None, orgid=None, deptId=None):
+    def __init__(self, id=None, email=None, name=None, password=None, usertype=None, orgid=None, deptid=None):
+        self.id = id
         self.email = email
         self.name = name
         self.password = password
         self.usertype = usertype
         self.orgid = orgid
-        self.deptId = deptId
+        self.deptid = deptid
 
     def toJSON(self):
         return {
