@@ -72,6 +72,6 @@ INSERT INTO "department" (name, orgid) VALUES ('Recursos Dos Manos', 3);
 INSERT INTO "department" (name, orgid) VALUES ('Limpeza', 3);
 INSERT INTO "department" (name, orgid) VALUES ('Carcereiros', 3);
 
-INSERT INTO "user" (name, deptid, orgid, email, password, usertype) VALUES ('Master Admin', 1, 1, 'admin@mykpi.online', 'admin', 'superadmin');
-INSERT INTO "user" (name, deptid, orgid, email, password, usertype) VALUES ('Admin do INATEL ', 2, 2, 'admin@inatel.br', 'admin', 'orgadmin');
-INSERT INTO "user" (name, deptid, orgid, email, password, usertype) VALUES ('Admin da 4Intelligence ', 3, 3, 'admin@4intelligence.com', 'admin', 'orgadmin');
+INSERT INTO "user" (name, deptid, orgid, email, password, usertype) VALUES ('Master Admin', 1, 1, 'admin@mykpi.online', '$2b$12$bwv0FxKSn0V1SznFi7Irb.C0CMoF67mxaDUK2ZBQ9LPm6WUTmrQXW', 'superadmin');
+INSERT INTO "user" (name, deptid, orgid, email, password, usertype) VALUES ('Admin do INATEL ', 2, 2, 'admin@inatel.br', '$2b$12$bwv0FxKSn0V1SznFi7Irb.C0CMoF67mxaDUK2ZBQ9LPm6WUTmrQXW', 'orgadmin');
+INSERT INTO "user" (name, deptid, orgid, email, password, usertype) VALUES ('Admin da 4Intelligence ', 3, 3, 'admin@4intelligence.com', '$2b$12$bwv0FxKSn0V1SznFi7Irb.C0CMoF67mxaDUK2ZBQ9LPm6WUTmrQXW', 'orgadmin');
