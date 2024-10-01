@@ -184,15 +184,10 @@ async def delete_organization(orgid: int):
 # Endpoints para Department
 @appServer.post("/api/v1/departments/", response_model=DepartmentBase)
 async def create_department(department: DepartmentCreate):
-    result = await DepartmentDAO.insert(department)
+    result = await DepartmentDAO.insert( department)
     if result is None:
         raise HTTPException(status_code=400, detail="Error creating department")
     return result
-
-@appServer.get("/api/v1/departments/", response_model=List[DepartmentBase])
-async def get_departments():
-    departments = await DepartmentDAO.get_all()
-    return departments
 
 # get department by orgid
 @appServer.get("/api/v1/departments/org/{orgid}", response_model=List[DepartmentBase])
@@ -200,23 +195,23 @@ async def get_department_by_org(orgid: int):
     departments = await DepartmentDAO.get_by_org(orgid)
     return departments
 
-@appServer.get("/api/v1/departments/{deptid}", response_model=DepartmentBase)
-async def get_department(deptid: int):
-    department = await DepartmentDAO.get(deptid)
+@appServer.get("/api/v1/departments/org/{orgid}/{deptid}", response_model=DepartmentBase)
+async def get_department(orgid: int, deptid: int):
+    department = await DepartmentDAO.get(orgid, deptid)
     if department is None:
         raise HTTPException(status_code=404, detail="Department not found")
     return department
 
-@appServer.put("/api/v1/departments/{deptid}", response_model=DepartmentBase)
-async def update_department(deptid: int, department: DepartmentUpdate):
-    result = await DepartmentDAO.update(deptid, department)
+@appServer.put("/api/v1/departments/org/{orgid}/{deptid}", response_model=DepartmentBase)
+async def update_department(orgid: int, deptid: int, department: DepartmentUpdate):
+    result = await DepartmentDAO.update(orgid, deptid, department)
     if result is None:
         raise HTTPException(status_code=400, detail="Error updating department")
     return result
 
-@appServer.delete("/api/v1/departments/{deptid}")
-async def delete_department(deptid: int):
-    result = await DepartmentDAO.delete(deptid)
+@appServer.delete("/api/v1/departments/org/{orgid}/{deptid}")
+async def delete_department( orgid: int, deptid: int):
+    result = await DepartmentDAO.delete(orgid, deptid)
     if not result:
         raise HTTPException(status_code=404, detail="Department not found")
     return {"message": "Department deleted successfully"}

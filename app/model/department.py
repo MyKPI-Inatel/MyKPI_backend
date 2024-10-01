@@ -10,6 +10,7 @@ class DepartmentBase(BaseModel):
 # Model for creating an Department
 class DepartmentCreate(DepartmentBase):
     name: str
+    orgid: int
 
 # Model for updating an Department (all fields optional)
 class DepartmentUpdate(BaseModel):
