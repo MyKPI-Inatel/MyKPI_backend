@@ -73,7 +73,7 @@ class DepartmentDAO:
             await conn.close()
 
     @staticmethod
-    async def delete(deptid: int, orgid: int):
+    async def delete(orgid: int, deptid: int):
         conn = await get_database()
         try:
             query = """
