@@ -26,6 +26,9 @@ class Survey(json.JSONEncoder):
         self.title = title
         self.orgid = orgid
 
+    def setQuestions(self, questions):
+        self.questions = questions
+
     def toJSON(self):
         return {
             "id": self.id,
