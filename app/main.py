@@ -80,17 +80,25 @@ async def register_user(user: UserBase):
 
 # Função para autenticar um usuário
 @appServer.post("/api/v1/login/")
-async def login_user(user: UserLogin):
+async def login_user(userLogin: UserLogin):
     try:
-        record = await UserDAO.get_password(user.email)
+        password = await UserDAO.get_password(userLogin.email)
+        user = await UserDAO.get(email=userLogin.email)
 
-        if record is None:
+        if password is None:
             raise HTTPException(status_code=401, detail="Invalid email or password")
-        stored_password = record
+        stored_password = password
 
         if not pwd_context.verify(user.password, stored_password):
             raise HTTPException(status_code=401, detail="Invalid email or password")
-        access_token = create_access_token(data={"sub": user.email})
+        access_token = create_access_token(data={"sub": user.email,
+                                                 "email": user.email,
+                                                 "id": user.id,
+                                                 "usertype": user.usertype,
+                                                 "orgid": user.orgid,
+                                                 "deptid": user.deptid,
+                                                 "name": user.name
+                                                 })
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Login failed: {str(e)}")
