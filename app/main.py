@@ -20,7 +20,7 @@ from dao.organization import OrganizationDAO
 from dao.department import DepartmentDAO
 
 from model.question import QuestionBase, QuestionCreate, QuestionUpdate
-from dao.question import QuestionDAO
+from service.question import Question as QuestionService
 
 appServer = FastAPI()
 
@@ -229,31 +229,31 @@ async def delete_department( orgid: int, deptid: int):
 
 @appServer.post("/api/v1/questions", response_model=QuestionBase)
 async def create_question(question: QuestionCreate):
-    new_question = await QuestionDAO.insert(question)
+    new_question = await QuestionService.create_question(question)
     return new_question
 
 @appServer.get("/api/v1/questions", response_model=List[QuestionBase])
 async def get_all_questions():
-    questions = await QuestionDAO.get_all()
+    questions = await QuestionService.get_all_questions()
     return questions
 
 @appServer.get("/api/v1/questions/{questionid}", response_model=QuestionBase)
 async def get_question(questionid: int):
-    question = await QuestionDAO.get(questionid)
+    question = await QuestionService.get_question(questionid)
     if question is None:
         raise HTTPException(status_code=404, detail="Question not found")
     return question
 
 @appServer.put("/api/v1/questions/{questionid}", response_model=QuestionBase)
 async def update_question(questionid: int, question: QuestionUpdate):
-    updated_question = await QuestionDAO.update(questionid, question)
+    updated_question = await QuestionService.update_question(questionid, question)
     if updated_question is None:
         raise HTTPException(status_code=400, detail="Error updating question")
     return updated_question
 
 @appServer.delete("/api/v1/questions/{questionid}")
 async def delete_question(questionid: int):
-    result = await QuestionDAO.delete(questionid)
+    result = await QuestionService.delete_question(questionid)
     if not result:
         raise HTTPException(status_code=404, detail="Question not found")
     return {"message": "Question deleted successfully"}
