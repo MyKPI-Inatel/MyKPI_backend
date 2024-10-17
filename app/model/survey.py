@@ -1,38 +1,40 @@
 import json
+from typing import List, Optional
 from pydantic import BaseModel
+
+class QuestionBase(BaseModel):
+    id: int
+    title: str
+    scorefactor: int
 
 class SurveyBase(BaseModel):
     id: int
     title: str
     orgid: int
+    questions: Optional[List[QuestionBase]] = None  # Lista opcional de perguntas associadas
 
 class SurveyCreate(BaseModel):
     title: str
     orgid: int
 
 class SurveyUpdate(BaseModel):
-    title: str = None
-    orgid: int = None
+    title: Optional[str] = None
+    orgid: Optional[int] = None
 
 class Survey(json.JSONEncoder):
-    def __init__(self, id, title, orgid):
-        self.id = id
-        self.title = title
-        self.orgid = orgid
-
-    # init but all fields are optional
     def __init__(self, id=None, title=None, orgid=None):
         self.id = id
         self.title = title
         self.orgid = orgid
+        self.questions = []
 
-    def setQuestions(self, questions):
+    def setQuestions(self, questions: List[QuestionBase]):
         self.questions = questions
 
     def toJSON(self):
         return {
             "id": self.id,
             "title": self.title,
-            "orgid": self.orgid
+            "orgid": self.orgid,
+            "questions": [q.dict() for q in self.questions] if self.questions else []
         }
-    
