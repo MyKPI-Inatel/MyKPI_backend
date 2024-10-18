@@ -1,6 +1,5 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse
 from passlib.context import CryptContext
 from typing import Optional, List
 from jose import jwt
@@ -14,18 +13,15 @@ from dao.database import Database
 from model.survey import SurveyBase, SurveyCreate, SurveyUpdate
 from dao.survey import SurveyDAO
 
-from model.organization import OrganizationBase, OrganizationCreate, OrganizationUpdate
-from dao.organization import OrganizationDAO
-
-from routers.organizations import router as organizations_router
-from routers.questions import router as questions_router
-from routers.departments import router as departments_router
+from router.organization import router as organization
+from router.question import router as question
+from router.department import router as department
 
 appServer = FastAPI()
 
-appServer.include_router(questions_router, prefix="/api/v1/questions", tags=["Questions"])
-appServer.include_router(departments_router, prefix="/api/v1/departments", tags=["Departments"])
-appServer.include_router(organizations_router, prefix="/api/v1/organizations", tags=["Organizations"])
+appServer.include_router(question, prefix="/api/v1/questions", tags=["Questions"])
+appServer.include_router(department, prefix="/api/v1/departments", tags=["Departments"])
+appServer.include_router(organization, prefix="/api/v1/organizations", tags=["Organizations"])
 
 # Adicione o middleware CORS
 appServer.add_middleware(

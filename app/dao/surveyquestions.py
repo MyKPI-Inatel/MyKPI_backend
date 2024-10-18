@@ -2,7 +2,7 @@ from fastapi import HTTPException
 import asyncpg
 import os
 
-class SurveyQuestionsDAO:
+class SurveyQuestionDAO:
     @staticmethod
     async def insert(surveyid: int, questionid: int):
         conn = await get_database()
