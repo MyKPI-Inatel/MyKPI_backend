@@ -1,6 +1,7 @@
 from fastapi import HTTPException
 import asyncpg
 import os
+from model.surveyquestion import SurveyQuestionBase
 
 class SurveyQuestionDAO:
     @staticmethod
@@ -21,7 +22,7 @@ class SurveyQuestionDAO:
             await conn.close()
 
     @staticmethod
-    async def get_questions_by_survey(surveyid: int):
+    async def get_by_survey(surveyid: int):
         conn = await get_database()
         try:
             query = """
@@ -38,7 +39,27 @@ class SurveyQuestionDAO:
             await conn.close()
 
     @staticmethod
-    async def delete(surveyid: int, questionid: int):
+    async def get_by_question(questionid: int):
+        conn = await get_database()
+        try:
+            query = """
+                SELECT s.id, s.title
+                FROM surveyquestions sq
+                JOIN survey s ON sq.surveyid = s.id
+                WHERE sq.questionid = $1
+            """
+            records = await conn.fetch(query, questionid)
+            return [{"id": record["id"], "title": record["title"]} for record in records]
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Failed to get surveys for question: {str(e)}")
+        finally:
+            await conn.close()
+
+    @staticmethod
+    async def delete(surveyquestion_data: SurveyQuestionBase):
+        surveyid = surveyquestion_data.surveyid
+        questionid = surveyquestion_data.questionid
+
         conn = await get_database()
         try:
             query = """
