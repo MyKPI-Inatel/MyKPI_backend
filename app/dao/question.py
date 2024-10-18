@@ -27,8 +27,10 @@ class QuestionDAO:
         try:
             query = """
                 SELECT q.id, q.title, q.scorefactor, sq.surveyid
-                FROM surveyquestions sq
-                JOIN question q ON sq.questionid = q.id
+                FROM question q
+                LEFT JOIN surveyquestions sq
+                ON sq.questionid = q.id
+                ORDER BY q.id
             """
             records = await conn.fetch(query)
             return [QuestionBase(**record) for record in records]
@@ -42,7 +44,11 @@ class QuestionDAO:
         conn = await get_database()
         try:
             query = """
-                SELECT id, title, scorefactor FROM question WHERE id = $1
+                SELECT q.id, q.title, q.scorefactor, sq.surveyid
+                FROM question q
+                LEFT JOIN surveyquestions sq
+                ON sq.questionid = q.id
+                WHERE q.id = $1
             """
             record = await conn.fetchrow(query, questionid)
             if record:
@@ -60,9 +66,11 @@ class QuestionDAO:
         try:
             query = """
                 SELECT q.id, q.title, q.scorefactor, sq.surveyid
-                FROM surveyquestions sq
-                JOIN question q ON sq.questionid = q.id
+                FROM question q
+                LEFT JOIN surveyquestions sq
+                ON sq.questionid = q.id
                 WHERE sq.surveyid = $1
+                ORDER BY q.id
             """
             records = await conn.fetch(query, surveyid)
             return [QuestionBase(**record) for record in records]

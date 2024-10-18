@@ -15,4 +15,3 @@ class QuestionCreate(BaseModel):
 class QuestionUpdate(BaseModel):
     title: Optional[str] = None
     scorefactor: Optional[int] = None
-    surveyid: Optional[int] = None
