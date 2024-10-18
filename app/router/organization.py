@@ -9,7 +9,7 @@ router = APIRouter()
     "", 
     response_model=OrganizationBase, 
     summary="Create a new organization", 
-    description="This endpoint allows you to create a new organization in the system."
+    description="This endpoint allows you to create a new organization."
 )
 async def create_organization(organization: OrganizationCreate):
     new_organization = await OrganizationService.create_organization(organization)
@@ -19,7 +19,7 @@ async def create_organization(organization: OrganizationCreate):
     "", 
     response_model=List[OrganizationBase], 
     summary="Get all organizations", 
-    description="Retrieve a list of all organizations in the system."
+    description="Retrieve a list of all organizations."
 )
 async def get_organizations():
     organizations = await OrganizationService.get_all_organizations()

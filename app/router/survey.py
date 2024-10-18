@@ -9,7 +9,7 @@ router = APIRouter()
     "/", 
     response_model=SurveyBase, 
     summary="Create a new survey", 
-    description="This endpoint allows you to create a new survey in the system."
+    description="This endpoint allows you to create a new survey."
 )
 async def create_survey(survey: SurveyCreate):
     return await SurveyService.create_survey(survey)
@@ -18,7 +18,7 @@ async def create_survey(survey: SurveyCreate):
     "/", 
     response_model=List[SurveyBase], 
     summary="Retrieve all surveys", 
-    description="Retrieve a list of all surveys available in the system."
+    description="Retrieve a list of all surveys available."
 )
 async def get_surveys():
     surveys = await SurveyService.get_all_surveys()

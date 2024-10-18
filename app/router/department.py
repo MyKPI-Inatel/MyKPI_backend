@@ -9,7 +9,7 @@ router = APIRouter()
     "", 
     response_model=DepartmentBase, 
     summary="Create a new department", 
-    description="This endpoint allows you to create a new department in the system."
+    description="This endpoint allows you to create a new department."
 )
 async def create_department(department: DepartmentCreate):
     new_department = await DepartmentService.create_department(department)

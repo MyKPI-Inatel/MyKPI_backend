@@ -9,8 +9,8 @@ router = APIRouter()
 
 @router.post(
     "", 
-    response_model=QuestionBase, 
-    summary="Create a new question", 
+    response_model=QuestionBase,
+    summary="Create a new question",
     description="This endpoint allows you to create a new question."
 )
 async def create_question(question: QuestionCreate):
@@ -18,9 +18,9 @@ async def create_question(question: QuestionCreate):
     return new_question
 
 @router.post(
-    "{questionid}/survey/{surveyid}", 
+    "{questionid}/survey/{surveyid}",
     response_model=SurveyQuestionBase,
-    summary="Associate a question with a survey", 
+    summary="Associate a question with a survey",
     description="This endpoint allows you to associate a question with a survey."
 )
 async def sync_question_with_survey(questionid: int, surveyid: int):
@@ -29,9 +29,9 @@ async def sync_question_with_survey(questionid: int, surveyid: int):
     return survey_question
 
 @router.get(
-    "", 
-    response_model=List[QuestionBase], 
-    summary="Retrieve all questions", 
+    "",
+    response_model=List[QuestionBase],
+    summary="Retrieve all questions",
     description="Retrieve a list of all questions."
 )
 async def get_all_questions():
@@ -50,9 +50,9 @@ async def get_by_survey(surveyid: int):
     
 
 @router.get(
-    "/{questionid}", 
-    response_model=QuestionBase, 
-    summary="Retrieve a specific question", 
+    "/{questionid}",
+    response_model=QuestionBase,
+    summary="Retrieve a specific question",
     description="Retrieve a question by its ID."
 )
 async def get_question(questionid: int):
@@ -62,9 +62,9 @@ async def get_question(questionid: int):
     return question
 
 @router.put(
-    "/{questionid}", 
-    response_model=QuestionBase, 
-    summary="Update a specific question", 
+    "/{questionid}",
+    response_model=QuestionBase,
+    summary="Update a specific question",
     description="Update a question by its ID with the provided data."
 )
 async def update_question(questionid: int, question: QuestionUpdate):
@@ -74,8 +74,8 @@ async def update_question(questionid: int, question: QuestionUpdate):
     return updated_question
 
 @router.delete(
-    "/{questionid}", 
-    summary="Delete a specific question", 
+    "/{questionid}",
+    summary="Delete a specific question",
     description="Delete a question by its ID."
 )
 async def delete_question(questionid: int):
