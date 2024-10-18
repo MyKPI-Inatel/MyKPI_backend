@@ -6,7 +6,7 @@ class DepartmentBase(BaseModel):
     name: str
     orgid: int
 
-class DepartmentCreate(DepartmentBase):
+class DepartmentCreate(BaseModel):
     name: str
     orgid: int
 

@@ -26,31 +26,31 @@ async def get_departments(orgid: int):
     return departments
 
 @router.get(
-    "/{departmentid}", 
+    "/org/{orgid}/{departmentid}", 
     response_model=DepartmentBase, 
     summary="Get a department by ID", 
     description="Retrieve a specific department by its ID."
 )
-async def get_department(departmentid: int):
-    department = await DepartmentService.get_department(departmentid)
+async def get_department(departmentid: int, orgid: int=None):
+    department = await DepartmentService.get_department(departmentid, orgid)
     if department is None:
         raise HTTPException(status_code=404, detail="Department not found")
     return department
 
 @router.put(
-    "/{departmentid}", 
+    "/org/{orgid}/{departmentid}", 
     response_model=DepartmentBase, 
     summary="Update a department", 
     description="Update the details of a specific department by its ID."
 )
-async def update_department(departmentid: int, department: DepartmentUpdate):
-    updated_department = await DepartmentService.update_department(departmentid, department)
+async def update_department(departmentid: int, department: DepartmentUpdate, orgid: int=None):
+    updated_department = await DepartmentService.update_department(departmentid, department, orgid)
     if updated_department is None:
         raise HTTPException(status_code=400, detail="Error updating department")
     return updated_department
 
 @router.delete(
-    "/{departmentid}", 
+    "/org/{orgid}/{departmentid}", 
     summary="Delete a department", 
     description="Delete a specific department by its ID."
 )

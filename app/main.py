@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 
+from dao.database import Database
 from router.organization import router as organization
 from router.question import router as question
 from router.department import router as department
@@ -24,6 +25,12 @@ appServer.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Rota para resetar o banco de dados
+@appServer.post("/api/v1/db-reset/")
+async def reset_database():
+    await Database.reset_database()
+    return {"message": "Database reset successfully"}
 
 # Função para healthcheck
 @appServer.get("/")

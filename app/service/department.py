@@ -9,8 +9,8 @@ class Department:
         return new_department_data
 
     @staticmethod
-    async def get_department(departmentid: int) -> DepartmentBase:
-        department_data = await DepartmentDAO.get(departmentid)
+    async def get_department(departmentid: int, orgid: int=None) -> DepartmentBase:
+        department_data = await DepartmentDAO.get(departmentid, orgid)
         return department_data
     
     @staticmethod
@@ -19,8 +19,8 @@ class Department:
         return department_data
 
     @staticmethod
-    async def update_department(departmentid: int, department_data: DepartmentUpdate) -> DepartmentBase:
-        updated_department_data = await DepartmentDAO.update(departmentid, department_data)
+    async def update_department(departmentid: int, department_data: DepartmentUpdate, orgid: int=None) -> DepartmentBase:
+        updated_department_data = await DepartmentDAO.update(departmentid, department_data, orgid)
         return updated_department_data
 
     @staticmethod

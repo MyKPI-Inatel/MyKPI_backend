@@ -22,13 +22,13 @@ class DepartmentDAO:
             await conn.close()
 
     @staticmethod
-    async def get(deptid: int):
+    async def get(deptid: int, orgid: int=None):
         conn = await get_database()
         try:
             query = """
-                SELECT id, name, orgid FROM department WHERE id = $1
+                SELECT id, name, orgid FROM department WHERE id = $1 AND orgid = $2
             """
-            record = await conn.fetchrow(query, deptid)
+            record = await conn.fetchrow(query, deptid, orgid)
             if record:
                 return DepartmentBase(**record)
             else:
@@ -54,15 +54,15 @@ class DepartmentDAO:
             await conn.close()
 
     @staticmethod
-    async def update(deptid: int, department: DepartmentUpdate):
+    async def update(deptid: int, department: DepartmentUpdate, orgid: int=None):
         conn = await get_database()
         try:
             query = f"""
-                UPDATE department SET name = $1 WHERE id = $2
+                UPDATE department SET name = $1 WHERE id = $2 AND orgid = $3
                 RETURNING id, name, orgid
             """
             async with conn.transaction():
-                record = await conn.fetchrow(query, department.name, deptid)
+                record = await conn.fetchrow(query, department.name, deptid, orgid)
                 if record:
                     return DepartmentBase(**record)
                 else:
