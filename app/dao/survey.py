@@ -1,4 +1,5 @@
 from fastapi import HTTPException
+from model.question import QuestionBase
 from model.survey import SurveyCreate, SurveyUpdate, SurveyBase
 import asyncpg
 import os
@@ -91,6 +92,26 @@ class SurveyDAO:
                     raise HTTPException(status_code=404, detail="Survey not found")
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Failed to delete survey: {str(e)}")
+        finally:
+            await conn.close()
+
+    @staticmethod
+    async def get_questions(surveyid: int):
+        conn = await get_database()
+        try:
+            query = """
+                SELECT q.id, q.title, q.scorefactor
+                FROM question q
+                JOIN surveyquestions sq ON sq.questionid = q.id
+                WHERE sq.surveyid = $1
+            """
+            records = await conn.fetch(query, surveyid)
+            if records:
+                return [QuestionBase(**record) for record in records]
+            else:
+                raise HTTPException(status_code=404, detail="No questions found for this survey")
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Failed to get questions for survey: {str(e)}")
         finally:
             await conn.close()
 

@@ -22,18 +22,18 @@ class DepartmentDAO:
             await conn.close()
 
     @staticmethod
-    async def get(orgid: int, deptid: int):
+    async def get(deptid: int):
         conn = await get_database()
         try:
             query = """
-                SELECT id, name, orgid FROM department WHERE id = $1 AND orgid = $2
+                SELECT id, name, orgid FROM department WHERE id = $1
             """
-            record = await conn.fetchrow(query, deptid, orgid)
+            record = await conn.fetchrow(query, deptid)
             if record:
                 return DepartmentBase(**record)
             else:
                 raise HTTPException(status_code=404, detail="Department not found")
-        except Exception as e:
+        except asyncpg.PostgresError as e:
             raise HTTPException(status_code=500, detail=f"Failed to get department: {str(e)}")
         finally:
             await conn.close()
@@ -54,15 +54,15 @@ class DepartmentDAO:
             await conn.close()
 
     @staticmethod
-    async def update(orgid: int, deptid: int, department: DepartmentUpdate):
+    async def update(deptid: int, department: DepartmentUpdate):
         conn = await get_database()
         try:
             query = f"""
-                UPDATE department SET name = $1 WHERE id = $2 AND orgid = $3
+                UPDATE department SET name = $1 WHERE id = $2
                 RETURNING id, name, orgid
             """
             async with conn.transaction():
-                record = await conn.fetchrow(query, department.name, deptid, orgid)
+                record = await conn.fetchrow(query, department.name, deptid)
                 if record:
                     return DepartmentBase(**record)
                 else:
@@ -86,7 +86,7 @@ class DepartmentDAO:
                     return True
                 else:
                     raise HTTPException(status_code=404, detail="Department not found")
-        except Exception as e:
+        except asyncpg.PostgresError as e:
             raise HTTPException(status_code=500, detail=f"Failed to delete department: {str(e)}")
         finally:
             await conn.close()
