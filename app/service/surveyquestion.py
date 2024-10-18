@@ -4,7 +4,7 @@ from dao.surveyquestion import SurveyQuestionDAO
 class SurveyQuestion:
     @staticmethod
     async def create_surveyquestion(surveyquestion_data: SurveyQuestionCreate) -> SurveyQuestionBase:
-        new_surveyquestion_data = await SurveyQuestionDAO.insert(surveyquestion_data)
+        new_surveyquestion_data = await SurveyQuestionDAO.insert(surveyquestion_data.surveyid, surveyquestion_data.questionid)
         return new_surveyquestion_data
 
     @staticmethod

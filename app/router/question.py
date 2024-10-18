@@ -1,7 +1,9 @@
 from fastapi import APIRouter, HTTPException
 from typing import List
+from model.surveyquestion import SurveyQuestionBase
 from model.question import QuestionBase, QuestionCreate, QuestionUpdate
 from service.question import Question as QuestionService
+from service.surveyquestion import SurveyQuestion as SurveyQuestionService
 
 router = APIRouter()
 
@@ -9,17 +11,28 @@ router = APIRouter()
     "", 
     response_model=QuestionBase, 
     summary="Create a new question", 
-    description="This endpoint allows you to create a new question in the system."
+    description="This endpoint allows you to create a new question."
 )
 async def create_question(question: QuestionCreate):
     new_question = await QuestionService.create_question(question)
     return new_question
 
+@router.post(
+    "{questionid}/survey/{surveyid}", 
+    response_model=SurveyQuestionBase,
+    summary="Associate a question with a survey", 
+    description="This endpoint allows you to associate a question with a survey."
+)
+async def sync_question_with_survey(questionid: int, surveyid: int):
+    surveyquestion_data = SurveyQuestionBase(surveyid=surveyid, questionid=questionid)
+    survey_question = await SurveyQuestionService.create_surveyquestion(surveyquestion_data)
+    return survey_question
+
 @router.get(
     "", 
     response_model=List[QuestionBase], 
     summary="Retrieve all questions", 
-    description="Retrieve a list of all questions in the system."
+    description="Retrieve a list of all questions."
 )
 async def get_all_questions():
     questions = await QuestionService.get_all_questions()
