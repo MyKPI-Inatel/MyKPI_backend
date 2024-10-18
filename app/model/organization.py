@@ -7,7 +7,7 @@ class OrganizationBase(BaseModel):
     name: str
 
 # Model for creating an organization
-class OrganizationCreate(OrganizationBase):
+class OrganizationCreate(BaseModel):
     name: str
 
 # Model for updating an organization (all fields optional)

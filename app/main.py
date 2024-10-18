@@ -17,6 +17,7 @@ from dao.survey import SurveyDAO
 from model.organization import OrganizationBase, OrganizationCreate, OrganizationUpdate
 from dao.organization import OrganizationDAO
 
+from routers.organizations import router as organizations_router
 from routers.questions import router as questions_router
 from routers.departments import router as departments_router
 
@@ -24,6 +25,7 @@ appServer = FastAPI()
 
 appServer.include_router(questions_router, prefix="/api/v1/questions", tags=["Questions"])
 appServer.include_router(departments_router, prefix="/api/v1/departments", tags=["Departments"])
+appServer.include_router(organizations_router, prefix="/api/v1/organizations", tags=["Organizations"])
 
 # Adicione o middleware CORS
 appServer.add_middleware(
@@ -156,37 +158,3 @@ async def delete_survey(surveyid: int):
     if not result:
         raise HTTPException(status_code=404, detail="Survey not found")
     return {"message": "Survey deleted successfully"}
-
-# Endpoints para Organization
-@appServer.post("/api/v1/organizations/", response_model=OrganizationBase)
-async def create_organization(organization: OrganizationCreate):
-    result = await OrganizationDAO.insert(organization)
-    if result is None:
-        raise HTTPException(status_code=400, detail="Error creating organization")
-    return result
-
-@appServer.get("/api/v1/organizations/", response_model=List[OrganizationBase])
-async def get_organizations():
-    organizations = await OrganizationDAO.get_all()
-    return organizations
-
-@appServer.get("/api/v1/organizations/{orgid}", response_model=OrganizationBase)
-async def get_organization(orgid: int):
-    organization = await OrganizationDAO.get(orgid)
-    if organization is None:
-        raise HTTPException(status_code=404, detail="Organization not found")
-    return organization
-
-@appServer.put("/api/v1/organizations/{orgid}", response_model=OrganizationBase)
-async def update_organization(orgid: int, organization: OrganizationUpdate):
-    result = await OrganizationDAO.update(orgid, organization)
-    if result is None:
-        raise HTTPException(status_code=400, detail="Error updating organization")
-    return result
-
-@appServer.delete("/api/v1/organizations/{orgid}")
-async def delete_organization(orgid: int):
-    result = await OrganizationDAO.delete(orgid)
-    if not result:
-        raise HTTPException(status_code=404, detail="Organization not found")
-    return {"message": "Organization deleted successfully"}

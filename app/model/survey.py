@@ -1,17 +1,13 @@
 import json
 from typing import List, Optional
 from pydantic import BaseModel
-
-class QuestionBase(BaseModel):
-    id: int
-    title: str
-    scorefactor: int
+from model.question import QuestionBase
 
 class SurveyBase(BaseModel):
     id: int
     title: str
     orgid: int
-    questions: Optional[List[QuestionBase]] = None  # Lista opcional de perguntas associadas
+    questions: Optional[List[QuestionBase]] = None
 
 class SurveyCreate(BaseModel):
     title: str
