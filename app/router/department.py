@@ -16,7 +16,7 @@ async def create_department(department: DepartmentCreate):
     return new_department
 
 @router.get(
-    "/orgid/{orgid}", 
+    "/org/{orgid}", 
     response_model=List[DepartmentBase], 
     summary="Get all departments by organization ID", 
     description="Retrieve a list of all departments associated with a specific organization ID."

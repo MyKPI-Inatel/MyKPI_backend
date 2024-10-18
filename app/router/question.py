@@ -26,6 +26,17 @@ async def get_all_questions():
     return questions
 
 @router.get(
+    "/survey/{surveyid}",
+    response_model=List[QuestionBase],
+    summary="Retrieve all questions for a specific survey",
+    description="Retrieve a list of all questions associated with a specific survey."
+)
+async def get_by_survey(surveyid: int):
+    questions = await QuestionService.get_by_survey(surveyid)
+    return questions
+    
+
+@router.get(
     "/{questionid}", 
     response_model=QuestionBase, 
     summary="Retrieve a specific question", 

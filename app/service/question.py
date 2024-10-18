@@ -21,8 +21,12 @@ class Question:
     @staticmethod
     async def get_question(questionid: int) -> QuestionBase:
         question_data = await QuestionDAO.get(questionid)
-
         return question_data
+    
+    @staticmethod
+    async def get_by_survey(surveyid: int) -> list[QuestionBase]:
+        questions_data = await QuestionDAO.get_by_survey(surveyid)
+        return questions_data
 
     @staticmethod
     async def update_question(questionid: int, question_data: QuestionUpdate) -> QuestionBase:

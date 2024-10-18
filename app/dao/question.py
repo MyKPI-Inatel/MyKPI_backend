@@ -26,7 +26,9 @@ class QuestionDAO:
         conn = await get_database()
         try:
             query = """
-                SELECT id, title, scorefactor FROM question
+                SELECT q.id, q.title, q.scorefactor, sq.surveyid
+                FROM surveyquestions sq
+                JOIN question q ON sq.questionid = q.id
             """
             records = await conn.fetch(query)
             return [QuestionBase(**record) for record in records]
@@ -49,6 +51,23 @@ class QuestionDAO:
                 raise HTTPException(status_code=404, detail="Question not found")
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Failed to get question: {str(e)}")
+        finally:
+            await conn.close()
+
+    @staticmethod
+    async def get_by_survey(surveyid: int):
+        conn = await get_database()
+        try:
+            query = """
+                SELECT q.id, q.title, q.scorefactor, sq.surveyid
+                FROM surveyquestions sq
+                JOIN question q ON sq.questionid = q.id
+                WHERE sq.surveyid = $1
+            """
+            records = await conn.fetch(query, surveyid)
+            return [QuestionBase(**record) for record in records]
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Failed to get questions for survey: {str(e)}")
         finally:
             await conn.close()
 
