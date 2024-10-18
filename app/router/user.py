@@ -66,8 +66,8 @@ async def login_user(user: UserLogin):
     try:
         user = await UserDAO.get_by_email(user.email)
         
-        access_token = create_access_token(data=user.toJSON())
+        access_token = create_access_token(user.toJSON())
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to get user: {str(e)}")
 
-    return {"access_token": access_token, "token_type": "bearer", "user": user}
+    return {"access_token": access_token, "token_type": "bearer", "user": user.toJSON()}
