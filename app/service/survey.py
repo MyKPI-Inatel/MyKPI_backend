@@ -16,6 +16,11 @@ class Survey:
     async def get_survey(surveyid: int) -> SurveyBase:
         survey_data = await SurveyDAO.get(surveyid)
         return survey_data
+    
+    @staticmethod
+    async def get_survey_by_org(orgid: int) -> list[SurveyBase]:
+        survey_data = await SurveyDAO.get_by_org(orgid)
+        return survey_data
 
     @staticmethod
     async def update_survey(surveyid: int, survey_data: SurveyUpdate) -> SurveyBase:

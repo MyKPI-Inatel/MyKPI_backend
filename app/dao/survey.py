@@ -54,6 +54,23 @@ class SurveyDAO:
             await conn.close()
 
     @staticmethod
+    async def get_by_org(orgid: int):
+        conn = await get_database()
+        try:
+            query = """
+                SELECT id, title, orgid FROM survey WHERE orgid = $1
+            """
+            record = await conn.fetchrow(query, orgid)
+            if record:
+                return SurveyBase(**record)
+            else:
+                raise HTTPException(status_code=404, detail="Survey not found")
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Failed to get survey: {str(e)}")
+        finally:
+            await conn.close()
+
+    @staticmethod
     async def update(surveyid: int, survey: SurveyUpdate):
         conn = await get_database()
         try:

@@ -36,6 +36,16 @@ async def get_survey(surveyid: int):
         raise HTTPException(status_code=404, detail="Survey not found")
     return survey
 
+@router.get(
+    "/org/{orgid}",
+    response_model=List[SurveyBase],
+    summary="Retrieve all surveys by organization ID",
+    description="Retrieve a list of all surveys associated with a specific organization ID."
+)
+async def get_surveys_by_org(orgid: int):
+    surveys = await SurveyService.get_survey_by_org(orgid)
+    return surveys
+
 @router.put(
     "/{surveyid}", 
     response_model=SurveyBase, 
