@@ -71,8 +71,7 @@ async def register_user(user: UserBase):
     
     if result is not None:
         try:
-            user = await UserDAO.get(email=user.email)
-            user = user[0]
+            user = await UserDAO.get_by_email(email=user.email)
             # Remove password from response
             user = {key: value for key, value in user.items() if key != "password"}
         except Exception as e:
@@ -81,10 +80,9 @@ async def register_user(user: UserBase):
 
 # Função para autenticar um usuário
 @appServer.post("/api/v1/login/")
-async def login_user(userLogin: UserLogin):
+async def login_user(user: UserLogin):
     try:
-        password = await UserDAO.get_password(userLogin.email)
-        user = await UserDAO.get(email=userLogin.email)
+        password = await UserDAO.get_password(user.email)
 
         if password is None:
             raise HTTPException(status_code=401, detail="Invalid email or password")
@@ -92,24 +90,14 @@ async def login_user(userLogin: UserLogin):
 
         if not pwd_context.verify(user.password, stored_password):
             raise HTTPException(status_code=401, detail="Invalid email or password")
-        access_token = create_access_token(data={"sub": user.email,
-                                                 "email": user.email,
-                                                 "id": user.id,
-                                                 "usertype": user.usertype,
-                                                 "orgid": user.orgid,
-                                                 "deptid": user.deptid,
-                                                 "name": user.name
-                                                 })
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Login failed: {str(e)}")
-    
-    # Pick username, usertype and id
+
     try:
-        user = await UserDAO.get(email=user.email)
-        user = user[0]
-        # Remove password from response
-        user = {key: value for key, value in user.items() if key != "password"}
+        user = await UserDAO.get_by_email(user.email)
+        
+        access_token = create_access_token(data=user.toJSON())
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to get user: {str(e)}")
 

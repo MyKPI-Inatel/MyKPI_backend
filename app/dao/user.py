@@ -45,14 +45,34 @@ class UserDAO:
             raise HTTPException(status_code=500, detail=f"Failed to check if user exists: {str(e)}")
 
     @staticmethod
-    async def get(email: str = None, id: int = None):
+    async def get(id: int):
         conn = await get_database()
         try:
             query = """
-                SELECT * FROM "user" WHERE email = $1 OR id = $2
+                SELECT * FROM "user" WHERE id = $1
             """
-            result = await conn.fetch(query, email, id)
-            return result
+            result = await conn.fetchrow(query, id)
+
+            user = UserBase(**result)
+            return user
+            
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Failed to get userss: {str(e)}")
+        finally:
+            await conn.close()
+
+
+    @staticmethod
+    async def get_by_email(email: str):
+        conn = await get_database()
+        try:
+            query = """
+                SELECT * FROM "user" WHERE email = $1
+            """
+            result = await conn.fetchrow(query, email)
+
+            user = UserBase(**result)
+            return user
             
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Failed to get user: {str(e)}")
