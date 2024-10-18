@@ -10,18 +10,17 @@ from model.user import UserBase, UserLogin
 from dao.user import UserDAO
 from dao.database import Database
 
-from model.survey import SurveyBase, SurveyCreate, SurveyUpdate
-from dao.survey import SurveyDAO
-
 from router.organization import router as organization
 from router.question import router as question
 from router.department import router as department
+from router.survey import router as survey
 
 appServer = FastAPI()
 
 appServer.include_router(question, prefix="/api/v1/questions", tags=["Questions"])
 appServer.include_router(department, prefix="/api/v1/departments", tags=["Departments"])
 appServer.include_router(organization, prefix="/api/v1/organizations", tags=["Organizations"])
+appServer.include_router(survey, prefix="/api/v1/surveys", tags=["Surveys"])
 
 # Adicione o middleware CORS
 appServer.add_middleware(
@@ -120,37 +119,3 @@ async def login_user(userLogin: UserLogin):
 @appServer.get("/")
 async def healthcheck():
     return {"status": "ok"}
-
-# Endpoints para Survey
-@appServer.post("/api/v1/surveys/", response_model=SurveyBase)
-async def create_survey(survey: SurveyCreate):
-    result = await SurveyDAO.insert(survey)
-    if result is None:
-        raise HTTPException(status_code=400, detail="Error creating survey")
-    return result
-
-@appServer.get("/api/v1/surveys/", response_model=List[SurveyBase])
-async def get_surveys():
-    surveys = await SurveyDAO.get_all()
-    return surveys
-
-@appServer.get("/api/v1/surveys/{surveyid}", response_model=SurveyBase)
-async def get_survey(surveyid: int):
-    survey = await SurveyDAO.get(surveyid)
-    if survey is None:
-        raise HTTPException(status_code=404, detail="Survey not found")
-    return survey
-
-@appServer.put("/api/v1/surveys/{surveyid}", response_model=SurveyBase)
-async def update_survey(surveyid: int, survey: SurveyUpdate):
-    result = await SurveyDAO.update(surveyid, survey)
-    if result is None:
-        raise HTTPException(status_code=400, detail="Error updating survey")
-    return result
-
-@appServer.delete("/api/v1/surveys/{surveyid}")
-async def delete_survey(surveyid: int):
-    result = await SurveyDAO.delete(surveyid)
-    if not result:
-        raise HTTPException(status_code=404, detail="Survey not found")
-    return {"message": "Survey deleted successfully"}
