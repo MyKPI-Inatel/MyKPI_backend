@@ -15,17 +15,15 @@ from model.survey import SurveyBase, SurveyCreate, SurveyUpdate
 from dao.survey import SurveyDAO
 
 from model.organization import OrganizationBase, OrganizationCreate, OrganizationUpdate
-from model.department import DepartmentBase, DepartmentCreate, DepartmentUpdate
 from dao.organization import OrganizationDAO
-from dao.department import DepartmentDAO
 
 from routers.questions import router as questions_router
 from routers.departments import router as departments_router
 
 appServer = FastAPI()
 
-appServer.include_router(questions_router, prefix="/api/v1/questions")
-appServer.include_router(departments_router, prefix="/api/v1/departments")
+appServer.include_router(questions_router, prefix="/api/v1/questions", tags=["Questions"])
+appServer.include_router(departments_router, prefix="/api/v1/departments", tags=["Departments"])
 
 # Adicione o middleware CORS
 appServer.add_middleware(
@@ -192,13 +190,3 @@ async def delete_organization(orgid: int):
     if not result:
         raise HTTPException(status_code=404, detail="Organization not found")
     return {"message": "Organization deleted successfully"}
-
-
-
-# Endpoints para Department
-@appServer.post("/api/v1/departments/", response_model=DepartmentBase)
-async def create_department(department: DepartmentCreate):
-    result = await DepartmentDAO.insert( department)
-    if result is None:
-        raise HTTPException(status_code=400, detail="Error creating department")
-    return result
