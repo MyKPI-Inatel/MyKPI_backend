@@ -6,7 +6,7 @@ from service.organization import Organization as OrganizationService
 router = APIRouter()
 
 @router.post(
-    "", 
+    "/", 
     response_model=OrganizationBase, 
     summary="Create a new organization", 
     description="This endpoint allows you to create a new organization."
@@ -16,7 +16,7 @@ async def create_organization(organization: OrganizationCreate):
     return new_organization
 
 @router.get(
-    "", 
+    "/", 
     response_model=List[OrganizationBase], 
     summary="Get all organizations", 
     description="Retrieve a list of all organizations."

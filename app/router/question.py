@@ -8,7 +8,7 @@ from service.surveyquestion import SurveyQuestion as SurveyQuestionService
 router = APIRouter()
 
 @router.post(
-    "", 
+    "/", 
     response_model=QuestionBase,
     summary="Create a new question",
     description="This endpoint allows you to create a new question."
@@ -18,7 +18,7 @@ async def create_question(question: QuestionCreate):
     return new_question
 
 @router.post(
-    "{questionid}/survey/{surveyid}",
+    "/{questionid}/survey/{surveyid}",
     response_model=SurveyQuestionBase,
     summary="Associate a question with a survey",
     description="This endpoint allows you to associate a question with a survey."
@@ -29,7 +29,7 @@ async def sync_question_with_survey(questionid: int, surveyid: int):
     return survey_question
 
 @router.get(
-    "",
+    "/",
     response_model=List[QuestionBase],
     summary="Retrieve all questions",
     description="Retrieve a list of all questions."
