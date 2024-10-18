@@ -20,10 +20,12 @@ from dao.organization import OrganizationDAO
 from dao.department import DepartmentDAO
 
 from routers.questions import router as questions_router
+from routers.departments import router as departments_router
 
 appServer = FastAPI()
 
-appServer.include_router(questions_router)
+appServer.include_router(questions_router, prefix="/api/v1/questions")
+appServer.include_router(departments_router, prefix="/api/v1/departments")
 
 # Adicione o middleware CORS
 appServer.add_middleware(
@@ -200,30 +202,3 @@ async def create_department(department: DepartmentCreate):
     if result is None:
         raise HTTPException(status_code=400, detail="Error creating department")
     return result
-
-# get department by orgid
-@appServer.get("/api/v1/departments/org/{orgid}", response_model=List[DepartmentBase])
-async def get_department_by_org(orgid: int):
-    departments = await DepartmentDAO.get_by_org(orgid)
-    return departments
-
-@appServer.get("/api/v1/departments/org/{orgid}/{deptid}", response_model=DepartmentBase)
-async def get_department(orgid: int, deptid: int):
-    department = await DepartmentDAO.get(orgid, deptid)
-    if department is None:
-        raise HTTPException(status_code=404, detail="Department not found")
-    return department
-
-@appServer.put("/api/v1/departments/org/{orgid}/{deptid}", response_model=DepartmentBase)
-async def update_department(orgid: int, deptid: int, department: DepartmentUpdate):
-    result = await DepartmentDAO.update(orgid, deptid, department)
-    if result is None:
-        raise HTTPException(status_code=400, detail="Error updating department")
-    return result
-
-@appServer.delete("/api/v1/departments/org/{orgid}/{deptid}")
-async def delete_department( orgid: int, deptid: int):
-    result = await DepartmentDAO.delete(orgid, deptid)
-    if not result:
-        raise HTTPException(status_code=404, detail="Department not found")
-    return {"message": "Department deleted successfully"}
