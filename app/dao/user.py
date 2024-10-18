@@ -1,5 +1,5 @@
 from fastapi import HTTPException
-from model.user import User, UserBase
+from model.user import UserBase
 from passlib.context import CryptContext
 import asyncpg
 import os
@@ -10,7 +10,7 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 class UserDAO:
     @staticmethod
-    async def insert(user: User):
+    async def insert(user: UserBase):
         conn = await get_database()
         if await UserDAO.exists(user.email, conn):
             raise HTTPException(status_code=400, detail="User already exists")
