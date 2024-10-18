@@ -1,8 +1,8 @@
-import json
 from pydantic import BaseModel
+from typing import Optional
 
 class UserBase(BaseModel):
-    id: int
+    id: Optional[int] = None
     email: str
     name: str
     password: str

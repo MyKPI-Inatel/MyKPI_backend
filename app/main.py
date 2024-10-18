@@ -1,19 +1,12 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from passlib.context import CryptContext
-from typing import Optional, List
-from jose import jwt
-from datetime import datetime, timedelta
-import os
 
-from model.user import UserBase, UserLogin
-from dao.user import UserDAO
-from dao.database import Database
 
 from router.organization import router as organization
 from router.question import router as question
 from router.department import router as department
 from router.survey import router as survey
+from router.user import router as user
 
 appServer = FastAPI()
 
@@ -21,6 +14,7 @@ appServer.include_router(question, prefix="/api/v1/questions", tags=["Questions"
 appServer.include_router(department, prefix="/api/v1/departments", tags=["Departments"])
 appServer.include_router(organization, prefix="/api/v1/organizations", tags=["Organizations"])
 appServer.include_router(survey, prefix="/api/v1/surveys", tags=["Surveys"])
+appServer.include_router(user, prefix="/api/v1", tags=["Users"])
 
 # Adicione o middleware CORS
 appServer.add_middleware(
@@ -30,78 +24,6 @@ appServer.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-# Usaremos este exemplo apenas para fins de demonstração.
-# Em um ambiente de produção, você deve armazenar as senhas de forma segura,
-# como usando hash e salt.
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
-# Configurações do banco de dados
-DATABASE_URL = os.environ.get("PGURL", "postgres://postgres:postgres@db:5432/mykpi")
-# Configurações do JWT
-SECRET_KEY = os.environ.get("SECRET_KEY", "09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7")
-ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
-
-# Função para verificar a senha
-def verify_password(plain_password, hashed_password):
-    return pwd_context.verify(plain_password, hashed_password)
-
-# Função para gerar o token JWT
-def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
-    to_encode = data.copy()
-    if expires_delta:
-        expire = datetime.utcnow() + expires_delta
-    else:
-        expire = datetime.utcnow() + timedelta(minutes=15)
-    to_encode.update({"exp": expire})
-    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
-    return encoded_jwt
-
-# Rota para resetar o banco de dados
-@appServer.post("/api/v1/db-reset/")
-async def reset_database():
-    await Database.reset_database()
-    return {"message": "Database reset successfully"}
-
-# Função para registrar um usuário
-@appServer.post("/api/v1/register/")
-async def register_user(user: UserBase):
-    result = await UserDAO.insert(user)
-    
-    if result is not None:
-        try:
-            user = await UserDAO.get_by_email(email=user.email)
-            # Remove password from response
-            user = {key: value for key, value in user.items() if key != "password"}
-        except Exception as e:
-            raise HTTPException(status_code=500, detail=f"Failed to get user: {str(e)}")
-        return {"message": "User registered successfully", "user": user}
-
-# Função para autenticar um usuário
-@appServer.post("/api/v1/login/")
-async def login_user(user: UserLogin):
-    try:
-        password = await UserDAO.get_password(user.email)
-
-        if password is None:
-            raise HTTPException(status_code=401, detail="Invalid email or password")
-        stored_password = password
-
-        if not pwd_context.verify(user.password, stored_password):
-            raise HTTPException(status_code=401, detail="Invalid email or password")
-
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Login failed: {str(e)}")
-
-    try:
-        user = await UserDAO.get_by_email(user.email)
-        
-        access_token = create_access_token(data=user.toJSON())
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to get user: {str(e)}")
-
-    return {"access_token": access_token, "token_type": "bearer", "user": user}
 
 # Função para healthcheck
 @appServer.get("/")
