@@ -22,3 +22,22 @@ async def test_create_organization(mocker):
 
     # Asserts that the result is as expected
     assert result == expected_return
+
+@pytest.mark.asyncio
+@pytest.mark.org
+async def test_get_organization(mocker):
+    # Mock input and expected return values
+    organizationid = 1
+    expected_return = OrganizationBase(id=1, name="HR")
+
+    # Mock the get method of the DAO
+    mocker.patch.object(OrganizationDAO, 'get', new_callable=AsyncMock, return_value=expected_return)
+
+    # Call the function we're testing
+    result = await Organization.get_organization(organizationid)
+
+    # Asserts that the DAO's get method was called with the correct input
+    OrganizationDAO.get.assert_called_once_with(organizationid)
+
+    # Asserts that the result is as expected
+    assert result == expected_return
