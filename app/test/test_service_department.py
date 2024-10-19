@@ -1,7 +1,7 @@
 import pytest
 from unittest.mock import AsyncMock
 from service.department import Department
-from model.department import DepartmentCreate, DepartmentBase
+from model.department import DepartmentCreate, DepartmentBase, DepartmentUpdate
 from dao.department import DepartmentDAO
 
 @pytest.mark.asyncio
@@ -40,6 +40,28 @@ async def test_get_department(mocker):
 
     # Asserts that the DAO's get method was called with the correct input
     DepartmentDAO.get.assert_called_once_with(departmentid, orgid)
+
+    # Asserts that the result is as expected
+    assert result == expected_return
+
+
+@pytest.mark.asyncio
+@pytest.mark.dept
+async def test_update_department(mocker):
+    # Mock input and expected return values
+    departmentid = 1
+    department_data = DepartmentUpdate(name="HR")
+    orgid = 2
+    expected_return = DepartmentBase(id=1, name="HR", orgid=2)
+
+    # Mock the update method of the DAO
+    mocker.patch.object(DepartmentDAO, 'update', new_callable=AsyncMock, return_value=expected_return)
+
+    # Call the function we're testing
+    result = await Department.update_department(departmentid, department_data, orgid)
+
+    # Asserts that the DAO's update method was called with the correct input
+    DepartmentDAO.update.assert_called_once_with(departmentid, department_data, orgid)
 
     # Asserts that the result is as expected
     assert result == expected_return
