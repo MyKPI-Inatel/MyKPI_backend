@@ -1,7 +1,7 @@
 import pytest
 from unittest.mock import AsyncMock
 from service.organization import Organization
-from model.organization import OrganizationCreate, OrganizationBase
+from model.organization import OrganizationCreate, OrganizationBase, OrganizationUpdate
 from dao.organization import OrganizationDAO
 
 @pytest.mark.asyncio
@@ -56,6 +56,26 @@ async def test_get_all_organizations(mocker):
 
     # Asserts that the DAO's get_all method was called
     OrganizationDAO.get_all.assert_called_once()
+
+    # Asserts that the result is as expected
+    assert result == expected_return
+
+@pytest.mark.asyncio
+@pytest.mark.org
+async def test_update_organization(mocker):
+    # Mock input and expected return values
+    organizationid = 1
+    organization_data = OrganizationUpdate(name="Instituto Nacional de Telecomunicacoes")
+    expected_return = OrganizationBase(id=1, name="Instituto Nacional de Telecomunicacoes")
+
+    # Mock the update method of the DAO
+    mocker.patch.object(OrganizationDAO, 'update', new_callable=AsyncMock, return_value=expected_return)
+
+    # Call the function we're testing
+    result = await Organization.update_organization(organizationid, organization_data)
+
+    # Asserts that the DAO's update method was called with the correct inputs
+    OrganizationDAO.update.assert_called_once_with(organizationid, organization_data)
 
     # Asserts that the result is as expected
     assert result == expected_return
