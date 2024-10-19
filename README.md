@@ -58,3 +58,7 @@ source .env.sh
 ```
 
 **Note**: To use the database, you must have the `.env.sh` file created and the project running locally.
+
+## Testing the API
+
+For more information on testing the API, please refer to the [Testing Guide](./app/test/README.md)
