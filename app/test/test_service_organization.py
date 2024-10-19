@@ -23,6 +23,7 @@ async def test_create_organization(mocker):
     # Asserts that the result is as expected
     assert result == expected_return
 
+
 @pytest.mark.asyncio
 @pytest.mark.org
 async def test_get_organization(mocker):
@@ -42,6 +43,7 @@ async def test_get_organization(mocker):
     # Asserts that the result is as expected
     assert result == expected_return
 
+
 @pytest.mark.asyncio
 @pytest.mark.org
 async def test_get_all_organizations(mocker):
@@ -60,6 +62,7 @@ async def test_get_all_organizations(mocker):
     # Asserts that the result is as expected
     assert result == expected_return
 
+
 @pytest.mark.asyncio
 @pytest.mark.org
 async def test_update_organization(mocker):
@@ -76,6 +79,26 @@ async def test_update_organization(mocker):
 
     # Asserts that the DAO's update method was called with the correct inputs
     OrganizationDAO.update.assert_called_once_with(organizationid, organization_data)
+
+    # Asserts that the result is as expected
+    assert result == expected_return
+
+
+@pytest.mark.asyncio
+@pytest.mark.org
+async def test_delete_organization(mocker):
+    # Mock input and expected return values
+    organizationid = 1
+    expected_return = True
+
+    # Mock the delete method of the DAO
+    mocker.patch.object(OrganizationDAO, 'delete', new_callable=AsyncMock, return_value=expected_return)
+
+    # Call the function we're testing
+    result = await Organization.delete_organization(organizationid)
+
+    # Asserts that the DAO's delete method was called with the correct input
+    OrganizationDAO.delete.assert_called_once_with(organizationid)
 
     # Asserts that the result is as expected
     assert result == expected_return
