@@ -65,3 +65,23 @@ async def test_update_department(mocker):
 
     # Asserts that the result is as expected
     assert result == expected_return
+
+@pytest.mark.asyncio
+@pytest.mark.dept
+async def test_delete_department(mocker):
+    # Mock input and expected return values
+    orgid = 2
+    departmentid = 1
+    expected_return = True
+
+    # Mock the delete method of the DAO
+    mocker.patch.object(DepartmentDAO, 'delete', new_callable=AsyncMock, return_value=expected_return)
+
+    # Call the function we're testing
+    result = await Department.delete_department(orgid, departmentid)
+
+    # Asserts that the DAO's delete method was called with the correct input
+    DepartmentDAO.delete.assert_called_once_with(orgid, departmentid)
+
+    # Asserts that the result is as expected
+    assert result == expected_return
