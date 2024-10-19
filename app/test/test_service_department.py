@@ -5,6 +5,7 @@ from model.department import DepartmentCreate, DepartmentBase
 from dao.department import DepartmentDAO
 
 @pytest.mark.asyncio
+@pytest.mark.dept
 async def test_create_department(mocker):
     # Mock input and expected return values
     department_data = DepartmentCreate(name="HR", orgid=2)
