@@ -18,7 +18,7 @@ async def test_create_department(mocker):
     result = await Department.create_department(department_data)
 
     # Asserts that the DAO's insert method was called with the correct input
-    DepartmentDAO.insert.assert_called_once_with(department_data)
+    DepartmentDAO.insert.assert_called_once_with(expected_return)
 
     # Asserts that the result is as expected
     assert result == expected_return
