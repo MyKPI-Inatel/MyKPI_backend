@@ -70,3 +70,27 @@ async def test_get_organizations(reset_database):
             {"id": 2, "name": "INATEL"},
             {"id": 3, "name": "4Intelligence"}
         ]
+
+
+@pytest.mark.asyncio
+@pytest.mark.org
+@pytest.mark.functional
+async def test_update_organization(reset_database):
+    async with AsyncClient(transport=ASGITransport(app=appServer), base_url="http://test") as client:
+
+        orgid = 1
+        organization_data = {
+            "name": "Netflix"
+        }
+
+        # Send a PUT request to create a organization
+        response = await client.put(f"/api/v1/organizations/{orgid}", json=organization_data)
+
+        # Assert the response status code
+        assert response.status_code == 200
+        
+        # Assert the returned data matches the expected format
+        assert response.json() == {
+            "id": 1,
+            "name": "Netflix"
+        }
