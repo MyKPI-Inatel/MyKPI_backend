@@ -94,3 +94,27 @@ async def test_update_organization(reset_database):
             "id": 1,
             "name": "Netflix"
         }
+
+
+@pytest.mark.asyncio
+@pytest.mark.org
+@pytest.mark.functional
+async def test_delete_organization(reset_database):
+    async with AsyncClient(transport=ASGITransport(app=appServer), base_url="http://test") as client:
+
+        orgname = "Netflix"
+
+        # create organization
+        response = await client.post("/api/v1/organizations/", json={"name": orgname})
+
+        orgid = response.json()["id"]
+
+        # Send a DELETE request to create a organization
+        response = await client.delete(f"/api/v1/organizations/{orgid}")
+
+        # Assert the response status code
+        assert response.status_code == 200
+
+        assert response.json() == {
+            "message": "Organization deleted successfully"
+        }
