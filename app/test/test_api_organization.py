@@ -9,7 +9,7 @@ async def reset_database():
     await Database.reset_database()
 
 @pytest.mark.asyncio
-@pytest.mark.dept
+@pytest.mark.org
 @pytest.mark.functional
 async def test_create_organization(reset_database):
     async with AsyncClient(transport=ASGITransport(app=appServer), base_url="http://test") as client:
@@ -28,4 +28,24 @@ async def test_create_organization(reset_database):
         assert response.json() == {
             "id": 4,
             "name": "Netflix",
+        }
+
+@pytest.mark.asyncio
+@pytest.mark.org
+@pytest.mark.functional
+async def test_get_organization(reset_database):
+    async with AsyncClient(transport=ASGITransport(app=appServer), base_url="http://test") as client:
+
+        orgid = 1
+
+        # Send a GET request to create a organization
+        response = await client.get(f"/api/v1/organizations/{orgid}")
+
+        # Assert the response status code
+        assert response.status_code == 200
+        
+        # Assert the returned data matches the expected format
+        assert response.json() == {
+            "id": 1,
+            "name": "MY-KPI"
         }
