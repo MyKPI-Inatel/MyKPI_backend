@@ -70,3 +70,25 @@ async def test_get_departments(reset_database):
             {"id": 3, "name": "Desenvolvimento", "orgid": 2},
             {"id": 4, "name": "Engenharia", "orgid": 2}
         ]
+
+
+@pytest.mark.asyncio
+@pytest.mark.dept
+@pytest.mark.functional
+async def test_update_department(reset_database):
+    async with AsyncClient(transport=ASGITransport(app=appServer), base_url="http://test") as client:
+
+        departmentid = 3
+        department_data = {
+            "name": "TI"
+        }
+        orgid = 2
+        response = await client.put(f"/api/v1/departments/org/{orgid}/{departmentid}", json=department_data)
+
+        assert response.status_code == 200
+        
+        assert response.json() == {
+            "id": 3,
+            "name": "TI",
+            "orgid": 2
+        }
