@@ -1,35 +1,64 @@
-# mykpi-backend
+# MyKPI Backend
 
-Para rodar a API localmente, você precisa executar o script Python que contém sua aplicação FastAPI.
+## Overview
 
-```bash
-cd app/
-source .env.sh
-uvicorn main:appServer --reload
-```
+MyKPI is a backend application developed with FastAPI, providing an API for data management and associated operations.
 
-Isso iniciará o servidor Uvicorn e sua aplicação FastAPI. O parâmetro `--reload` faz com que o servidor reinicie automaticamente sempre que você fizer alterações no código-fonte, o que é útil durante o desenvolvimento.
+## Running the API Locally
 
-Depois de iniciar o servidor, você poderá acessar sua API em `http://localhost:8000`. Se você seguiu o exemplo anterior, a documentação interativa (Swagger UI) estará disponível em `http://localhost:8000/docs`, onde você pode explorar e testar os endpoints da sua API.
+To run the API locally, follow the steps below:
 
-Certifique-se de que nenhuma outra aplicação esteja ocupando a porta 8000 em seu sistema, pois isso pode causar conflitos. Se necessário, você pode alterar a porta usando o argumento `--port` ao iniciar o servidor.
+1. Navigate to the application directory:
+   ```bash
+   cd app/
+   ```
 
-Se você tiver qualquer problema ou dúvida ao rodar a API localmente, não hesite em perguntar!
+2. Load the environment variables:
+   ```bash
+   source .env.sh
+   ```
 
-# docker-compose
+3. Start the Uvicorn server:
+   ```bash
+   uvicorn main:appServer --reload
+   ```
 
-Para rodar a API localmente com o Docker, você pode executar o seguinte comando no terminal partindo da raiz da aplicação, ou seja, no diretório `mykpi-backend`.:
+### Accessing the API
+
+After starting the server, you can access your API at:
+- **Base URL**: [http://localhost:8000](http://localhost:8000)
+- **Swagger UI**: [http://localhost:8000/docs](http://localhost:8000/docs)
+
+The interactive documentation (Swagger UI) allows you to explore and test the endpoints of your API.
+
+### Note
+
+Ensure that no other application is using port **8000** on your system, as this may cause conflicts. If necessary, you can change the port using the `--port` argument when starting the server.
+
+If you encounter any issues or have questions while running the API locally, feel free to ask!
+
+---
+
+## Running the API with Docker
+
+To run the API locally using Docker, you can use the following command at the root of the application (directory `mykpi-backend`):
 
 ```bash
 docker-compose up --build
 ```
 
-# database
+---
 
-para conectar ao banco de dados.
+## Database Connection
+
+To connect to the database, load the environment variables:
 
 ```bash
 source .env.sh
 ```
 
-Nota: para usar o banco de dados, você deve ter o arquivo `.env.sh` criado. E rodar o projeto localmente.
+**Note**: To use the database, you must have the `.env.sh` file created and the project running locally.
+
+## Testing the API
+
+For more information on testing the API, please refer to the [Testing Guide](./app/test/README.md)
