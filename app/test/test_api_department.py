@@ -1,13 +1,17 @@
 import pytest
 from httpx import ASGITransport, AsyncClient
+from app.dao.database import Database
 from main import appServer
+import pytest_asyncio
 
-# TODO: Make a fixture for resetting the database before each test
+@pytest_asyncio.fixture()
+async def reset_database():
+    await Database.reset_database()
 
 @pytest.mark.asyncio
 @pytest.mark.dept
 @pytest.mark.functional
-async def test_create_department():
+async def test_create_department(reset_database):
     async with AsyncClient(transport=ASGITransport(app=appServer), base_url="http://test") as client:
         # Sample data for the department
         department_data = {
@@ -23,7 +27,7 @@ async def test_create_department():
         
         # Assert the returned data matches the expected format
         assert response.json() == {
-            "id": 13,
+            "id": 8,
             "name": "RH",
             "orgid": 1
         }
