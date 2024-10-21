@@ -58,8 +58,10 @@ async def test_get_department(reset_database):
 async def test_get_departments(reset_database):
     async with AsyncClient(transport=ASGITransport(app=appServer), base_url="http://test") as client:
 
+        orgid = 2
+
         # Send a GET request to create a department
-        response = await client.get("/api/v1/departments/org/2")
+        response = await client.get(f"/api/v1/departments/org/{orgid}")
 
         # Assert the response status code
         assert response.status_code == 200
@@ -91,4 +93,20 @@ async def test_update_department(reset_database):
             "id": 3,
             "name": "TI",
             "orgid": 2
+        }
+
+@pytest.mark.asyncio
+@pytest.mark.dept
+@pytest.mark.functional
+async def test_delete_department(reset_database):
+    async with AsyncClient(transport=ASGITransport(app=appServer), base_url="http://test") as client:
+
+        departmentid = 3
+        orgid = 2
+        response = await client.delete(f"/api/v1/departments/org/{orgid}/{departmentid}")
+
+        assert response.status_code == 409
+
+        assert response.json() == {
+            "detail": "Unable to delete department: related data exists in another table."
         }

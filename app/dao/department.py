@@ -86,12 +86,16 @@ class DepartmentDAO:
                     return True
                 else:
                     raise HTTPException(status_code=404, detail="Department not found")
+        except asyncpg.ForeignKeyViolationError:
+            raise HTTPException(
+                status_code=409,
+                detail="Unable to delete department: related data exists in another table."
+            )
         except asyncpg.PostgresError as e:
             raise HTTPException(status_code=500, detail=f"Failed to delete department: {str(e)}")
         finally:
             await conn.close()
 
-# Função para conectar ao banco de dados
 async def get_database():
     DATABASE_URL = os.environ.get("PGURL", "postgres://postgres:postgres@db:5432/mykpi") 
     return await asyncpg.connect(DATABASE_URL)
