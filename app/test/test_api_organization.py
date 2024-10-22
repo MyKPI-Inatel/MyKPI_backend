@@ -11,7 +11,7 @@ async def reset_database():
 @pytest.mark.asyncio
 @pytest.mark.org
 @pytest.mark.functional
-async def test_create_organization(reset_database):
+async def test_api_create_organization(reset_database):
     async with AsyncClient(transport=ASGITransport(app=appServer), base_url="http://test") as client:
         # Sample data for the organization
         organization_data = {
@@ -34,7 +34,7 @@ async def test_create_organization(reset_database):
 @pytest.mark.asyncio
 @pytest.mark.org
 @pytest.mark.functional
-async def test_get_organization(reset_database):
+async def test_api_get_organization(reset_database):
     async with AsyncClient(transport=ASGITransport(app=appServer), base_url="http://test") as client:
 
         orgid = 1
@@ -55,7 +55,7 @@ async def test_get_organization(reset_database):
 @pytest.mark.asyncio
 @pytest.mark.org
 @pytest.mark.functional
-async def test_get_organizations(reset_database):
+async def test_api_get_all_organizations(reset_database):
     async with AsyncClient(transport=ASGITransport(app=appServer), base_url="http://test") as client:
 
         # Send a GET request to create a organization
@@ -75,7 +75,7 @@ async def test_get_organizations(reset_database):
 @pytest.mark.asyncio
 @pytest.mark.org
 @pytest.mark.functional
-async def test_update_organization(reset_database):
+async def test_api_update_organization(reset_database):
     async with AsyncClient(transport=ASGITransport(app=appServer), base_url="http://test") as client:
 
         orgid = 1
@@ -99,7 +99,7 @@ async def test_update_organization(reset_database):
 @pytest.mark.asyncio
 @pytest.mark.org
 @pytest.mark.functional
-async def test_conflict_deleting_organization(reset_database):
+async def test_api_conflict_deleting_organization(reset_database):
     async with AsyncClient(transport=ASGITransport(app=appServer), base_url="http://test") as client:
 
         orgid = 1
@@ -115,7 +115,7 @@ async def test_conflict_deleting_organization(reset_database):
 @pytest.mark.asyncio
 @pytest.mark.org
 @pytest.mark.functional
-async def test_delete_organization(reset_database):
+async def test_api_delete_organization(reset_database):
     async with AsyncClient(transport=ASGITransport(app=appServer), base_url="http://test") as client:
 
         orgname = "Netflix"

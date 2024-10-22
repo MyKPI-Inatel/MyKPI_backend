@@ -7,7 +7,7 @@ from dao.department import DepartmentDAO
 @pytest.mark.asyncio
 @pytest.mark.dept
 @pytest.mark.unit
-async def test_create_department(mocker):
+async def test_svc_create_department(mocker):
     # Mock input and expected return values
     department_data = DepartmentCreate(name="HR", orgid=2)
     expected_return = DepartmentBase(id=1, name="HR", orgid=2)
@@ -28,7 +28,7 @@ async def test_create_department(mocker):
 @pytest.mark.asyncio
 @pytest.mark.dept
 @pytest.mark.unit
-async def test_get_department(mocker):
+async def test_svc_get_department(mocker):
     # Mock input and expected return values
     departmentid = 1
     orgid = 2
@@ -50,7 +50,7 @@ async def test_get_department(mocker):
 @pytest.mark.asyncio
 @pytest.mark.dept
 @pytest.mark.unit
-async def test_update_department(mocker):
+async def test_svc_update_department(mocker):
     # Mock input and expected return values
     departmentid = 1
     department_data = DepartmentUpdate(name="HR")
@@ -72,7 +72,7 @@ async def test_update_department(mocker):
 @pytest.mark.asyncio
 @pytest.mark.dept
 @pytest.mark.unit
-async def test_delete_department(mocker):
+async def test_svc_delete_department(mocker):
     # Mock input and expected return values
     orgid = 2
     departmentid = 1

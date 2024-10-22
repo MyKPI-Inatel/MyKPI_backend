@@ -11,7 +11,7 @@ async def reset_database():
 @pytest.mark.asyncio
 @pytest.mark.dept
 @pytest.mark.functional
-async def test_create_department(reset_database):
+async def test_api_create_department(reset_database):
     async with AsyncClient(transport=ASGITransport(app=appServer), base_url="http://test") as client:
         # Sample data for the department
         department_data = {
@@ -35,7 +35,7 @@ async def test_create_department(reset_database):
 @pytest.mark.asyncio
 @pytest.mark.dept
 @pytest.mark.functional
-async def test_get_department(reset_database):
+async def test_api_get_department(reset_database):
     async with AsyncClient(transport=ASGITransport(app=appServer), base_url="http://test") as client:
 
         # Send a GET request to create a department
@@ -55,7 +55,7 @@ async def test_get_department(reset_database):
 @pytest.mark.asyncio
 @pytest.mark.dept
 @pytest.mark.functional
-async def test_get_departments(reset_database):
+async def test_api_get_departments_by_org(reset_database):
     async with AsyncClient(transport=ASGITransport(app=appServer), base_url="http://test") as client:
 
         orgid = 2
@@ -77,7 +77,7 @@ async def test_get_departments(reset_database):
 @pytest.mark.asyncio
 @pytest.mark.dept
 @pytest.mark.functional
-async def test_update_department(reset_database):
+async def test_api_update_department(reset_database):
     async with AsyncClient(transport=ASGITransport(app=appServer), base_url="http://test") as client:
 
         departmentid = 3
@@ -98,7 +98,7 @@ async def test_update_department(reset_database):
 @pytest.mark.asyncio
 @pytest.mark.dept
 @pytest.mark.functional
-async def test_conflict_deleting_department(reset_database):
+async def test_api_conflict_deleting_department(reset_database):
     async with AsyncClient(transport=ASGITransport(app=appServer), base_url="http://test") as client:
 
         departmentid = 3
@@ -114,7 +114,7 @@ async def test_conflict_deleting_department(reset_database):
 @pytest.mark.asyncio
 @pytest.mark.dept
 @pytest.mark.functional
-async def test_delete_department(reset_database):
+async def test_api_delete_department(reset_database):
     async with AsyncClient(transport=ASGITransport(app=appServer), base_url="http://test") as client:
 
         orgid = 3

@@ -7,7 +7,7 @@ from dao.organization import OrganizationDAO
 @pytest.mark.asyncio
 @pytest.mark.org
 @pytest.mark.unit
-async def test_create_organization(mocker):
+async def test_svc_create_organization(mocker):
     # Mock input and expected return values
     organization_data = OrganizationCreate(name="Inatel")
     expected_return = OrganizationBase(id=1, name="Inatel")
@@ -28,7 +28,7 @@ async def test_create_organization(mocker):
 @pytest.mark.asyncio
 @pytest.mark.org
 @pytest.mark.unit
-async def test_get_organization(mocker):
+async def test_svc_get_organization(mocker):
     # Mock input and expected return values
     organizationid = 1
     expected_return = OrganizationBase(id=1, name="Inatel")
@@ -49,7 +49,7 @@ async def test_get_organization(mocker):
 @pytest.mark.asyncio
 @pytest.mark.org
 @pytest.mark.unit
-async def test_get_all_organizations(mocker):
+async def test_svc_get_all_organizations(mocker):
     # Mock expected return values
     expected_return = [OrganizationBase(id=1, name="INATEL"), OrganizationBase(id=2, name="MyKPI")]
 
@@ -69,7 +69,7 @@ async def test_get_all_organizations(mocker):
 @pytest.mark.asyncio
 @pytest.mark.org
 @pytest.mark.unit
-async def test_update_organization(mocker):
+async def test_svc_update_organization(mocker):
     # Mock input and expected return values
     organizationid = 1
     organization_data = OrganizationUpdate(name="Instituto Nacional de Telecomunicacoes")
@@ -91,7 +91,7 @@ async def test_update_organization(mocker):
 @pytest.mark.asyncio
 @pytest.mark.org
 @pytest.mark.unit
-async def test_delete_organization(mocker):
+async def test_svc_delete_organization(mocker):
     # Mock input and expected return values
     organizationid = 1
     expected_return = True
