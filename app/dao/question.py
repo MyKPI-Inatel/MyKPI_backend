@@ -1,7 +1,7 @@
 from fastapi import HTTPException
+from app.dao.database import get_database
 from model.question import QuestionCreate, QuestionUpdate, QuestionBase
 import asyncpg
-import os
 
 class QuestionDAO:
     @staticmethod
@@ -119,8 +119,3 @@ class QuestionDAO:
             raise HTTPException(status_code=500, detail=f"Failed to delete question: {str(e)}")
         finally:
             await conn.close()
-
-# Função para conectar ao banco de dados
-async def get_database():
-    DATABASE_URL = os.environ.get("PGURL", "postgres://postgres:postgres@db:5432/mykpi")
-    return await asyncpg.connect(DATABASE_URL)
