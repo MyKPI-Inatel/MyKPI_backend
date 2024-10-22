@@ -99,6 +99,22 @@ async def test_update_organization(reset_database):
 @pytest.mark.asyncio
 @pytest.mark.org
 @pytest.mark.functional
+async def test_conflict_deleting_organization(reset_database):
+    async with AsyncClient(transport=ASGITransport(app=appServer), base_url="http://test") as client:
+
+        orgid = 1
+        response = await client.delete(f"/api/v1/organizations/{orgid}")
+
+        assert response.status_code == 409
+
+        assert response.json() == {
+            "detail": "Unable to delete organization: related data exists in another table."
+        }
+
+
+@pytest.mark.asyncio
+@pytest.mark.org
+@pytest.mark.functional
 async def test_delete_organization(reset_database):
     async with AsyncClient(transport=ASGITransport(app=appServer), base_url="http://test") as client:
 
