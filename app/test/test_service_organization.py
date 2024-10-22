@@ -6,6 +6,7 @@ from dao.organization import OrganizationDAO
 
 @pytest.mark.asyncio
 @pytest.mark.org
+@pytest.mark.unit
 async def test_create_organization(mocker):
     # Mock input and expected return values
     organization_data = OrganizationCreate(name="Inatel")
@@ -26,6 +27,7 @@ async def test_create_organization(mocker):
 
 @pytest.mark.asyncio
 @pytest.mark.org
+@pytest.mark.unit
 async def test_get_organization(mocker):
     # Mock input and expected return values
     organizationid = 1
@@ -46,6 +48,7 @@ async def test_get_organization(mocker):
 
 @pytest.mark.asyncio
 @pytest.mark.org
+@pytest.mark.unit
 async def test_get_all_organizations(mocker):
     # Mock expected return values
     expected_return = [OrganizationBase(id=1, name="INATEL"), OrganizationBase(id=2, name="MyKPI")]
@@ -65,6 +68,7 @@ async def test_get_all_organizations(mocker):
 
 @pytest.mark.asyncio
 @pytest.mark.org
+@pytest.mark.unit
 async def test_update_organization(mocker):
     # Mock input and expected return values
     organizationid = 1
@@ -86,6 +90,7 @@ async def test_update_organization(mocker):
 
 @pytest.mark.asyncio
 @pytest.mark.org
+@pytest.mark.unit
 async def test_delete_organization(mocker):
     # Mock input and expected return values
     organizationid = 1
