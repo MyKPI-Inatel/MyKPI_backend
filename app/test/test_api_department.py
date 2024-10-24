@@ -1,6 +1,6 @@
 import pytest
 from httpx import ASGITransport, AsyncClient
-from app.dao.database import Database
+from dao.database import Database
 from main import appServer
 import pytest_asyncio
 
