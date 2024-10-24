@@ -1,8 +1,8 @@
 from fastapi import HTTPException
+from dao.database import get_database
 from model.user import UserBase
 from passlib.context import CryptContext
 import asyncpg
-import os
 
 
 # Crie o contexto de segurança para o hash da senha
@@ -108,8 +108,3 @@ class UserDAO:
             raise HTTPException(status_code=500, detail=f"Failed to get password: {str(e)}")
         finally:
             await conn.close()
-
-# Função para conectar ao banco de dados
-async def get_database():
-    DATABASE_URL = os.environ.get("PGURL", "postgres://postgres:postgres@db:5432/mykpi") 
-    return await asyncpg.connect(DATABASE_URL)

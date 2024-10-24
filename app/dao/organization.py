@@ -1,7 +1,7 @@
-from fastapi import HTTPException
-from model.organization import OrganizationCreate, OrganizationUpdate, OrganizationBase
 import asyncpg
-import os
+from fastapi import HTTPException
+from dao.database import get_database
+from model.organization import OrganizationCreate, OrganizationUpdate, OrganizationBase
 
 class OrganizationDAO:
     @staticmethod
@@ -89,12 +89,12 @@ class OrganizationDAO:
                     return True
                 else:
                     raise HTTPException(status_code=404, detail="Organization not found")
-        except Exception as e:
+        except asyncpg.ForeignKeyViolationError:
+            raise HTTPException(
+                status_code=409,
+                detail="Unable to delete organization: related data exists in another table."
+            )
+        except asyncpg.PostgresError as e:
             raise HTTPException(status_code=500, detail=f"Failed to delete organization: {str(e)}")
         finally:
             await conn.close()
-
-# Função para conectar ao banco de dados
-async def get_database():
-    DATABASE_URL = os.environ.get("PGURL", "postgres://postgres:postgres@db:5432/mykpi") 
-    return await asyncpg.connect(DATABASE_URL)

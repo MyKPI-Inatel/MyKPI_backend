@@ -1,7 +1,7 @@
 from fastapi import HTTPException
+from dao.database import get_database
 from model.department import DepartmentCreate, DepartmentUpdate, DepartmentBase
 import asyncpg
-import os
 
 class DepartmentDAO:
     @staticmethod
@@ -95,7 +95,3 @@ class DepartmentDAO:
             raise HTTPException(status_code=500, detail=f"Failed to delete department: {str(e)}")
         finally:
             await conn.close()
-
-async def get_database():
-    DATABASE_URL = os.environ.get("PGURL", "postgres://postgres:postgres@db:5432/mykpi") 
-    return await asyncpg.connect(DATABASE_URL)
