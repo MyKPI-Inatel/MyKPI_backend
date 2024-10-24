@@ -1,7 +1,7 @@
 from fastapi import HTTPException
 from dao.database import get_database
 from model.question import QuestionBase
-from model.survey import SurveyCreate, SurveyUpdate, SurveyBase
+from model.survey import SurveyCreate, SurveyUpdate, SurveyBase, SurveyResponse
 import asyncpg
 
 class SurveyDAO:
@@ -129,5 +129,34 @@ class SurveyDAO:
                 raise HTTPException(status_code=404, detail="No questions found for this survey")
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Failed to get questions for survey: {str(e)}")
+        finally:
+            await conn.close()
+
+    @staticmethod
+    async def get_unresponded_surveys(employee_id: int):
+        conn = await get_database()
+        try:
+            query = """
+                SELECT s.*
+                FROM survey s
+                WHERE s.id IN (
+                    SELECT sq.surveyid
+                    FROM surveyquestions sq
+                    LEFT JOIN questionscore qs ON sq.questionid = qs.questionid AND qs.employeeid = $1
+                    WHERE qs.questionid IS NULL
+                )
+                AND s.orgid = (
+                    SELECT u.orgid
+                    FROM "user" u
+                    WHERE u.id = $1
+                )
+            """
+            records = await conn.fetch(query, employee_id)
+            if records:
+                return [SurveyResponse(**record) for record in records]
+            else:
+                raise HTTPException(status_code=404, detail="No unresponded surveys found")
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Failed to get unresponded surveys: {str(e)}")
         finally:
             await conn.close()

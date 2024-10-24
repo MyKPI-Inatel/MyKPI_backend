@@ -1,4 +1,4 @@
-from model.survey import SurveyCreate, SurveyUpdate, SurveyBase
+from model.survey import SurveyCreate, SurveyUpdate, SurveyBase, SurveyResponse
 from dao.survey import SurveyDAO
 
 class Survey:
@@ -30,3 +30,8 @@ class Survey:
     @staticmethod
     async def delete_survey(surveyid: int) -> bool:
         return await SurveyDAO.delete(surveyid)
+    
+    @staticmethod
+    async def get_unresponded_surveys(employee_id: int) -> list[SurveyResponse]:
+        survey_data = await SurveyDAO.get_unresponded_surveys(employee_id)
+        return survey_data
