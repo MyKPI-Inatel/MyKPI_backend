@@ -1,5 +1,5 @@
 from fastapi import HTTPException
-from app.dao.database import get_database
+from dao.database import get_database
 from model.user import UserBase
 from passlib.context import CryptContext
 import asyncpg

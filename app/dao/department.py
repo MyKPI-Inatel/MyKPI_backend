@@ -1,5 +1,5 @@
 from fastapi import HTTPException
-from app.dao.database import get_database
+from dao.database import get_database
 from model.department import DepartmentCreate, DepartmentUpdate, DepartmentBase
 import asyncpg
 

@@ -1,5 +1,5 @@
 from fastapi import HTTPException
-from app.dao.database import get_database
+from dao.database import get_database
 from model.question import QuestionBase
 from model.survey import SurveyCreate, SurveyUpdate, SurveyBase
 import asyncpg

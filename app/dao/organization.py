@@ -1,6 +1,6 @@
 import asyncpg
 from fastapi import HTTPException
-from app.dao.database import get_database
+from dao.database import get_database
 from model.organization import OrganizationCreate, OrganizationUpdate, OrganizationBase
 
 class OrganizationDAO:
