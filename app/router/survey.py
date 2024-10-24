@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
 from typing import List
-from model.survey import SurveyBase, SurveyCreate, SurveyUpdate
+from model.survey import SurveyBase, SurveyCreate, SurveyUpdate, SurveyResponse
 from service.survey import Survey as SurveyService
 
 router = APIRouter()
@@ -68,3 +68,14 @@ async def delete_survey(surveyid: int):
     if not result:
         raise HTTPException(status_code=404, detail="Survey not found")
     return {"message": "Survey deleted successfully"}
+
+# rota para pesquisar as surveys não respondidas pelo usuario
+@router.get(
+    "/unresponded/{employee_id}",
+    response_model=List[SurveyResponse],
+    summary="Retrieve all unresponded surveys",
+    description="Retrieve a list of all surveys that have not been responded by the user."
+)
+async def get_unresponded_surveys(employee_id: int):
+    surveys = await SurveyService.get_unresponded_surveys(employee_id)
+    return surveys
