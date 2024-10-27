@@ -1,21 +1,17 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-
 from dao.database import Database
-from router.organization import router as organization
-from router.question import router as question
-from router.department import router as department
-from router.survey import router as survey
-from router.user import router as user
+
+from router import organization, question, department, survey, user
 
 appServer = FastAPI()
 
-appServer.include_router(question, prefix="/api/v1/questions", tags=["Questions"])
-appServer.include_router(department, prefix="/api/v1/departments", tags=["Departments"])
-appServer.include_router(organization, prefix="/api/v1/organizations", tags=["Organizations"])
-appServer.include_router(survey, prefix="/api/v1/surveys", tags=["Surveys"])
-appServer.include_router(user, prefix="/api/v1", tags=["Users"])
+appServer.include_router(question.router, prefix="/api/v1/questions", tags=["Questions"])
+appServer.include_router(department.router, prefix="/api/v1/departments", tags=["Departments"])
+appServer.include_router(organization.router, prefix="/api/v1/organizations", tags=["Organizations"])
+appServer.include_router(survey.router, prefix="/api/v1/surveys", tags=["Surveys"])
+appServer.include_router(user.router, prefix="/api/v1", tags=["Users"])
 
 # Adicione o middleware CORS
 appServer.add_middleware(
