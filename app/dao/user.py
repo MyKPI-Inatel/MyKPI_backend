@@ -2,8 +2,6 @@ from fastapi import HTTPException
 from dao.database import get_database
 from model.user import UserBase
 from passlib.context import CryptContext
-import asyncpg
-
 
 # Crie o contexto de segurança para o hash da senha
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")

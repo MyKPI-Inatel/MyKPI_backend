@@ -1,6 +1,5 @@
 from fastapi import HTTPException
 from dao.database import get_database
-import asyncpg
 from model.surveyquestion import SurveyQuestionBase
 
 class SurveyQuestionDAO:

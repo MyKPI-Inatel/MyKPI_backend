@@ -1,7 +1,6 @@
 from fastapi import HTTPException
 from dao.database import get_database
 from model.question import QuestionCreate, QuestionUpdate, QuestionBase
-import asyncpg
 
 class QuestionDAO:
     @staticmethod

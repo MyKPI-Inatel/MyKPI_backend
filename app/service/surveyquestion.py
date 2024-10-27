@@ -1,4 +1,4 @@
-from model.surveyquestion import SurveyQuestionCreate, SurveyQuestionUpdate, SurveyQuestionBase
+from model.surveyquestion import SurveyQuestionCreate, SurveyQuestionBase
 from dao.surveyquestion import SurveyQuestionDAO
 
 class SurveyQuestion:

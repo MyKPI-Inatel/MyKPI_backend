@@ -2,7 +2,6 @@ from fastapi import HTTPException
 from dao.database import get_database
 from model.question import QuestionBase
 from model.survey import SurveyCreate, SurveyUpdate, SurveyBase, SurveyResponse
-import asyncpg
 
 class SurveyDAO:
     @staticmethod

@@ -13,7 +13,6 @@ appServer.include_router(organization.router, prefix="/api/v1/organizations", ta
 appServer.include_router(survey.router, prefix="/api/v1/surveys", tags=["Surveys"])
 appServer.include_router(user.router, prefix="/api/v1", tags=["Users"])
 
-# Adicione o middleware CORS
 appServer.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -22,13 +21,11 @@ appServer.add_middleware(
     allow_headers=["*"],
 )
 
-# Rota para resetar o banco de dados
 @appServer.post("/api/v1/db-reset/")
 async def reset_database():
     await Database.reset_database()
     return {"message": "Database reset successfully"}
 
-# Função para healthcheck
 @appServer.get("/")
 async def healthcheck():
     return {"status": "ok"}

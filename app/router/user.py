@@ -30,7 +30,6 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
-# Função para registrar um usuário
 @router.post("/register/")
 async def register_user(user: UserBase):
 
@@ -47,7 +46,6 @@ async def register_user(user: UserBase):
             raise HTTPException(status_code=500, detail=f"Failed to get user: {str(e)}")
         return {"message": "User registered successfully", "user": user}
 
-# Função para autenticar um usuário
 @router.post("/login/")
 async def login_user(user: UserLogin):
     try:
