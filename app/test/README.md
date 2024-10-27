@@ -23,6 +23,7 @@ markers =
     dept: marks tests as department tests
     org: marks tests as organization tests
     functional: marks tests as functional tests
+    unit: marks tests as unit tests
 ```
 
 - **log_cli**: Enables logging for the command line interface.
@@ -37,10 +38,10 @@ markers =
 
 ### Environment Variables for Functional Tests
 
-To run functional tests, ensure that the variables in your `.env.sh` file are properly configured. If these variables are not set, you can run only the non-functional tests using the following command:
+To run functional tests, ensure that the variables in your `.env.sh` file are properly configured. If these variables are not set, you can run only the unit tests using the following command:
 
 ```bash
-pytest -m "not functional"
+pytest -m "unit"
 ```
 
 ### Running Specific Tests
@@ -65,4 +66,4 @@ You can also run tests with specific markers using the `-m` option. For example:
   pytest -m "not dept"
   ```
 
-This setup makes it easy to execute tests and organize them based on categories, providing flexibility in testing your application.
+This setup makes it easy to execute tests and organize them based on categories, providing flexibility in testing the application.
