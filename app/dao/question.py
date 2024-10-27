@@ -82,7 +82,7 @@ class QuestionDAO:
     async def update(questionid: int, question: QuestionUpdate):
         conn = await get_database()
         try:
-            update_data = question.dict(exclude_unset=True)
+            update_data = question.model_dump(exclude_unset=True)
             set_clause = ", ".join([f"{key} = ${i+2}" for i, key in enumerate(update_data.keys())])
             query = f"""
                 UPDATE question SET {set_clause} WHERE id = $1
