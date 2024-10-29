@@ -1,7 +1,7 @@
 import pytest
 from unittest.mock import AsyncMock
 from service.question import Question
-from model.question import QuestionCreate, QuestionBase
+from model.question import QuestionCreate, QuestionBase, QuestionUpdate
 from dao.question import QuestionDAO
 from model.surveyquestion import SurveyQuestionBase
 from dao.surveyquestion import SurveyQuestionDAO
@@ -75,6 +75,28 @@ async def test_svc_get_all_questions(mocker):
 
     # Asserts that the DAO's get_all method was called
     QuestionDAO.get_all.assert_called_once()
+
+    # Asserts that the result is as expected
+    assert result == expected_return
+
+
+@pytest.mark.asyncio
+@pytest.mark.quest
+@pytest.mark.unit
+async def test_svc_update_question(mocker):
+    # Mock input and expected return values
+    questionid = 1
+    question_data = QuestionUpdate(title="What is your name?", scorefactor=1, surveyid=1)
+    expected_return = QuestionBase(id=1, title="What is your name?", scorefactor=1, surveyid=1)
+
+    # Mock the update method of the DAO
+    mocker.patch.object(QuestionDAO, 'update', new_callable=AsyncMock, return_value=expected_return)
+
+    # Call the function we're testing
+    result = await Question.update_question(questionid, question_data)
+
+    # Asserts that the DAO's update method was called with the correct input
+    QuestionDAO.update.assert_called_once_with(questionid, question_data)
 
     # Asserts that the result is as expected
     assert result == expected_return
