@@ -1,5 +1,6 @@
 import pytest
 from httpx import ASGITransport, AsyncClient
+from service.department import Department
 from dao.database import Database
 from main import appServer
 import pytest_asyncio
@@ -13,6 +14,9 @@ async def reset_database():
 @pytest.mark.functional
 async def test_api_create_department(reset_database):
     async with AsyncClient(transport=ASGITransport(app=appServer), base_url="http://test") as client:
+
+        last_id = await Department.get_last_id()
+
         # Sample data for the department
         department_data = {
             "name": "RH",
@@ -27,7 +31,7 @@ async def test_api_create_department(reset_database):
         
         # Assert the returned data matches the expected format
         assert response.json() == {
-            "id": 8,
+            "id": last_id+1,
             "name": "RH",
             "orgid": 1
         }
