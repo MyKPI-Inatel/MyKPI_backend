@@ -1,13 +1,19 @@
+from model.surveyquestion import SurveyQuestionBase
 from model.question import QuestionCreate, QuestionUpdate, QuestionBase
 from dao.question import QuestionDAO
-from dao.surveyquestion import SurveyQuestionDAO
+from service.surveyquestion import SurveyQuestion
 
 class Question:
     @staticmethod
     async def create_question(question_data: QuestionCreate) -> QuestionBase:
         new_question_data = await QuestionDAO.insert(question_data)
 
-        await SurveyQuestionDAO.insert(question_data.surveyid, new_question_data.id)
+        surveyquestion_data = SurveyQuestionBase(
+            surveyid=question_data.surveyid,
+            questionid=new_question_data.id
+        )
+
+        await SurveyQuestion.create_surveyquestion(surveyquestion_data)
         
         return new_question_data
 
