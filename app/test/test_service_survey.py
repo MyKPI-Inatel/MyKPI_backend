@@ -44,3 +44,23 @@ async def test_svc_get_survey(mocker):
 
     # Asserts that the result is as expected
     assert result == expected_return
+
+
+@pytest.mark.asyncio
+@pytest.mark.survey
+@pytest.mark.unit
+async def test_svc_get_all_surveys(mocker):
+    # Mock expected return values
+    expected_return = [SurveyBase(id=1, title="Survey at Inatel", orgid=1)]
+
+    # Mock the get_all method of the DAO
+    mocker.patch.object(SurveyDAO, 'get_all', new_callable=AsyncMock, return_value=expected_return)
+
+    # Call the function we're testing
+    result = await Survey.get_all_surveys()
+
+    # Asserts that the DAO's get_all method was called
+    SurveyDAO.get_all.assert_called_once()
+
+    # Asserts that the result is as expected
+    assert result == expected_return
