@@ -67,3 +67,24 @@ async def test_svc_get_surveyquestion_by_survey(mocker):
 
     # Asserts that the result is as expected
     assert result == expected_return
+
+
+@pytest.mark.asyncio
+@pytest.mark.survquest
+@pytest.mark.unit
+async def test_svc_delete_surveyquestion(mocker):
+    # Mock input and expected return values
+    surveyquestionid = 1
+    expected_return = True
+
+    # Mock the delete method of the DAO
+    mocker.patch.object(SurveyQuestionDAO, 'delete', new_callable=AsyncMock, return_value=expected_return)
+
+    # Call the function we're testing
+    result = await SurveyQuestion.delete_surveyquestion(surveyquestionid)
+
+    # Asserts that the DAO's delete method was called with the correct input
+    SurveyQuestionDAO.delete.assert_called_once_with(surveyquestionid)
+
+    # Asserts that the result is as expected
+    assert result == expected_return
