@@ -4,7 +4,7 @@ from model.surveyquestion import SurveyQuestionBase
 
 class SurveyQuestionDAO:
     @staticmethod
-    async def insert(surveyid: int, questionid: int):
+    async def insert(surveyquestion_data: SurveyQuestionBase):
         conn = await get_database()
         try:
             query = """
@@ -13,7 +13,7 @@ class SurveyQuestionDAO:
                 RETURNING surveyid, questionid
             """
             async with conn.transaction():
-                record = await conn.fetchrow(query, surveyid, questionid)
+                record = await conn.fetchrow(query, surveyquestion_data.surveyid, surveyquestion_data.questionid)
                 return SurveyQuestionBase(**record)
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Failed to insert survey question: {str(e)}")
