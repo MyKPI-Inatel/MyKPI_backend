@@ -26,3 +26,7 @@ class Department:
     @staticmethod
     async def delete_department(orgid: int, departmentid: int) -> bool:
         return await DepartmentDAO.delete(orgid, departmentid)
+    
+    @staticmethod
+    async def get_last_id() -> int:
+        return await DepartmentDAO.get_last_id()
