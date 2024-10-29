@@ -8,8 +8,6 @@ class Question:
         new_question_data = await QuestionDAO.insert(question_data)
 
         await SurveyQuestionDAO.insert(question_data.surveyid, new_question_data.id)
-
-        new_question_data.surveyid = question_data.surveyid
         
         return new_question_data
 
