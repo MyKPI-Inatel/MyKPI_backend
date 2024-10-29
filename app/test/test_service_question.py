@@ -35,3 +35,23 @@ async def test_svc_create_question(mocker):
 
     # Asserts that the result is as expected
     assert result == expected_quesion_return
+
+@pytest.mark.asyncio
+@pytest.mark.quest
+@pytest.mark.unit
+async def test_svc_get_question(mocker):
+    # Mock input and expected return values
+    questionid = 1
+    expected_return = QuestionBase(id=1, title="What is your name?", scorefactor=1, surveyid=1)
+
+    # Mock the get method of the DAO
+    mocker.patch.object(QuestionDAO, 'get', new_callable=AsyncMock, return_value=expected_return)
+
+    # Call the function we're testing
+    result = await Question.get_question(questionid)
+
+    # Asserts that the DAO's get method was called with the correct input
+    QuestionDAO.get.assert_called_once_with(questionid)
+
+    # Asserts that the result is as expected
+    assert result == expected_return
