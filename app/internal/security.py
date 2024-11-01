@@ -43,8 +43,7 @@ async def get_current_user(
     token: str = Depends(oauth2_scheme),
 ):
     credentials_exception = HTTPException(
-        status_code=HTTPStatus.UNAUTHORIZED,
-        detail='Could not validate credentials',
+        HTTPStatus.UNAUTHORIZED, 'Could not validate credentials',
         headers={'WWW-Authenticate': 'Bearer'},
     )
 
@@ -58,8 +57,7 @@ async def get_current_user(
         raise credentials_exception
     except jwt.exceptions.ExpiredSignatureError:
         raise HTTPException(
-            status_code=HTTPStatus.UNAUTHORIZED,
-            detail='Token expired',
+            HTTPStatus.UNAUTHORIZED, 'Token expired',
             headers={'WWW-Authenticate': 'Bearer'},
         )
 

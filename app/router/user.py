@@ -20,10 +20,7 @@ async def create_user(user: UserCreate):
     exists = await User.exists(user.email)
 
     if exists:
-        raise HTTPException(
-            status_code=HTTPStatus.BAD_REQUEST,
-            detail='Email already exists',
-        )
+        raise HTTPException(HTTPStatus.BAD_REQUEST, 'Email already exists')
     
     user = UserBase(**user.model_dump(), usertype='employee')
 
@@ -43,11 +40,9 @@ def update_user(
     current_user: User = Depends(get_current_user),
 ):
     if current_user.id != user_id:
-        raise HTTPException(
-            status_code=HTTPStatus.FORBIDDEN, detail='Not enough permissions'
-        )
+        raise HTTPException(HTTPStatus.FORBIDDEN, 'Not enough permissions')
     try:
-        current_user.username = user.username
+        current_user.name = user.name
         current_user.password = get_password_hash(user.password)
         current_user.email = user.email
 
@@ -56,10 +51,7 @@ def update_user(
         return user_data
 
     except HTTPException:
-        raise HTTPException(
-            status_code=HTTPStatus.CONFLICT,
-            detail='Username or Email already exists',
-        )
+        raise HTTPException(HTTPStatus.CONFLICT, 'Email already exists')
 
 
 @router.delete('/users/{user_id}')
@@ -68,9 +60,7 @@ async def delete_user(
     current_user: User = Depends(get_current_user),
 ):
     if current_user.id != user_id:
-        raise HTTPException(
-            status_code=HTTPStatus.FORBIDDEN, detail='Not enough permissions'
-        )
+        raise HTTPException(HTTPStatus.FORBIDDEN, 'Not enough permissions')
 
     result = await User.delete_user(user_id)
 
@@ -84,16 +74,10 @@ async def login_for_access_token(
     user = await User.get_user_by_email(form_data.username)
 
     if not user:
-        raise HTTPException(
-            status_code=HTTPStatus.BAD_REQUEST,
-            detail='Incorrect email or password',
-        )
+        raise HTTPException(HTTPStatus.BAD_REQUEST, 'Incorrect email or password')
 
     if not verify_password(form_data.password, user.password):
-        raise HTTPException(
-            status_code=HTTPStatus.BAD_REQUEST,
-            detail='Incorrect email or password',
-        )
+        raise HTTPException(HTTPStatus.BAD_REQUEST, 'Incorrect email or password')
 
     token_data = {k: v for k, v in user.model_dump().items() if k != 'password'}
     token_data['sub'] = user.email

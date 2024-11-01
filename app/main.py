@@ -5,7 +5,7 @@ from dao.database import Database
 
 from router import organization, question, department, survey, user
 
-appServer = FastAPI()
+appServer = FastAPI(title="MyKPI Backend")
 
 appServer.include_router(question.router, prefix="/api/v1/questions", tags=["Questions"])
 appServer.include_router(department.router, prefix="/api/v1/departments", tags=["Departments"])
