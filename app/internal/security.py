@@ -5,6 +5,7 @@ import os
 from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 from jwt import DecodeError, decode, encode
+import jwt
 from pwdlib import PasswordHash
 from zoneinfo import ZoneInfo
 
@@ -55,6 +56,12 @@ async def get_current_user(
         token_data = TokenData(username=username)
     except DecodeError:
         raise credentials_exception
+    except jwt.exceptions.ExpiredSignatureError:
+        raise HTTPException(
+            status_code=HTTPStatus.UNAUTHORIZED,
+            detail='Token expired',
+            headers={'WWW-Authenticate': 'Bearer'},
+        )
 
     user = await User.get_user_by_email(token_data.username)
 
