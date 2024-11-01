@@ -6,6 +6,15 @@ class UserType(str, Enum):
     employee = 'employee'
     orgadmin = 'orgadmin'
     superadmin = 'superadmin'
+    
+    @property
+    def level(self) -> int:
+        levels = {
+            UserType.employee: 1,
+            UserType.orgadmin: 2,
+            UserType.superadmin: 3
+        }
+        return levels[self]
 
 class UserBase(BaseModel):
     id: Optional[int] = None
