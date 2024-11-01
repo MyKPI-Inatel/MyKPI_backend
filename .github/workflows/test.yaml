@@ -37,4 +37,5 @@ jobs:
         env: # Or as an environment variable
           PGURL: ${{ secrets.PGURL }}
           SECRET_KEY: ${{ secrets.SECRET_KEY }}
-          INIT_SQL: "../../db/init.sql"
+          INIT_SQL: $(pwd)/db/init.sql
+
