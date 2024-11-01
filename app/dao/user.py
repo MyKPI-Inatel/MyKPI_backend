@@ -1,4 +1,3 @@
-import asyncpg
 from fastapi import HTTPException
 from dao.database import get_database
 from model.user import UserBase, UserUpdate
