@@ -14,7 +14,7 @@ class User:
    async def get_user_by_email(email: str):
        user_data = await UserDAO.get_by_email(email)
        if not user_data:
-           raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail='User not found')
+           raise HTTPException(HTTPStatus.NOT_FOUND, 'User not found')
        return user_data
    
    @staticmethod
