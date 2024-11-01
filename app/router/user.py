@@ -1,71 +1,101 @@
-# router/user.py
-from fastapi import APIRouter, HTTPException
-from model.user import UserBase, UserLogin
-from dao.user import UserDAO
-from passlib.context import CryptContext
-from jose import jwt
-from datetime import datetime, timedelta
-import os
-from typing import Optional
+from http import HTTPStatus
+
+from fastapi import APIRouter, Depends, HTTPException
+from fastapi.security import OAuth2PasswordRequestForm
+
+from model.user import UserBase, UserCreate, UserUpdate
+from model.token import Token
+from service.user import User
+from internal.security import (
+    create_access_token,
+    get_current_user,
+    get_password_hash,
+    verify_password,
+)
 
 router = APIRouter()
 
-# Usaremos este exemplo apenas para fins de demonstração.
-# Em um ambiente de produção, você deve armazenar as senhas de forma segura,
-# como usando hash e salt.
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+@router.post('/register', status_code=HTTPStatus.CREATED, response_model=UserBase)
+async def create_user(user: UserCreate):
+    exists = await User.exists(user.email)
 
-# Configurações do JWT
-SECRET_KEY = os.environ.get("SECRET_KEY", "09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7")
-ALGORITHM = "HS256"
+    if exists:
+        raise HTTPException(
+            status_code=HTTPStatus.BAD_REQUEST,
+            detail='Email already exists',
+        )
 
-# Função para gerar o token JWT
-def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
-    to_encode = data.copy()
-    if expires_delta:
-        expire = datetime.now() + expires_delta
-    else:
-        expire = datetime.now() + timedelta(minutes=15)
-    to_encode.update({"exp": expire})
-    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
-    return encoded_jwt
+    hashed_password = get_password_hash(user.password)
 
-@router.post("/register/")
-async def register_user(user: UserBase):
+    user.password = hashed_password
 
-    result = await UserDAO.insert(user)
-    
-    if result is not None:
-        try:
-            user = await UserDAO.get_by_email(user.email)
+    user_data = await User.create_user(user)
 
-            print(user)
-            
-            user.password = None
-        except Exception as e:
-            raise HTTPException(status_code=500, detail=f"Failed to get user: {str(e)}")
-        return {"message": "User registered successfully", "user": user}
+    return user_data
 
-@router.post("/login/")
-async def login_user(user: UserLogin):
+
+@router.put('/users/{user_id}', response_model=UserBase)
+def update_user(
+    user_id: int,
+    user: UserUpdate,
+    current_user: User = Depends(get_current_user),
+):
+    if current_user.id != user_id:
+        raise HTTPException(
+            status_code=HTTPStatus.FORBIDDEN, detail='Not enough permissions'
+        )
     try:
-        password = await UserDAO.get_password(user.email)
+        current_user.username = user.username
+        current_user.password = get_password_hash(user.password)
+        current_user.email = user.email
 
-        if password is None:
-            raise HTTPException(status_code=401, detail="Invalid email or password")
-        stored_password = password
+        user_data = User.update_user(current_user)
 
-        if not pwd_context.verify(user.password, stored_password):
-            raise HTTPException(status_code=401, detail="Invalid email or password")
+        return user_data
 
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Login failed: {str(e)}")
+    except HTTPException:
+        raise HTTPException(
+            status_code=HTTPStatus.CONFLICT,
+            detail='Username or Email already exists',
+        )
 
-    try:
-        user = await UserDAO.get_by_email(user.email)
-        
-        access_token = create_access_token(user.toJSON())
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to get user: {str(e)}")
 
-    return {"access_token": access_token, "token_type": "bearer", "user": user.toJSON()}
+@router.delete('/users/{user_id}')
+async def delete_user(
+    user_id: int,
+    current_user: User = Depends(get_current_user),
+):
+    if current_user.id != user_id:
+        raise HTTPException(
+            status_code=HTTPStatus.FORBIDDEN, detail='Not enough permissions'
+        )
+
+    result = await User.delete_user(user_id)
+
+    return {'message': 'User deleted'}
+
+
+@router.post('/login', response_model=Token)
+async def login_for_access_token(
+    form_data: OAuth2PasswordRequestForm = Depends()
+):
+    user = await User.get_user_by_email(form_data.username)
+
+    if not user:
+        raise HTTPException(
+            status_code=HTTPStatus.BAD_REQUEST,
+            detail='Incorrect email or password',
+        )
+
+    if not verify_password(form_data.password, user.password):
+        raise HTTPException(
+            status_code=HTTPStatus.BAD_REQUEST,
+            detail='Incorrect email or password',
+        )
+
+    token_data = {k: v for k, v in user.model_dump().items() if k != 'password'}
+    token_data['sub'] = user.email
+
+    access_token = create_access_token(data=token_data)
+
+    return {'access_token': access_token, 'token_type': 'bearer'}
