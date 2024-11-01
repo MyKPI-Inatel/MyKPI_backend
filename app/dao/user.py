@@ -1,29 +1,22 @@
+import asyncpg
 from fastapi import HTTPException
 from dao.database import get_database
-from model.user import UserBase
-from passlib.context import CryptContext
-
-# Crie o contexto de segurança para o hash da senha
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+from model.user import UserBase, UserUpdate
 
 class UserDAO:
     @staticmethod
     async def insert(user: UserBase):
         conn = await get_database()
-        if await UserDAO.exists(user.email, conn):
-            raise HTTPException(status_code=400, detail="User already exists")
-
-        # Hash da senha antes de inserir no banco de dados
-        hashed_password = pwd_context.hash(user.password)
 
         try:
             query = """
                 INSERT INTO "user" (email, name, password, usertype, orgid, deptid)
                 VALUES ($1, $2, $3, $4, $5, $6)
+                RETURNING *
             """
             async with conn.transaction():
-                result = await conn.execute(query, user.email, user.name, hashed_password, user.usertype, user.orgid, user.deptid)
-                return result
+                result = await conn.fetchrow(query, user.email, user.name, user.password, user.usertype, user.orgid, user.deptid)
+                return UserBase(**result)
             
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Failed to insert user: {str(e)}")
@@ -31,7 +24,8 @@ class UserDAO:
             await conn.close()
 
     @staticmethod
-    async def exists(email: str, conn):
+    async def exists(email: str):
+        conn = await get_database()
         try:
             query = """
                 SELECT 1 FROM "user" WHERE email = $1
@@ -41,6 +35,8 @@ class UserDAO:
             
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Failed to check if user exists: {str(e)}")
+        finally:
+            await conn.close()
 
     @staticmethod
     async def get(id: int):
@@ -67,16 +63,16 @@ class UserDAO:
             query = """
                 SELECT * FROM "user" WHERE email = $1
             """
-            result = await conn.fetchrow(query, email)
-
-            user = UserBase(**result)
-            return user
-            
+            async with conn.transaction():
+                result = await conn.fetchrow(query, email)
+                
+                user = UserBase(**result) if result else None
+                return user
+        
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Failed to get user: {str(e)}")
         finally:
             await conn.close()
-
 
     @staticmethod
     async def delete(id: int):
@@ -104,5 +100,53 @@ class UserDAO:
             return result
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Failed to get password: {str(e)}")
+        finally:
+            await conn.close()
+
+    @staticmethod
+    async def self_update(user: UserUpdate):
+        conn = await get_database()
+        try:
+            query = """
+                UPDATE "user"
+                SET name = $1, email = $2, password = $3
+                WHERE id = $5
+            """
+            result = await conn.execute(query, user.name, user.email, user.password)
+            return result
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Failed to update user: {str(e)}")
+        finally:
+            await conn.close()
+
+    @staticmethod
+    async def update(user: UserUpdate):
+        conn = await get_database()
+        try:
+            query = """
+                UPDATE "user"
+                SET name = $1, password = $2, email = $3, usertype = $4, orgid = $5, deptid = $6
+                WHERE id = $7
+            """
+            result = await conn.execute(query, user.name, user.password, user.email, user.usertype, user.orgid, user.deptid, user.id)
+            return result
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Failed to update user: {str(e)}")
+        finally:
+            await conn.close()
+
+    @staticmethod
+    async def update_department(user: UserUpdate):
+        conn = await get_database()
+        try:
+            query = """
+                UPDATE "user"
+                SET name = $1, email = $2, password = $3, usertype = $4, orgid = $5, deptid = $6
+                WHERE id = $7
+            """
+            result = await conn.execute(query, user.name, user.email, user.password, user.usertype, user.orgid, user.deptid, user.id)
+            return result
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Failed to update user: {str(e)}")
         finally:
             await conn.close()
