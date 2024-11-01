@@ -33,6 +33,7 @@ jobs:
       - name: Run functional tests
         run: |
           cd app
+          echo "$PGURL"
           pytest -m "functional and org"
         env: # Or as an environment variable
           PGURL: ${{ secrets.PGURL }}
