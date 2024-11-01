@@ -1,16 +1,11 @@
-from model.surveyquestion import SurveyQuestionCreate, SurveyQuestionUpdate, SurveyQuestionBase
+from model.surveyquestion import SurveyQuestionCreate, SurveyQuestionBase
 from dao.surveyquestion import SurveyQuestionDAO
 
 class SurveyQuestion:
     @staticmethod
     async def create_surveyquestion(surveyquestion_data: SurveyQuestionCreate) -> SurveyQuestionBase:
-        new_surveyquestion_data = await SurveyQuestionDAO.insert(surveyquestion_data.surveyid, surveyquestion_data.questionid)
+        new_surveyquestion_data = await SurveyQuestionDAO.insert(surveyquestion_data)
         return new_surveyquestion_data
-
-    @staticmethod
-    async def get_all_surveyquestions() -> list[SurveyQuestionBase]:
-        surveyquestions_data = await SurveyQuestionDAO.get_all()
-        return surveyquestions_data
 
     @staticmethod
     async def get_by_survey(surveyid: int) -> SurveyQuestionBase:

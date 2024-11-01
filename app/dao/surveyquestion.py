@@ -1,11 +1,10 @@
 from fastapi import HTTPException
 from dao.database import get_database
-import asyncpg
 from model.surveyquestion import SurveyQuestionBase
 
 class SurveyQuestionDAO:
     @staticmethod
-    async def insert(surveyid: int, questionid: int):
+    async def insert(surveyquestion_data: SurveyQuestionBase):
         conn = await get_database()
         try:
             query = """
@@ -14,8 +13,8 @@ class SurveyQuestionDAO:
                 RETURNING surveyid, questionid
             """
             async with conn.transaction():
-                record = await conn.fetchrow(query, surveyid, questionid)
-                return {"surveyid": record["surveyid"], "questionid": record["questionid"]}
+                record = await conn.fetchrow(query, surveyquestion_data.surveyid, surveyquestion_data.questionid)
+                return SurveyQuestionBase(**record)
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Failed to insert survey question: {str(e)}")
         finally:
@@ -32,7 +31,7 @@ class SurveyQuestionDAO:
                 WHERE sq.surveyid = $1
             """
             records = await conn.fetch(query, surveyid)
-            return [{"id": record["id"], "title": record["title"], "scorefactor": record["scorefactor"]} for record in records]
+            return [SurveyQuestionBase(**record) for record in records]
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Failed to get questions for survey: {str(e)}")
         finally:
@@ -49,7 +48,7 @@ class SurveyQuestionDAO:
                 WHERE sq.questionid = $1
             """
             records = await conn.fetch(query, questionid)
-            return [{"id": record["id"], "title": record["title"]} for record in records]
+            return [SurveyQuestionBase(**record) for record in records]
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Failed to get surveys for question: {str(e)}")
         finally:
@@ -70,7 +69,7 @@ class SurveyQuestionDAO:
             async with conn.transaction():
                 record = await conn.fetchrow(query, surveyid, questionid)
                 if record:
-                    return {"surveyid": record["surveyid"], "questionid": record["questionid"]}
+                    return SurveyQuestionBase(**record)
                 else:
                     raise HTTPException(status_code=404, detail="Survey question not found")
         except Exception as e:

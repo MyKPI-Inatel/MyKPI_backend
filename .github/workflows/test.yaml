@@ -10,7 +10,7 @@ on:
 
 jobs:
   test:
-    name: Running unit tests
+    name: Running tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -28,4 +28,14 @@ jobs:
       - name: Run unit tests
         run: |
           cd app
-          pytest -m "not functional"
+          pytest -m "unit"
+
+      - name: Run functional tests
+        run: |
+          cd app
+          pytest -m "functional"
+        env: # Or as an environment variable
+          PGURL: ${{ secrets.PGURL }}
+          SECRET_KEY: ${{ secrets.SECRET_KEY }}
+          INIT_SQL: "../db/init.sql"
+

@@ -2,7 +2,6 @@ from fastapi import HTTPException
 from dao.database import get_database
 from model.question import QuestionBase
 from model.survey import SurveyCreate, SurveyUpdate, SurveyBase, SurveyResponse
-import asyncpg
 
 class SurveyDAO:
     @staticmethod
@@ -74,7 +73,7 @@ class SurveyDAO:
     async def update(surveyid: int, survey: SurveyUpdate):
         conn = await get_database()
         try:
-            update_data = survey.dict(exclude_unset=True)
+            update_data = survey.model_dump(exclude_unset=True)
             set_clause = ", ".join([f"{key} = ${i+2}" for i, key in enumerate(update_data.keys())])
             query = f"""
                 UPDATE survey SET {set_clause} WHERE id = $1

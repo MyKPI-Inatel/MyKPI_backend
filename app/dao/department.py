@@ -95,3 +95,20 @@ class DepartmentDAO:
             raise HTTPException(status_code=500, detail=f"Failed to delete department: {str(e)}")
         finally:
             await conn.close()
+
+    @staticmethod
+    async def get_last_id():
+        conn = await get_database()
+        try:
+            query = """
+                SELECT id FROM department ORDER BY id DESC LIMIT 1
+            """
+            record = await conn.fetchval(query)
+            if record:
+                return record
+            else:
+                raise HTTPException(status_code=404, detail="Department not found")
+        except asyncpg.PostgresError as e:
+            raise HTTPException(status_code=500, detail=f"Failed to get last department: {str(e)}")
+        finally:
+            await conn.close()
