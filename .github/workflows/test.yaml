@@ -31,8 +31,8 @@ jobs:
           pytest -m "unit"
 
       - name: Run functional tests
-        env: # Or as an environment variable
-          PGURL: ${{ secrets.TEST_DB_URI }}
         run: |
           cd app
           pytest -m "functional and org"
+        env: # Or as an environment variable
+          PGURL: ${{ secrets.TEST_DB_URI }}
