@@ -47,8 +47,6 @@ async def get_survey(surveyid: int,
     current_user: User = Depends(get_current_user)
 ):
     survey = await SurveyService.get_survey(surveyid)
-    if survey is None:
-        raise HTTPException(HTTPStatus.NOT_FOUND, 'Survey not found')
     
     verify_permissions(current_user, UserType.employee, {'orgid': survey.orgid})
     
