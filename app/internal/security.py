@@ -9,6 +9,7 @@ import jwt
 from pwdlib import PasswordHash
 from zoneinfo import ZoneInfo
 
+from model.user import UserBase, UserType
 from service.user import User
 from model.token import TokenData
 
@@ -67,3 +68,12 @@ async def get_current_user(
         raise credentials_exception
 
     return user
+
+def verify_permissions(user: UserBase, minimum_usertype: UserType, criteria: dict = None):
+    if user.user_type.level < minimum_usertype.level:
+        raise HTTPException(HTTPStatus.FORBIDDEN, 'Not enough permissions')
+    
+    if criteria:
+        for key, value in criteria.items():
+            if getattr(user, key) != value:
+                raise HTTPException(HTTPStatus.FORBIDDEN, 'Not enough permissions')
