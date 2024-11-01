@@ -21,10 +21,6 @@ class UserCreate(BaseModel):
     email: str
     name: str
     password: str
-    usertype: Literal['employee', 'orgadmin', 'superadmin'] = Field(
-        ..., 
-        description="User type can be one of the following: 'employee', 'orgadmin', 'superadmin'"
-    )
     orgid: int
     deptid: int
 

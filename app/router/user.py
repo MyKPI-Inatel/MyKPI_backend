@@ -24,6 +24,8 @@ async def create_user(user: UserCreate):
             status_code=HTTPStatus.BAD_REQUEST,
             detail='Email already exists',
         )
+    
+    user = UserBase(**user.model_dump(), usertype='employee')
 
     hashed_password = get_password_hash(user.password)
 
