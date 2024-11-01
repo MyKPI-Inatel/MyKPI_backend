@@ -1,15 +1,18 @@
-from pydantic import BaseModel, Field
-from typing import Literal, Optional
+from pydantic import BaseModel
+from typing import Optional
+from enum import Enum
+
+class UserType(str, Enum):
+    employee = 'employee'
+    orgadmin = 'orgadmin'
+    superadmin = 'superadmin'
 
 class UserBase(BaseModel):
     id: Optional[int] = None
     email: str
     name: str
     password: str
-    usertype: Literal['employee', 'orgadmin', 'superadmin'] = Field(
-        ..., 
-        description="User type can be one of the following: 'employee', 'orgadmin', 'superadmin'"
-    )
+    usertype: UserType
     orgid: int
     deptid: int
 
@@ -28,9 +31,6 @@ class UserUpdate(BaseModel):
     name: Optional[str]
     password: Optional[str]
     email: Optional[str]
-    usertype: Optional[Literal['employee', 'orgadmin', 'superadmin']] = Field(
-        ..., 
-        description="User type can be one of the following: 'employee', 'orgadmin', 'superadmin'"
-    )
+    usertype: Optional[UserType]
     orgid: Optional[int]
     deptid: Optional[int]
