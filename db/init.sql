@@ -82,19 +82,19 @@ ADDING USERS
 */
 -- ORGANIZATIION MY-KPI
 INSERT INTO "user" (name, deptid, orgid, email, password, usertype)  -- id = 1 / superadmin / dept = Geral
-VALUES ('Master Admin', 1, 1, 'admin@mykpi.online', '$2b$12$bwv0FxKSn0V1SznFi7Irb.C0CMoF67mxaDUK2ZBQ9LPm6WUTmrQXW', 'superadmin');
+VALUES ('Master Admin', 1, 1, 'admin@mykpi.online', '$argon2id$v=19$m=65536,t=3,p=4$0NMBnpJi+zMDOXbEQbinEA$CReTuQFvaMzh9+50m8Bs9n+nCNKbaPfS+2rvENkqbn8', 'superadmin');
 -- ORGANIZATION INATEL
 INSERT INTO "user" (name, deptid, orgid, email, password, usertype)  -- id = 2 / orgadmin / dept = Recursos Humanos
-VALUES ('Admin do INATEL ', 2, 2, 'admin@inatel.br', '$2b$12$bwv0FxKSn0V1SznFi7Irb.C0CMoF67mxaDUK2ZBQ9LPm6WUTmrQXW', 'orgadmin');
+VALUES ('Admin do INATEL ', 2, 2, 'admin@inatel.br', '$argon2id$v=19$m=65536,t=3,p=4$0NMBnpJi+zMDOXbEQbinEA$CReTuQFvaMzh9+50m8Bs9n+nCNKbaPfS+2rvENkqbn8', 'orgadmin');
 INSERT INTO "user" (name, deptid, orgid, email, password, usertype)  -- id = 3 / employee / dept = Desenvolvimento
-VALUES ('Pedro', 4, 2, 'dev@inatel.br', '$2b$12$bwv0FxKSn0V1SznFi7Irb.C0CMoF67mxaDUK2ZBQ9LPm6WUTmrQXW', 'employee');
+VALUES ('Pedro', 4, 2, 'dev@inatel.br', '$argon2id$v=19$m=65536,t=3,p=4$0NMBnpJi+zMDOXbEQbinEA$CReTuQFvaMzh9+50m8Bs9n+nCNKbaPfS+2rvENkqbn8', 'employee');
 -- ORGANIZATION 4INTELLIGENCE
 INSERT INTO "user" (name, deptid, orgid, email, password, usertype)  -- id = 4 / orgadmin / dept = Recursos Humanos
-VALUES ('Admin da 4Intelligence ', 3, 3, 'admin@4intelligence.com', '$2b$12$bwv0FxKSn0V1SznFi7Irb.C0CMoF67mxaDUK2ZBQ9LPm6WUTmrQXW', 'orgadmin');
+VALUES ('Admin da 4Intelligence ', 3, 3, 'admin@4intelligence.com', '$argon2id$v=19$m=65536,t=3,p=4$0NMBnpJi+zMDOXbEQbinEA$CReTuQFvaMzh9+50m8Bs9n+nCNKbaPfS+2rvENkqbn8', 'orgadmin');
 INSERT INTO "user" (name, deptid, orgid, email, password, usertype)  -- id = 5 / employee / dept = Limpeza
-VALUES ('João', 6, 3, 'joao@4intelligence.com', '$2b$12$bwv0FxKSn0V1SznFi7Irb.C0CMoF67mxaDUK2ZBQ9LPm6WUTmrQXW', 'employee');
+VALUES ('João', 6, 3, 'joao@4intelligence.com', '$argon2id$v=19$m=65536,t=3,p=4$0NMBnpJi+zMDOXbEQbinEA$CReTuQFvaMzh9+50m8Bs9n+nCNKbaPfS+2rvENkqbn8', 'employee');
 INSERT INTO "user" (name, deptid, orgid, email, password, usertype)  -- id = 6 / employee / dept = Desenvolvimento
-VALUES ('Marcos', 7, 3, 'marcos@4intelligence.com', '$2b$12$bwv0FxKSn0V1SznFi7Irb.C0CMoF67mxaDUK2ZBQ9LPm6WUTmrQXW', 'employee');
+VALUES ('Marcos', 7, 3, 'marcos@4intelligence.com', '$argon2id$v=19$m=65536,t=3,p=4$0NMBnpJi+zMDOXbEQbinEA$CReTuQFvaMzh9+50m8Bs9n+nCNKbaPfS+2rvENkqbn8', 'employee');
 
 /*
 ADDING SURVEYS
