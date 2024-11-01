@@ -35,4 +35,4 @@ jobs:
           cd app
           pytest -m "functional and org"
         env: # Or as an environment variable
-          PGURL: ${{ secrets.TEST_DB_URI }}
+          PGURL: ${{ secrets.PGURL }}
