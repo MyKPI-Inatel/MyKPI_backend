@@ -51,8 +51,9 @@ CREATE TABLE "surveyquestions" (
 CREATE TABLE "questionscore" (
     employeeid INT REFERENCES "user"(id),
     questionid INT REFERENCES "question"(id),
+    surveyid INT REFERENCES "survey"(id),
     score INT NOT NULL,
-    PRIMARY KEY (employeeid, questionid)
+    PRIMARY KEY (employeeid, questionid, surveyid)
 );
 
 CREATE INDEX idx_user_orgid ON "user"(orgid);
@@ -164,26 +165,27 @@ INSERT INTO "surveyquestions" (surveyid, questionid) VALUES (4, 20);
 INSERT ANSWERS
 */
 -- ORGANIZATION INATEL, SURVEY "Pesquisa de clima de trabalho", USER Pedro
-INSERT INTO "questionscore" (employeeid, questionid, score) VALUES (3, 6, 4);
-INSERT INTO "questionscore" (employeeid, questionid, score) VALUES (3, 7, 5);
-INSERT INTO "questionscore" (employeeid, questionid, score) VALUES (3, 8, 3);
-INSERT INTO "questionscore" (employeeid, questionid, score) VALUES (3, 9, 4);
-INSERT INTO "questionscore" (employeeid, questionid, score) VALUES (3, 10, 5);
+INSERT INTO "questionscore" (employeeid, questionid, score, surveyid) VALUES (3, 6, 4, 2);
+INSERT INTO "questionscore" (employeeid, questionid, score, surveyid) VALUES (3, 7, 5, 2);
+INSERT INTO "questionscore" (employeeid, questionid, score, surveyid) VALUES (3, 8, 3, 2);
+INSERT INTO "questionscore" (employeeid, questionid, score, surveyid) VALUES (3, 9, 4, 2);
+INSERT INTO "questionscore" (employeeid, questionid, score, surveyid) VALUES (3, 10, 5, 2);
 -- ORGANIZATION INATEL, SURVEY "Pesquisa de desenvolvimento de carreira", USER Pedro
-INSERT INTO "questionscore" (employeeid, questionid, score) VALUES (3, 11, 4);
-INSERT INTO "questionscore" (employeeid, questionid, score) VALUES (3, 12, 5);
-INSERT INTO "questionscore" (employeeid, questionid, score) VALUES (3, 13, 3);
-INSERT INTO "questionscore" (employeeid, questionid, score) VALUES (3, 14, 4);
-INSERT INTO "questionscore" (employeeid, questionid, score) VALUES (3, 15, 5);
+INSERT INTO "questionscore" (employeeid, questionid, score, surveyid) VALUES (3, 11, 4, 3);
+INSERT INTO "questionscore" (employeeid, questionid, score, surveyid) VALUES (3, 12, 5, 3);
+INSERT INTO "questionscore" (employeeid, questionid, score, surveyid) VALUES (3, 13, 3, 3);
+INSERT INTO "questionscore" (employeeid, questionid, score, surveyid) VALUES (3, 14, 4, 3);
+INSERT INTO "questionscore" (employeeid, questionid, score, surveyid) VALUES (3, 15, 5, 3);
 -- ORGANIZATION 4INTELLIGENCE, SURVEY "Pesquisa de satisfação", USER João
-INSERT INTO "questionscore" (employeeid, questionid, score) VALUES (5, 16, 4);
-INSERT INTO "questionscore" (employeeid, questionid, score) VALUES (5, 17, 5);
-INSERT INTO "questionscore" (employeeid, questionid, score) VALUES (5, 18, 3);
-INSERT INTO "questionscore" (employeeid, questionid, score) VALUES (5, 19, 4);
-INSERT INTO "questionscore" (employeeid, questionid, score) VALUES (5, 20, 5);
+INSERT INTO "questionscore" (employeeid, questionid, score, surveyid) VALUES (5, 16, 4, 4);
+INSERT INTO "questionscore" (employeeid, questionid, score, surveyid) VALUES (5, 17, 5, 4);
+INSERT INTO "questionscore" (employeeid, questionid, score, surveyid) VALUES (5, 18, 3, 4);
+INSERT INTO "questionscore" (employeeid, questionid, score, surveyid) VALUES (5, 19, 4, 4);
+INSERT INTO "questionscore" (employeeid, questionid, score, surveyid) VALUES (5, 20, 5, 4);
 -- ORGANIZATION 4INTELLIGENCE, SURVEY "Pesquisa de satisfação", USER Marcos
-INSERT INTO "questionscore" (employeeid, questionid, score) VALUES (6, 16, 4);
-INSERT INTO "questionscore" (employeeid, questionid, score) VALUES (6, 17, 5);
-INSERT INTO "questionscore" (employeeid, questionid, score) VALUES (6, 18, 3);
-INSERT INTO "questionscore" (employeeid, questionid, score) VALUES (6, 19, 4);
-INSERT INTO "questionscore" (employeeid, questionid, score) VALUES (6, 20, 5);
+INSERT INTO "questionscore" (employeeid, questionid, score, surveyid) VALUES (6, 16, 4, 4);
+INSERT INTO "questionscore" (employeeid, questionid, score, surveyid) VALUES (6, 16, 4, 4);
+INSERT INTO "questionscore" (employeeid, questionid, score, surveyid) VALUES (6, 17, 5, 4);
+INSERT INTO "questionscore" (employeeid, questionid, score, surveyid) VALUES (6, 18, 3, 4);
+INSERT INTO "questionscore" (employeeid, questionid, score, surveyid) VALUES (6, 19, 4, 4);
+INSERT INTO "questionscore" (employeeid, questionid, score, surveyid) VALUES (6, 20, 5, 4);
