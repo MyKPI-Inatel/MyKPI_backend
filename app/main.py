@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from dao.database import Database
 
-from router import organization, question, department, survey, user
+from router import organization, question, department, survey, user, report
 
 appServer = FastAPI(title="MyKPI Backend")
 
@@ -12,6 +12,7 @@ appServer.include_router(department.router, prefix="/api/v1/departments", tags=[
 appServer.include_router(organization.router, prefix="/api/v1/organizations", tags=["Organizations"])
 appServer.include_router(survey.router, prefix="/api/v1/surveys", tags=["Surveys"])
 appServer.include_router(user.router, prefix="/api/v1", tags=["Users"])
+appServer.include_router(report.router, prefix="/api/v1/reports", tags=["Reports"])
 
 appServer.add_middleware(
     CORSMiddleware,
