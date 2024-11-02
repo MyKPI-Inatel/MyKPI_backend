@@ -184,7 +184,6 @@ INSERT INTO "questionscore" (employeeid, questionid, score, surveyid) VALUES (5,
 INSERT INTO "questionscore" (employeeid, questionid, score, surveyid) VALUES (5, 20, 5, 4);
 -- ORGANIZATION 4INTELLIGENCE, SURVEY "Pesquisa de satisfação", USER Marcos
 INSERT INTO "questionscore" (employeeid, questionid, score, surveyid) VALUES (6, 16, 4, 4);
-INSERT INTO "questionscore" (employeeid, questionid, score, surveyid) VALUES (6, 16, 4, 4);
 INSERT INTO "questionscore" (employeeid, questionid, score, surveyid) VALUES (6, 17, 5, 4);
 INSERT INTO "questionscore" (employeeid, questionid, score, surveyid) VALUES (6, 18, 3, 4);
 INSERT INTO "questionscore" (employeeid, questionid, score, surveyid) VALUES (6, 19, 4, 4);
