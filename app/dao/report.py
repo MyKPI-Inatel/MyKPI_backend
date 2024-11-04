@@ -24,9 +24,6 @@ class ReportDAO:
                     q.id, q.title, qs.surveyid, q.scorefactor;
             """
             records = await conn.fetch(query, surveyid)
-
-            for record in records:
-                print(record)
             return [ReportBySurvey(**record) for record in records]
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Failed to get surveys: {str(e)}")
