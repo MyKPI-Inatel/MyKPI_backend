@@ -1,5 +1,5 @@
 from model.surveyquestion import SurveyQuestionBase
-from model.question import QuestionCreate, QuestionUpdate, QuestionBase
+from model.question import QuestionCreate, QuestionToScore, QuestionUpdate, QuestionBase
 from dao.question import QuestionDAO
 from service.surveyquestion import SurveyQuestion
 
@@ -42,3 +42,7 @@ class Question:
     @staticmethod
     async def delete_question(questionid: int) -> bool:
         return await QuestionDAO.delete(questionid)
+    
+    @staticmethod
+    async def add_question_score(questionscore: QuestionToScore) -> bool:
+        return await QuestionDAO.add_question_score(questionscore)

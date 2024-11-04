@@ -1,6 +1,6 @@
 from fastapi import HTTPException
 from dao.database import get_database
-from model.question import QuestionCreate, QuestionUpdate, QuestionBase
+from model.question import QuestionCreate, QuestionToScore, QuestionUpdate, QuestionBase
 
 class QuestionDAO:
     @staticmethod
@@ -116,5 +116,33 @@ class QuestionDAO:
                     raise HTTPException(status_code=404, detail="Question not found")
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Failed to delete question: {str(e)}")
+        finally:
+            await conn.close()
+
+    # função para adicionar uma resposta na tabela questionscore
+    @staticmethod
+    async def add_question_score(questionscore: QuestionToScore):
+        conn = await get_database()
+        employeeid = questionscore.employeeid
+        surveyid = questionscore.surveyid
+        try:
+            query = """
+                INSERT INTO "questionscore" (employeeid, questionid, score, surveyid)
+                VALUES 
+            """
+            for i, answer in enumerate(questionscore.answers):
+                if i > 0:
+                    query += ","
+                query += f"({employeeid}, {answer.questionid}, {answer.score}, {surveyid})"
+            query += ";"
+
+            async with conn.transaction():
+                record = await conn.execute(query)
+                if record:
+                    return True
+                else:
+                    raise HTTPException(status_code=500, detail="Failed to add question score")
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Failed to add question score: {str(e)} - {query}")
         finally:
             await conn.close()

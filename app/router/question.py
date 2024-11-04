@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException
 from typing import List
 from model.surveyquestion import SurveyQuestionBase
-from model.question import QuestionBase, QuestionCreate, QuestionUpdate
+from model.question import QuestionBase, QuestionCreate, QuestionToScore, QuestionUpdate
 from service.question import Question as QuestionService
 from service.surveyquestion import SurveyQuestion as SurveyQuestionService
 
@@ -83,3 +83,12 @@ async def delete_question(questionid: int):
     if not result:
         raise HTTPException(status_code=404, detail="Question not found")
     return {"message": "Question deleted successfully"}
+
+@router.post(
+    "/respond/",
+    summary="Submit responses to questions",
+    description="Submit responses to questions."
+)
+async def submit_responses(questionscores: QuestionToScore):
+    result = await QuestionService.add_question_score(questionscores)
+    return result
