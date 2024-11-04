@@ -1,9 +1,13 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from typing import List
+from app.internal.security import get_current_user, verify_permissions
 from model.surveyquestion import SurveyQuestionBase
 from model.question import QuestionBase, QuestionCreate, QuestionToScore, QuestionUpdate
 from service.question import Question as QuestionService
 from service.surveyquestion import SurveyQuestion as SurveyQuestionService
+from service.user import User
+from service.survey import Survey
+from model.user import UserType
 
 router = APIRouter()
 
@@ -89,6 +93,11 @@ async def delete_question(questionid: int):
     summary="Submit responses to questions",
     description="Submit responses to questions."
 )
-async def submit_responses(questionscores: QuestionToScore):
+async def submit_responses(questionscores: QuestionToScore,
+                           current_user: User = Depends(get_current_user)):
+    survey_data = await Survey.get_survey(questionscores.surveyid)
+
+    verify_permissions(current_user, UserType.employee, {'orgid': survey_data.orgid, 'id': questionscores.employeeid})
+
     result = await QuestionService.add_question_score(questionscores)
     return result
