@@ -143,6 +143,6 @@ class QuestionDAO:
                 else:
                     raise HTTPException(status_code=500, detail="Failed to add question score")
         except Exception as e:
-            raise HTTPException(status_code=500, detail=f"Failed to add question score: {str(e)} - {query}")
+            raise HTTPException(status_code=500, detail=f"Failed to add question score: {str(e)}")
         finally:
             await conn.close()
