@@ -108,7 +108,7 @@ async def delete_survey(surveyid: int,
 async def get_unresponded_surveys(employee_id: int,
     current_user: User = Depends(get_current_user)
 ):
-    verify_permissions(current_user, UserType.employee, {'orgid': employee_id})
+    verify_permissions(current_user, UserType.employee, {'id': employee_id})
 
     surveys = await SurveyService.get_unresponded_surveys(employee_id)
     return surveys
