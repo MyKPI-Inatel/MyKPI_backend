@@ -36,6 +36,11 @@ class UserCreate(BaseModel):
     orgid: int
     deptid: int
 
+class EmployeeCreate(BaseModel):
+    email: str
+    name: str
+    deptid: int
+
 class UserUpdate(BaseModel):
     name: Optional[str]
     password: Optional[str]

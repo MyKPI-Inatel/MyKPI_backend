@@ -70,10 +70,10 @@ async def get_current_user(
     return user
 
 def verify_permissions(user: UserBase, minimum_usertype: UserType, criteria: dict = None):
-    if user.user_type.level < minimum_usertype.level:
+    if user.usertype.level < minimum_usertype.level:
         raise HTTPException(HTTPStatus.FORBIDDEN, 'Not enough permissions')
     
-    if criteria:
+    if criteria and user.usertype.level != UserType.superadmin.level:
         for key, value in criteria.items():
             if getattr(user, key) != value:
                 raise HTTPException(HTTPStatus.FORBIDDEN, 'Not enough permissions')
