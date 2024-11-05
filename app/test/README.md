@@ -37,7 +37,11 @@ markers =
 - **markers**: Lists the custom markers available in the project, including:
   - `dept`: Marks tests as department tests.
   - `org`: Marks tests as organization tests.
+  - `quest`: Marks tests as question tests.
+  - `survey`: Marks tests as survey tests.
+  - `survquest`: Marks tests as survey question tests.
   - `functional`: Marks tests as functional tests.
+  - `unit`: Marks tests as unit tests.
 
 ### Environment Variables for Functional Tests
 
@@ -69,4 +73,29 @@ You can also run tests with specific markers using the `-m` option. For example:
   pytest -m "not dept"
   ```
 
-This setup makes it easy to execute tests and organize them based on categories, providing flexibility in testing the application.
+
+### Generating Test Reports
+
+By default, if no specific path is provided for the report, it will be generated at `test/cover/report.html`.
+
+To specify a custom path for the report file, use the `--html` flag. Recommended paths include:
+
+- For **unit tests**, use `test/cover/unit.html`:
+
+  ```bash
+  pytest -m "unit" --html=test/cover/unit.html
+  ```
+
+- For **functional tests**, use `test/cover/functional.html`:
+
+  ```bash
+  pytest -m "functional" --html=test/cover/functional.html
+  ```
+
+- For **all tests**, default to `test/cover/report.html`:
+
+  ```bash
+  pytest
+  ```
+
+This setup allows you to easily execute tests based on categories, providing flexibility in testing the application.
