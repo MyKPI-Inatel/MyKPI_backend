@@ -28,14 +28,20 @@ jobs:
       - name: Run unit tests
         run: |
           cd app
-          pytest -m "unit"
+          pytest -m "unit" --html=test/cover/unit.html
 
       - name: Run functional tests
         run: |
           cd app
-          pytest -m "functional"
-        env: # Or as an environment variable
+          pytest -m "functional" --html=test/cover/functional.html
+        env:
           PGURL: ${{ secrets.PGURL }}
           SECRET_KEY: ${{ secrets.SECRET_KEY }}
           INIT_SQL: "../db/init.sql"
+      
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: app/test/cover/*.html
 
