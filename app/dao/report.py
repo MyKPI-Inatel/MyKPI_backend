@@ -1,4 +1,6 @@
+from http import HTTPStatus
 from fastapi import HTTPException
+
 from dao.database import get_database
 from model.report import ReportBySurvey
 
@@ -26,6 +28,6 @@ class ReportDAO:
             records = await conn.fetch(query, surveyid)
             return [ReportBySurvey(**record) for record in records]
         except Exception as e:
-            raise HTTPException(status_code=500, detail=f"Failed to get surveys: {str(e)}")
+            raise HTTPException(HTTPStatus.INTERNAL_SERVER_ERROR, f"Failed to get surveys: {str(e)}")
         finally:
             await conn.close()

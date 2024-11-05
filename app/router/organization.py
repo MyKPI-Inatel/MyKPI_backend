@@ -1,7 +1,10 @@
+from http import HTTPStatus
 from fastapi import APIRouter, HTTPException
 from typing import List
+
 from model.organization import OrganizationBase, OrganizationCreate, OrganizationUpdate
-from service.organization import Organization as OrganizationService
+
+from service.organization import Organization
 
 router = APIRouter()
 
@@ -12,7 +15,7 @@ router = APIRouter()
     description="This endpoint allows you to create a new organization."
 )
 async def create_organization(organization: OrganizationCreate):
-    new_organization = await OrganizationService.create_organization(organization)
+    new_organization = await Organization.create_organization(organization)
     return new_organization
 
 @router.get(
@@ -22,7 +25,7 @@ async def create_organization(organization: OrganizationCreate):
     description="Retrieve a list of all organizations."
 )
 async def get_organizations():
-    organizations = await OrganizationService.get_all_organizations()
+    organizations = await Organization.get_all_organizations()
     return organizations
 
 @router.get(
@@ -32,9 +35,9 @@ async def get_organizations():
     description="Retrieve a specific organization by its ID."
 )
 async def get_organization(organizationid: int):
-    organization = await OrganizationService.get_organization(organizationid)
+    organization = await Organization.get_organization(organizationid)
     if organization is None:
-        raise HTTPException(status_code=404, detail="Organization not found")
+        raise HTTPException(HTTPStatus.NOT_FOUND, "Organization not found")
     return organization
 
 @router.put(
@@ -44,9 +47,9 @@ async def get_organization(organizationid: int):
     description="Update the details of a specific organization by its ID."
 )
 async def update_organization(organizationid: int, organization: OrganizationUpdate):
-    updated_organization = await OrganizationService.update_organization(organizationid, organization)
+    updated_organization = await Organization.update_organization(organizationid, organization)
     if updated_organization is None:
-        raise HTTPException(status_code=400, detail="Error updating organization")
+        raise HTTPException(HTTPStatus.BAD_REQUEST, "Error updating organization")
     return updated_organization
 
 @router.delete(
@@ -55,7 +58,7 @@ async def update_organization(organizationid: int, organization: OrganizationUpd
     description="Delete a specific organization by its ID."
 )
 async def delete_organization(organizationid: int):
-    result = await OrganizationService.delete_organization(organizationid)
+    result = await Organization.delete_organization(organizationid)
     if not result:
-        raise HTTPException(status_code=404, detail="Organization not found")
+        raise HTTPException(HTTPStatus.NOT_FOUND, "Organization not found")
     return {"message": "Organization deleted successfully"}

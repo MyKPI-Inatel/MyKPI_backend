@@ -1,5 +1,7 @@
 import asyncpg
+from http import HTTPStatus
 from fastapi import HTTPException
+
 from dao.database import get_database
 from model.organization import OrganizationCreate, OrganizationUpdate, OrganizationBase
 
@@ -17,7 +19,7 @@ class OrganizationDAO:
                 record = await conn.fetchrow(query, organization.name)
                 return OrganizationBase(**record)
         except Exception as e:
-            raise HTTPException(status_code=500, detail=f"Failed to insert organization: {str(e)}")
+            raise HTTPException(HTTPStatus.INTERNAL_SERVER_ERROR, f"Failed to insert organization: {str(e)}")
         finally:
             await conn.close()
 
@@ -31,7 +33,7 @@ class OrganizationDAO:
             records = await conn.fetch(query)
             return [OrganizationBase(**record) for record in records]
         except Exception as e:
-            raise HTTPException(status_code=500, detail=f"Failed to get organizations: {str(e)}")
+            raise HTTPException(HTTPStatus.INTERNAL_SERVER_ERROR, f"Failed to get organizations: {str(e)}")
         finally:
             await conn.close()
 
@@ -46,9 +48,9 @@ class OrganizationDAO:
             if record:
                 return OrganizationBase(**record)
             else:
-                raise HTTPException(status_code=404, detail="Organization not found")
+                raise HTTPException(HTTPStatus.NOT_FOUND, "Organization not found")
         except Exception as e:
-            raise HTTPException(status_code=500, detail=f"Failed to get organization: {str(e)}")
+            raise HTTPException(HTTPStatus.INTERNAL_SERVER_ERROR, f"Failed to get organization: {str(e)}")
         finally:
             await conn.close()
 
@@ -69,9 +71,9 @@ class OrganizationDAO:
                 if record:
                     return OrganizationBase(**record)
                 else:
-                    raise HTTPException(status_code=404, detail="Organization not found")
+                    raise HTTPException(HTTPStatus.NOT_FOUND, "Organization not found")
         except Exception as e:
-            raise HTTPException(status_code=500, detail=f"Failed to update organization: {str(e)}")
+            raise HTTPException(HTTPStatus.INTERNAL_SERVER_ERROR, f"Failed to update organization: {str(e)}")
         finally:
             await conn.close()
 
@@ -88,13 +90,11 @@ class OrganizationDAO:
                 if record:
                     return True
                 else:
-                    raise HTTPException(status_code=404, detail="Organization not found")
+                    raise HTTPException(HTTPStatus.NOT_FOUND, "Organization not found")
         except asyncpg.ForeignKeyViolationError:
-            raise HTTPException(
-                status_code=409,
-                detail="Unable to delete organization: related data exists in another table."
-            )
+            raise HTTPException(HTTPStatus.CONFLICT, 
+                                "Unable to delete organization: related data exists in another table.")
         except asyncpg.PostgresError as e:
-            raise HTTPException(status_code=500, detail=f"Failed to delete organization: {str(e)}")
+            raise HTTPException(HTTPStatus.INTERNAL_SERVER_ERROR, f"Failed to delete organization: {str(e)}")
         finally:
             await conn.close()

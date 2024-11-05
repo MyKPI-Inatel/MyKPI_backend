@@ -1,5 +1,6 @@
-from model.surveyquestion import SurveyQuestionCreate, SurveyQuestionBase
 from dao.surveyquestion import SurveyQuestionDAO
+
+from model.surveyquestion import SurveyQuestionCreate, SurveyQuestionBase
 
 class SurveyQuestion:
     @staticmethod

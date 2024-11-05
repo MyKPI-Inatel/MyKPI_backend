@@ -1,9 +1,9 @@
 from http import HTTPStatus
-
 from fastapi import HTTPException
-from model.user import UserBase
+
 from dao.user import UserDAO
 
+from model.user import UserBase
 class User:
    @staticmethod
    async def create_user(user: UserBase):

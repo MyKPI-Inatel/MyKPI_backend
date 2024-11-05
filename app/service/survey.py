@@ -1,5 +1,6 @@
-from model.survey import SurveyCreate, SurveyUpdate, SurveyBase, SurveyResponse
 from dao.survey import SurveyDAO
+
+from model.survey import SurveyCreate, SurveyUpdate, SurveyBase, SurveyResponse
 
 class Survey:
     @staticmethod

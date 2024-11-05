@@ -1,8 +1,10 @@
-import pytest
+import pytest, pytest_asyncio
+from http import HTTPStatus
 from httpx import ASGITransport, AsyncClient
+
 from dao.database import Database
+
 from main import appServer
-import pytest_asyncio
 
 @pytest_asyncio.fixture()
 async def reset_database():
@@ -105,7 +107,7 @@ async def test_api_conflict_deleting_organization(reset_database):
         orgid = 1
         response = await client.delete(f"/api/v1/organizations/{orgid}")
 
-        assert response.status_code == 409
+        assert response.status_code == HTTPStatus.CONFLICT
 
         assert response.json() == {
             "detail": "Unable to delete organization: related data exists in another table."

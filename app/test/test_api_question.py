@@ -1,8 +1,10 @@
-import pytest
+import pytest, pytest_asyncio
+from http import HTTPStatus
 from httpx import ASGITransport, AsyncClient
+
 from dao.database import Database
+
 from main import appServer
-import pytest_asyncio
 
 @pytest_asyncio.fixture()
 async def reset_database():

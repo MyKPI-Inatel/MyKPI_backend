@@ -1,7 +1,10 @@
+from http import HTTPStatus
 from fastapi import APIRouter, HTTPException
 from typing import List
+
 from model.department import DepartmentBase, DepartmentCreate, DepartmentUpdate
-from service.department import Department as DepartmentService
+
+from service.department import Department
 
 router = APIRouter()
 
@@ -12,7 +15,7 @@ router = APIRouter()
     description="This endpoint allows you to create a new department."
 )
 async def create_department(department: DepartmentCreate):
-    new_department = await DepartmentService.create_department(department)
+    new_department = await Department.create_department(department)
     return new_department
 
 @router.get(
@@ -22,7 +25,7 @@ async def create_department(department: DepartmentCreate):
     description="Retrieve a list of all departments associated with a specific organization ID."
 )
 async def get_departments(orgid: int):
-    departments = await DepartmentService.get_department_by_org(orgid)
+    departments = await Department.get_department_by_org(orgid)
     return departments
 
 @router.get(
@@ -32,9 +35,9 @@ async def get_departments(orgid: int):
     description="Retrieve a specific department by its ID."
 )
 async def get_department(departmentid: int, orgid: int=None):
-    department = await DepartmentService.get_department(departmentid, orgid)
+    department = await Department.get_department(departmentid, orgid)
     if department is None:
-        raise HTTPException(status_code=404, detail="Department not found")
+        raise HTTPException(HTTPStatus.NOT_FOUND, "Department not found")
     return department
 
 @router.put(
@@ -44,9 +47,9 @@ async def get_department(departmentid: int, orgid: int=None):
     description="Update the details of a specific department by its ID."
 )
 async def update_department(departmentid: int, department: DepartmentUpdate, orgid: int=None):
-    updated_department = await DepartmentService.update_department(departmentid, department, orgid)
+    updated_department = await Department.update_department(departmentid, department, orgid)
     if updated_department is None:
-        raise HTTPException(status_code=400, detail="Error updating department")
+        raise HTTPException(HTTPStatus.BAD_REQUEST, "Error updating department")
     return updated_department
 
 @router.delete(
@@ -55,7 +58,7 @@ async def update_department(departmentid: int, department: DepartmentUpdate, org
     description="Delete a specific department by its ID."
 )
 async def delete_department(orgid: int, departmentid: int):
-    result = await DepartmentService.delete_department(orgid, departmentid)
+    result = await Department.delete_department(orgid, departmentid)
     if not result:
-        raise HTTPException(status_code=404, detail="Department not found")
+        raise HTTPException(HTTPStatus.NOT_FOUND, "Department not found")
     return {"message": "Department deleted successfully"}

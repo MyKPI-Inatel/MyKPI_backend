@@ -1,4 +1,7 @@
+import asyncpg
+from http import HTTPStatus
 from fastapi import HTTPException
+
 from dao.database import get_database
 from model.surveyquestion import SurveyQuestionBase
 
@@ -16,7 +19,7 @@ class SurveyQuestionDAO:
                 record = await conn.fetchrow(query, surveyquestion_data.surveyid, surveyquestion_data.questionid)
                 return SurveyQuestionBase(**record)
         except Exception as e:
-            raise HTTPException(status_code=500, detail=f"Failed to insert survey question: {str(e)}")
+            raise HTTPException(HTTPStatus.INTERNAL_SERVER_ERROR, f"Failed to insert survey question: {str(e)}")
         finally:
             await conn.close()
 
@@ -33,7 +36,7 @@ class SurveyQuestionDAO:
             records = await conn.fetch(query, surveyid)
             return [SurveyQuestionBase(**record) for record in records]
         except Exception as e:
-            raise HTTPException(status_code=500, detail=f"Failed to get questions for survey: {str(e)}")
+            raise HTTPException(HTTPStatus.INTERNAL_SERVER_ERROR, f"Failed to get questions for survey: {str(e)}")
         finally:
             await conn.close()
 
@@ -50,7 +53,7 @@ class SurveyQuestionDAO:
             records = await conn.fetch(query, questionid)
             return [SurveyQuestionBase(**record) for record in records]
         except Exception as e:
-            raise HTTPException(status_code=500, detail=f"Failed to get surveys for question: {str(e)}")
+            raise HTTPException(HTTPStatus.INTERNAL_SERVER_ERROR, f"Failed to get surveys for question: {str(e)}")
         finally:
             await conn.close()
 
@@ -71,8 +74,10 @@ class SurveyQuestionDAO:
                 if record:
                     return SurveyQuestionBase(**record)
                 else:
-                    raise HTTPException(status_code=404, detail="Survey question not found")
-        except Exception as e:
-            raise HTTPException(status_code=500, detail=f"Failed to delete survey question: {str(e)}")
+                    raise HTTPException(HTTPStatus.NOT_FOUND, "Survey question not found")
+        except asyncpg.ForeignKeyViolationError:
+            raise HTTPException(HTTPStatus.CONFLICT, 
+                                "Unable to delete survey question: related data exists in another table.")
+        except asyncpg.PostgresError as e:            raise HTTPException(HTTPStatus.INTERNAL_SERVER_ERROR, f"Failed to delete survey question: {str(e)}")
         finally:
             await conn.close()

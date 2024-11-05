@@ -1,5 +1,4 @@
-import os
-import asyncpg
+import os, asyncpg
 
 init_sql = os.getenv("INIT_SQL", "db/init.sql")
 

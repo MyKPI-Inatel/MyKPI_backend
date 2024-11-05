@@ -1,4 +1,5 @@
 from dao.report import ReportDAO
+
 from model.report import ReportBySurvey
 
 class Report:

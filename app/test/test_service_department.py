@@ -1,8 +1,11 @@
 import pytest
 from unittest.mock import AsyncMock
-from service.department import Department
-from model.department import DepartmentCreate, DepartmentBase, DepartmentUpdate
+
 from dao.department import DepartmentDAO
+
+from model.department import DepartmentCreate, DepartmentBase, DepartmentUpdate
+
+from service.department import Department
 
 @pytest.mark.asyncio
 @pytest.mark.dept
