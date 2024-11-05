@@ -1,6 +1,8 @@
+from dao.question import QuestionDAO
+
 from model.surveyquestion import SurveyQuestionBase
 from model.question import QuestionCreate, QuestionToScore, QuestionUpdate, QuestionBase
-from dao.question import QuestionDAO
+
 from service.surveyquestion import SurveyQuestion
 
 class Question:

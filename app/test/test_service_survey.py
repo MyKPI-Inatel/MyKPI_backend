@@ -1,8 +1,11 @@
 import pytest
 from unittest.mock import AsyncMock
-from service.survey import Survey
-from model.survey import SurveyCreate, SurveyBase
+
 from dao.survey import SurveyDAO
+
+from model.survey import SurveyCreate, SurveyBase
+
+from service.survey import Survey
 
 @pytest.mark.asyncio
 @pytest.mark.survey

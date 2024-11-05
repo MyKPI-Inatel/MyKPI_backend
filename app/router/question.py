@@ -1,13 +1,17 @@
+from http import HTTPStatus
 from fastapi import APIRouter, Depends, HTTPException
 from typing import List
-from app.internal.security import get_current_user, verify_permissions
-from model.surveyquestion import SurveyQuestionBase
+
+from internal.security import get_current_user, verify_permissions
+
 from model.question import QuestionBase, QuestionCreate, QuestionToScore, QuestionUpdate
-from service.question import Question as QuestionService
-from service.surveyquestion import SurveyQuestion as SurveyQuestionService
+from model.surveyquestion import SurveyQuestionBase
+from model.user import UserType
+
+from service.question import Question
+from service.surveyquestion import SurveyQuestion
 from service.user import User
 from service.survey import Survey
-from model.user import UserType
 
 router = APIRouter()
 
@@ -18,7 +22,7 @@ router = APIRouter()
     description="This endpoint allows you to create a new question."
 )
 async def create_question(question: QuestionCreate):
-    new_question = await QuestionService.create_question(question)
+    new_question = await Question.create_question(question)
     return new_question
 
 @router.post(
@@ -29,7 +33,7 @@ async def create_question(question: QuestionCreate):
 )
 async def sync_question_with_survey(questionid: int, surveyid: int):
     surveyquestion_data = SurveyQuestionBase(surveyid=surveyid, questionid=questionid)
-    survey_question = await SurveyQuestionService.create_surveyquestion(surveyquestion_data)
+    survey_question = await SurveyQuestion.create_surveyquestion(surveyquestion_data)
     return survey_question
 
 @router.get(
@@ -39,7 +43,7 @@ async def sync_question_with_survey(questionid: int, surveyid: int):
     description="Retrieve a list of all questions."
 )
 async def get_all_questions():
-    questions = await QuestionService.get_all_questions()
+    questions = await Question.get_all_questions()
     return questions
 
 @router.get(
@@ -49,7 +53,7 @@ async def get_all_questions():
     description="Retrieve a list of all questions associated with a specific survey."
 )
 async def get_by_survey(surveyid: int):
-    questions = await QuestionService.get_by_survey(surveyid)
+    questions = await Question.get_by_survey(surveyid)
     return questions
     
 
@@ -60,9 +64,9 @@ async def get_by_survey(surveyid: int):
     description="Retrieve a question by its ID."
 )
 async def get_question(questionid: int):
-    question = await QuestionService.get_question(questionid)
+    question = await Question.get_question(questionid)
     if question is None:
-        raise HTTPException(status_code=404, detail="Question not found")
+        raise HTTPException(HTTPStatus.NOT_FOUND, "Question not found")
     return question
 
 @router.put(
@@ -72,9 +76,9 @@ async def get_question(questionid: int):
     description="Update a question by its ID with the provided data."
 )
 async def update_question(questionid: int, question: QuestionUpdate):
-    updated_question = await QuestionService.update_question(questionid, question)
+    updated_question = await Question.update_question(questionid, question)
     if updated_question is None:
-        raise HTTPException(status_code=400, detail="Error updating question")
+        raise HTTPException(HTTPStatus.BAD_REQUEST, "Error updating question")
     return updated_question
 
 @router.delete(
@@ -83,9 +87,9 @@ async def update_question(questionid: int, question: QuestionUpdate):
     description="Delete a question by its ID."
 )
 async def delete_question(questionid: int):
-    result = await QuestionService.delete_question(questionid)
+    result = await Question.delete_question(questionid)
     if not result:
-        raise HTTPException(status_code=404, detail="Question not found")
+        raise HTTPException(HTTPStatus.NOT_FOUND, "Question not found")
     return {"message": "Question deleted successfully"}
 
 @router.post(
@@ -99,5 +103,5 @@ async def submit_responses(questionscores: QuestionToScore,
 
     verify_permissions(current_user, UserType.employee, {'orgid': survey_data.orgid, 'id': questionscores.employeeid})
 
-    result = await QuestionService.add_question_score(questionscores)
+    result = await Question.add_question_score(questionscores)
     return result

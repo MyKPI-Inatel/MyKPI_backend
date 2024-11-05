@@ -1,4 +1,7 @@
+import asyncpg
+from http import HTTPStatus
 from fastapi import HTTPException
+
 from dao.database import get_database
 from model.user import UserBase, UserUpdate
 
@@ -18,7 +21,7 @@ class UserDAO:
                 return UserBase(**result)
             
         except Exception as e:
-            raise HTTPException(status_code=500, detail=f"Failed to insert user: {str(e)}")
+            raise HTTPException(HTTPStatus.INTERNAL_SERVER_ERROR, f"Failed to insert user: {str(e)}")
         finally:
             await conn.close()
 
@@ -33,7 +36,7 @@ class UserDAO:
             return result is not None
             
         except Exception as e:
-            raise HTTPException(status_code=500, detail=f"Failed to check if user exists: {str(e)}")
+            raise HTTPException(HTTPStatus.INTERNAL_SERVER_ERROR, f"Failed to check if user exists: {str(e)}")
         finally:
             await conn.close()
 
@@ -50,7 +53,7 @@ class UserDAO:
             return user
             
         except Exception as e:
-            raise HTTPException(status_code=500, detail=f"Failed to get userss: {str(e)}")
+            raise HTTPException(HTTPStatus.INTERNAL_SERVER_ERROR, f"Failed to get userss: {str(e)}")
         finally:
             await conn.close()
 
@@ -69,7 +72,7 @@ class UserDAO:
                 return user
         
         except Exception as e:
-            raise HTTPException(status_code=500, detail=f"Failed to get user: {str(e)}")
+            raise HTTPException(HTTPStatus.INTERNAL_SERVER_ERROR, f"Failed to get user: {str(e)}")
         finally:
             await conn.close()
 
@@ -83,8 +86,10 @@ class UserDAO:
             result = await conn.execute(query, id)
             return result
             
-        except Exception as e:
-            raise HTTPException(status_code=500, detail=f"Failed to delete user: {str(e)}")
+        except asyncpg.ForeignKeyViolationError:
+            raise HTTPException(HTTPStatus.CONFLICT, 
+                                "Unable to delete department: related data exists in another table.")
+        except asyncpg.PostgresError as e:            raise HTTPException(HTTPStatus.INTERNAL_SERVER_ERROR, f"Failed to delete user: {str(e)}")
         finally:
             await conn.close()
 
@@ -98,7 +103,7 @@ class UserDAO:
             result = await conn.fetchval(query, email)
             return result
         except Exception as e:
-            raise HTTPException(status_code=500, detail=f"Failed to get password: {str(e)}")
+            raise HTTPException(HTTPStatus.INTERNAL_SERVER_ERROR, f"Failed to get password: {str(e)}")
         finally:
             await conn.close()
 
@@ -114,7 +119,7 @@ class UserDAO:
             result = await conn.execute(query, user.name, user.email, user.password)
             return result
         except Exception as e:
-            raise HTTPException(status_code=500, detail=f"Failed to update user: {str(e)}")
+            raise HTTPException(HTTPStatus.INTERNAL_SERVER_ERROR, f"Failed to update user: {str(e)}")
         finally:
             await conn.close()
 
@@ -130,7 +135,7 @@ class UserDAO:
             result = await conn.execute(query, user.name, user.password, user.email, user.usertype, user.orgid, user.deptid, user.id)
             return result
         except Exception as e:
-            raise HTTPException(status_code=500, detail=f"Failed to update user: {str(e)}")
+            raise HTTPException(HTTPStatus.INTERNAL_SERVER_ERROR, f"Failed to update user: {str(e)}")
         finally:
             await conn.close()
 
@@ -146,6 +151,6 @@ class UserDAO:
             result = await conn.execute(query, user.name, user.email, user.password, user.usertype, user.orgid, user.deptid, user.id)
             return result
         except Exception as e:
-            raise HTTPException(status_code=500, detail=f"Failed to update user: {str(e)}")
+            raise HTTPException(HTTPStatus.INTERNAL_SERVER_ERROR, f"Failed to update user: {str(e)}")
         finally:
             await conn.close()

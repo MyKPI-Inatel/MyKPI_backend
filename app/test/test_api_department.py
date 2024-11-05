@@ -1,9 +1,11 @@
-import pytest
+import pytest, pytest_asyncio
+from http import HTTPStatus
 from httpx import ASGITransport, AsyncClient
-from service.department import Department
+
 from dao.database import Database
+from service.department import Department
+
 from main import appServer
-import pytest_asyncio
 
 @pytest_asyncio.fixture()
 async def reset_database():
@@ -109,7 +111,7 @@ async def test_api_conflict_deleting_department(reset_database):
         orgid = 2
         response = await client.delete(f"/api/v1/departments/org/{orgid}/{departmentid}")
 
-        assert response.status_code == 409
+        assert response.status_code == HTTPStatus.CONFLICT
 
         assert response.json() == {
             "detail": "Unable to delete department: related data exists in another table."

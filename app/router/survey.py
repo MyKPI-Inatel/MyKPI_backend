@@ -1,12 +1,14 @@
 from http import HTTPStatus
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from typing import List
-from service.user import User
+
+from internal.security import get_current_user, verify_permissions
+
 from model.survey import SurveyBase, SurveyCreate, SurveyUpdate, SurveyResponse
 from model.user import UserType
-from service.survey import Survey as SurveyService
-from internal.security import get_current_user, verify_permissions
-from fastapi import APIRouter, Depends, HTTPException
+
+from service.user import User
+from service.survey import Survey
 
 router = APIRouter()
 
@@ -21,7 +23,7 @@ async def create_survey(survey: SurveyCreate,
 ):
     verify_permissions(current_user, UserType.orgadmin, {'orgid': survey.orgid})
 
-    return await SurveyService.create_survey(survey)
+    return await Survey.create_survey(survey)
 
 @router.get(
     "/", 
@@ -34,7 +36,7 @@ async def get_surveys(
 ):
     verify_permissions(current_user, UserType.superadmin)
 
-    surveys = await SurveyService.get_all_surveys()
+    surveys = await Survey.get_all_surveys()
     return surveys
 
 @router.get(
@@ -46,7 +48,7 @@ async def get_surveys(
 async def get_survey(surveyid: int,
     current_user: User = Depends(get_current_user)
 ):
-    survey = await SurveyService.get_survey(surveyid)
+    survey = await Survey.get_survey(surveyid)
     
     verify_permissions(current_user, UserType.employee, {'orgid': survey.orgid})
     
@@ -63,7 +65,7 @@ async def get_surveys_by_org(orgid: int,
 ):
     verify_permissions(current_user, UserType.employee, {'orgid': orgid})
     
-    surveys = await SurveyService.get_survey_by_org(orgid)
+    surveys = await Survey.get_survey_by_org(orgid)
     return surveys
 
 @router.put(
@@ -77,7 +79,7 @@ async def update_survey(surveyid: int, survey: SurveyUpdate,
 ):
     verify_permissions(current_user, UserType.orgadmin, {'orgid': survey.orgid})
 
-    result = await SurveyService.update_survey(surveyid, survey)
+    result = await Survey.update_survey(surveyid, survey)
     if not result:
         raise HTTPException(HTTPStatus.NOT_FOUND, 'Survey not found')
     return result
@@ -90,11 +92,11 @@ async def update_survey(surveyid: int, survey: SurveyUpdate,
 async def delete_survey(surveyid: int,
     current_user: User = Depends(get_current_user)
 ):
-    survey = await SurveyService.get_survey(surveyid)
+    survey = await Survey.get_survey(surveyid)
     
     verify_permissions(current_user, UserType.orgadmin, {'orgid': survey.orgid})
 
-    result = await SurveyService.delete_survey(surveyid)
+    result = await Survey.delete_survey(surveyid)
     if not result:
         raise HTTPException(HTTPStatus.NOT_FOUND, 'Survey not found')
     return {"message": "Survey deleted successfully"}
@@ -110,5 +112,5 @@ async def get_unresponded_surveys(employee_id: int,
 ):
     verify_permissions(current_user, UserType.employee, {'id': employee_id})
 
-    surveys = await SurveyService.get_unresponded_surveys(employee_id)
+    surveys = await Survey.get_unresponded_surveys(employee_id)
     return surveys

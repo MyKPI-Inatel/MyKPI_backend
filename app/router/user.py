@@ -1,14 +1,15 @@
 from http import HTTPStatus
-
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
 
-from app.service.department import Department
+from internal.security import create_access_token, get_current_user, get_password_hash, verify_password, verify_permissions
+
 from model.user import UserBase, UserCreate, UserUpdate, EmployeeCreate
 from model.token import Token
-from service.user import User
-from internal.security import create_access_token, get_current_user, get_password_hash, verify_password, verify_permissions
 from model.user import UserType
+
+from service.user import User
+from service.department import Department
 
 router = APIRouter()
 

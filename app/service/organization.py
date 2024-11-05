@@ -1,5 +1,7 @@
-from model.organization import OrganizationCreate, OrganizationUpdate, OrganizationBase
 from dao.organization import OrganizationDAO
+
+from model.organization import OrganizationCreate, OrganizationUpdate, OrganizationBase
+
 from typing import List
 
 class Organization:

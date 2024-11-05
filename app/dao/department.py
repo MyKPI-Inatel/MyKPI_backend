@@ -1,11 +1,14 @@
+import asyncpg
+from http import HTTPStatus
 from fastapi import HTTPException
+
 from dao.database import get_database
 from model.department import DepartmentCreate, DepartmentUpdate, DepartmentBase
-import asyncpg
 
 class DepartmentDAO:
     @staticmethod
     async def insert(department: DepartmentCreate):
+        
         conn = await get_database()
         try:
             query = """
@@ -17,7 +20,7 @@ class DepartmentDAO:
                 record = await conn.fetchrow(query, department.name, department.orgid)
                 return DepartmentBase(**record)
         except Exception as e:
-            raise HTTPException(status_code=500, detail=f"Failed to insert department: {str(e)}")
+            raise HTTPException(HTTPStatus.INTERNAL_SERVER_ERROR, f"Failed to insert department: {str(e)}")
         finally:
             await conn.close()
 
@@ -32,9 +35,9 @@ class DepartmentDAO:
             if record:
                 return DepartmentBase(**record)
             else:
-                raise HTTPException(status_code=404, detail="Department not found")
+                raise HTTPException(HTTPStatus.NOT_FOUND, "Department not found")
         except asyncpg.PostgresError as e:
-            raise HTTPException(status_code=500, detail=f"Failed to get department: {str(e)}")
+            raise HTTPException(HTTPStatus.INTERNAL_SERVER_ERROR, f"Failed to get department: {str(e)}")
         finally:
             await conn.close()
     
@@ -49,7 +52,7 @@ class DepartmentDAO:
             records = await conn.fetch(query, orgid)
             return [DepartmentBase(**record) for record in records]
         except Exception as e:
-            raise HTTPException(status_code=500, detail=f"Failed to get departments: {str(e)}")
+            raise HTTPException(HTTPStatus.INTERNAL_SERVER_ERROR, f"Failed to get departments: {str(e)}")
         finally:
             await conn.close()
 
@@ -66,9 +69,9 @@ class DepartmentDAO:
                 if record:
                     return DepartmentBase(**record)
                 else:
-                    raise HTTPException(status_code=404, detail="Department not found")
+                    raise HTTPException(HTTPStatus.NOT_FOUND, "Department not found")
         except Exception as e:
-            raise HTTPException(status_code=500, detail=f"Failed to update department: {str(e)}")
+            raise HTTPException(HTTPStatus.INTERNAL_SERVER_ERROR, f"Failed to update department: {str(e)}")
         finally:
             await conn.close()
 
@@ -85,14 +88,12 @@ class DepartmentDAO:
                 if record:
                     return True
                 else:
-                    raise HTTPException(status_code=404, detail="Department not found")
+                    raise HTTPException(HTTPStatus.NOT_FOUND, "Department not found")
         except asyncpg.ForeignKeyViolationError:
-            raise HTTPException(
-                status_code=409,
-                detail="Unable to delete department: related data exists in another table."
-            )
+            raise HTTPException(HTTPStatus.CONFLICT, 
+                                "Unable to delete department: related data exists in another table.")
         except asyncpg.PostgresError as e:
-            raise HTTPException(status_code=500, detail=f"Failed to delete department: {str(e)}")
+            raise HTTPException(HTTPStatus.INTERNAL_SERVER_ERROR, f"Failed to delete department: {str(e)}")
         finally:
             await conn.close()
 
@@ -107,8 +108,8 @@ class DepartmentDAO:
             if record:
                 return record
             else:
-                raise HTTPException(status_code=404, detail="Department not found")
+                raise HTTPException(HTTPStatus.NOT_FOUND, "Department not found")
         except asyncpg.PostgresError as e:
-            raise HTTPException(status_code=500, detail=f"Failed to get last department: {str(e)}")
+            raise HTTPException(HTTPStatus.INTERNAL_SERVER_ERROR, f"Failed to get last department: {str(e)}")
         finally:
             await conn.close()

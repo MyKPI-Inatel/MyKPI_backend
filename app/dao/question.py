@@ -1,4 +1,7 @@
+import asyncpg
+from http import HTTPStatus
 from fastapi import HTTPException
+
 from dao.database import get_database
 from model.question import QuestionCreate, QuestionToScore, QuestionUpdate, QuestionBase
 
@@ -16,7 +19,7 @@ class QuestionDAO:
                 record = await conn.fetchrow(query, question.title, question.scorefactor)
                 return QuestionBase(**record)
         except Exception as e:
-            raise HTTPException(status_code=500, detail=f"Failed to insert question: {str(e)}")
+            raise HTTPException(HTTPStatus.INTERNAL_SERVER_ERROR, f"Failed to insert question: {str(e)}")
         finally:
             await conn.close()
 
@@ -34,7 +37,7 @@ class QuestionDAO:
             records = await conn.fetch(query)
             return [QuestionBase(**record) for record in records]
         except Exception as e:
-            raise HTTPException(status_code=500, detail=f"Failed to get questions: {str(e)}")
+            raise HTTPException(HTTPStatus.INTERNAL_SERVER_ERROR, f"Failed to get questions: {str(e)}")
         finally:
             await conn.close()
 
@@ -53,9 +56,9 @@ class QuestionDAO:
             if record:
                 return QuestionBase(**record)
             else:
-                raise HTTPException(status_code=404, detail="Question not found")
+                raise HTTPException(HTTPStatus.NOT_FOUND, "Question not found")
         except Exception as e:
-            raise HTTPException(status_code=500, detail=f"Failed to get question: {str(e)}")
+            raise HTTPException(HTTPStatus.INTERNAL_SERVER_ERROR, f"Failed to get question: {str(e)}")
         finally:
             await conn.close()
 
@@ -74,7 +77,7 @@ class QuestionDAO:
             records = await conn.fetch(query, surveyid)
             return [QuestionBase(**record) for record in records]
         except Exception as e:
-            raise HTTPException(status_code=500, detail=f"Failed to get questions for survey: {str(e)}")
+            raise HTTPException(HTTPStatus.INTERNAL_SERVER_ERROR, f"Failed to get questions for survey: {str(e)}")
         finally:
             await conn.close()
 
@@ -94,9 +97,9 @@ class QuestionDAO:
                 if record:
                     return QuestionBase(**record)
                 else:
-                    raise HTTPException(status_code=404, detail="Question not found")
+                    raise HTTPException(HTTPStatus.NOT_FOUND, "Question not found")
         except Exception as e:
-            raise HTTPException(status_code=500, detail=f"Failed to update question: {str(e)}")
+            raise HTTPException(HTTPStatus.INTERNAL_SERVER_ERROR, f"Failed to update question: {str(e)}")
         finally:
             await conn.close()
 
@@ -113,9 +116,11 @@ class QuestionDAO:
                 if record:
                     return True
                 else:
-                    raise HTTPException(status_code=404, detail="Question not found")
+                    raise HTTPException(HTTPStatus.NOT_FOUND, "Question not found")
+        except asyncpg.ForeignKeyViolationError:
+            raise HTTPException(HTTPStatus.CONFLICT, "Unable to delete question: related data exists in another table.")
         except Exception as e:
-            raise HTTPException(status_code=500, detail=f"Failed to delete question: {str(e)}")
+            raise HTTPException(HTTPStatus.INTERNAL_SERVER_ERROR, f"Failed to delete question: {str(e)}")
         finally:
             await conn.close()
 
@@ -141,8 +146,8 @@ class QuestionDAO:
                 if record:
                     return True
                 else:
-                    raise HTTPException(status_code=500, detail="Failed to add question score")
+                    raise HTTPException(HTTPStatus.INTERNAL_SERVER_ERROR, "Failed to add question score")
         except Exception as e:
-            raise HTTPException(status_code=500, detail=f"Failed to add question score: {str(e)}")
+            raise HTTPException(HTTPStatus.INTERNAL_SERVER_ERROR, f"Failed to add question score: {str(e)}")
         finally:
             await conn.close()

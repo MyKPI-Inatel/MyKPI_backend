@@ -1,6 +1,9 @@
-from model.department import DepartmentCreate, DepartmentUpdate, DepartmentBase
-from dao.department import DepartmentDAO
+
 from typing import List
+
+from dao.department import DepartmentDAO
+
+from model.department import DepartmentCreate, DepartmentUpdate, DepartmentBase
 
 class Department:
     @staticmethod
