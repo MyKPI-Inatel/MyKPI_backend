@@ -1,4 +1,5 @@
 # MyKPI Backend
+[![Running Tests](https://github.com/MyKPI-Inatel/MyKPI_backend/actions/workflows/test.yaml/badge.svg)](https://github.com/MyKPI-Inatel/MyKPI_backend/actions/workflows/test.yaml)
 
 ## Overview
 
