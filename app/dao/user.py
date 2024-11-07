@@ -3,7 +3,7 @@ from http import HTTPStatus
 from fastapi import HTTPException
 
 from dao.database import get_database
-from model.user import UserBase, UserUpdate
+from model.user import UserBase, UserUpdate, EmployeeBase
 
 class UserDAO:
     @staticmethod
@@ -57,6 +57,23 @@ class UserDAO:
         finally:
             await conn.close()
 
+    # get users by orgid
+    @staticmethod
+    async def get_by_orgid(orgid: int):
+        conn = await get_database()
+        try:
+            query = """
+                SELECT id, name, email, deptid, usertype  FROM "user" WHERE orgid = $1
+            """
+            async with conn.transaction():
+                result = await conn.fetch(query, orgid)
+                users = [EmployeeBase(**user) for user in result]
+                return users
+            
+        except Exception as e:
+            raise HTTPException(HTTPStatus.INTERNAL_SERVER_ERROR, f"Failed to get users: {str(e)}") 
+        finally:
+            await conn.close()
 
     @staticmethod
     async def get_by_email(email: str):

@@ -42,6 +42,13 @@ class EmployeeCreate(BaseModel):
     name: str
     deptid: int
 
+class EmployeeBase(BaseModel):
+    id: int
+    name: str
+    email: str
+    deptid: int
+    usertype: str
+
 class UserUpdate(BaseModel):
     name: Optional[str]
     password: Optional[str]
