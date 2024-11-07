@@ -4,7 +4,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 
 from internal.security import create_access_token, get_current_user, get_password_hash, verify_password, verify_permissions
 
-from model.user import UserBase, UserCreate, UserUpdate, EmployeeCreate
+from model.user import EmployeeBase, UserBase, UserCreate, UserUpdate, EmployeeCreate
 from model.token import Token
 from model.user import UserType
 
@@ -108,3 +108,14 @@ async def login_for_access_token(
     access_token = create_access_token(data=token_data)
 
     return {'access_token': access_token, 'token_type': 'bearer'}
+
+# get users by orgid
+@router.get('/users', response_model=list[EmployeeBase])
+async def get_users_by_orgid(
+    current_user: User = Depends(get_current_user)
+):
+    verify_permissions(current_user, UserType.orgadmin, {'orgid': current_user.orgid})
+
+    users = await User.get_users_by_orgid(current_user.orgid)
+
+    return users

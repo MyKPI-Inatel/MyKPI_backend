@@ -18,6 +18,13 @@ class User:
        return user_data
    
    @staticmethod
+   async def get_users_by_orgid(orgid: int):
+       user_data = await UserDAO.get_by_orgid(orgid)
+       if not user_data:
+           raise HTTPException(HTTPStatus.NOT_FOUND, 'User not found')
+       return user_data
+
+   @staticmethod
    async def get_user_by_id(id: int):
        
        user_data = await UserDAO.get(id)
