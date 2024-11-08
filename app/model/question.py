@@ -5,7 +5,6 @@ class QuestionBase(BaseModel):
     id: int
     title: str
     scorefactor: int
-    surveyid: Optional[int] = None
 
 class QuestionCreate(BaseModel):
     title: str
