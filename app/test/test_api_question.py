@@ -32,6 +32,5 @@ async def test_api_create_question(reset_database):
         assert response.json() == {
             "id": 21,
             "title": "Who are you?",
-            "scorefactor": 2,
-            "surveyid": 1
+            "scorefactor": 2
         }
