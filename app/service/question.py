@@ -8,18 +8,7 @@ from service.surveyquestion import SurveyQuestion
 class Question:
     @staticmethod
     async def create_question(question_data: QuestionCreate) -> QuestionBase:
-        new_question_data = await QuestionDAO.insert(question_data) # there's no surveyid yet
-
-        surveyquestion_data = SurveyQuestionBase(
-            surveyid=question_data.surveyid,
-            questionid=new_question_data.id
-        )
-
-        new_question_data.surveyid = question_data.surveyid
-
-        await SurveyQuestion.create_surveyquestion(surveyquestion_data)
-        
-        return new_question_data
+        return await QuestionDAO.insert(question_data)
 
     @staticmethod
     async def get_all_questions() -> list[QuestionBase]:

@@ -7,7 +7,6 @@ class SurveyBase(BaseModel):
     id: int
     title: str
     orgid: int
-    questions: Optional[List[QuestionBase]] = None
 
 class SurveyCreate(BaseModel):
     title: str

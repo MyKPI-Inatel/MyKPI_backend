@@ -41,5 +41,4 @@ async def test_api_create_survey(reset_database, access_token):
         response_json = response.json()
         assert response_json["title"] == "Survey at Inatel"
         assert response_json["orgid"] == 1
-        assert response_json["questions"] is None
         assert isinstance(response_json["id"], int)

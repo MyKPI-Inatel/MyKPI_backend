@@ -14,25 +14,17 @@ from service.surveyquestion import SurveyQuestion
 @pytest.mark.unit
 async def test_svc_create_question(mocker):
     # Mock input and expected return values
-    survey_id = 1
-    question_data = QuestionCreate(title="What is your name?", scorefactor=1, surveyid=survey_id)
-    expected_question_return = QuestionBase(id=1, title="What is your name?", scorefactor=1, surveyid=survey_id)
-    expected_surveyquestion_data = SurveyQuestionBase(surveyid=survey_id, questionid=expected_question_return.id)
+    question_data = QuestionCreate(title="What is your name?", scorefactor=1)
+    expected_question_return = QuestionBase(id=1, title="What is your name?", scorefactor=1)
 
     # Mock the insert method of the QuestionDAO
     mocker.patch.object(QuestionDAO, 'insert', new_callable=AsyncMock, return_value=expected_question_return)
 
-    # Mock the create_surveyquestion method of the SurveyQuestion
-    mocker.patch.object(SurveyQuestion, 'create_surveyquestion', new_callable=AsyncMock)
-
     # Call the function we're testing
     result = await Question.create_question(question_data)
 
-    # Assert that QuestionDAO's insert method was called with the correct input
+    # Asserts that the DAO's insert method was called with the correct input
     QuestionDAO.insert.assert_called_once_with(question_data)
-
-    # Assert that SurveyQuestion's create_surveyquestion method was called with the correct data
-    SurveyQuestion.create_surveyquestion.assert_called_once_with(expected_surveyquestion_data)
 
     # Assert that the result is as expected
     assert result == expected_question_return
@@ -45,7 +37,7 @@ async def test_svc_create_question(mocker):
 async def test_svc_get_question(mocker):
     # Mock input and expected return values
     questionid = 1
-    expected_return = QuestionBase(id=1, title="What is your name?", scorefactor=1, surveyid=1)
+    expected_return = QuestionBase(id=1, title="What is your name?", scorefactor=1)
 
     # Mock the get method of the DAO
     mocker.patch.object(QuestionDAO, 'get', new_callable=AsyncMock, return_value=expected_return)
@@ -65,9 +57,9 @@ async def test_svc_get_question(mocker):
 @pytest.mark.unit
 async def test_svc_get_all_questions(mocker):
     # Mock expected return values
-    expected_return = [QuestionBase(id=1, title="What is your name?", scorefactor=1, surveyid=1),
-                       QuestionBase(id=2, title="What is your age?", scorefactor=1, surveyid=1),
-                       QuestionBase(id=3, title="What is your gender?", scorefactor=1, surveyid=1)]
+    expected_return = [QuestionBase(id=1, title="What is your name?", scorefactor=1),
+                       QuestionBase(id=2, title="What is your age?", scorefactor=1),
+                       QuestionBase(id=3, title="What is your gender?", scorefactor=1)]
 
     # Mock the get_all method of the DAO
     mocker.patch.object(QuestionDAO, 'get_all', new_callable=AsyncMock, return_value=expected_return)
@@ -88,8 +80,8 @@ async def test_svc_get_all_questions(mocker):
 async def test_svc_update_question(mocker):
     # Mock input and expected return values
     questionid = 1
-    question_data = QuestionUpdate(title="What is your name?", scorefactor=1, surveyid=1)
-    expected_return = QuestionBase(id=1, title="What is your name?", scorefactor=1, surveyid=1)
+    question_data = QuestionUpdate(title="What is your name?", scorefactor=1)
+    expected_return = QuestionBase(id=1, title="What is your name?", scorefactor=1)
 
     # Mock the update method of the DAO
     mocker.patch.object(QuestionDAO, 'update', new_callable=AsyncMock, return_value=expected_return)
