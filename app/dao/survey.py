@@ -62,13 +62,14 @@ class SurveyDAO:
             query = """
                 SELECT id, title, orgid FROM survey WHERE orgid = $1
             """
-            record = await conn.fetchrow(query, orgid)
-            if record:
-                return SurveyBase(**record)
+            records = await conn.fetch(query, orgid)
+            
+            if records:
+                return [SurveyBase(**record) for record in records]
             else:
                 raise HTTPException(HTTPStatus.NOT_FOUND, "Survey not found")
         except Exception as e:
-            raise HTTPException(HTTPStatus.INTERNAL_SERVER_ERROR, f"Failed to get survey: {str(e)}")
+            raise HTTPException(HTTPStatus.INTERNAL_SERVER_ERROR, f"Failed to get surveys: {str(e)}")
         finally:
             await conn.close()
 
