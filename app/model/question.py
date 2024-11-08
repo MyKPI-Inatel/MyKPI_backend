@@ -9,7 +9,6 @@ class QuestionBase(BaseModel):
 class QuestionCreate(BaseModel):
     title: str
     scorefactor: int
-    surveyid: int
 
 class QuestionUpdate(BaseModel):
     title: Optional[str] = None
