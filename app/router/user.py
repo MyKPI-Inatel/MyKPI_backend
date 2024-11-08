@@ -82,12 +82,13 @@ async def delete_user(
     user_id: int,
     current_user: User = Depends(get_current_user),
 ):
-    if current_user.id != user_id:
-        raise HTTPException(HTTPStatus.FORBIDDEN, 'Not enough permissions')
+    verify_permissions(current_user, UserType.orgadmin, {'orgid': current_user.orgid})
+    try:
+        result = await User.delete_user(user_id, current_user.orgid)
+    except HTTPException:
+        raise HTTPException(HTTPStatus.NOT_FOUND, 'User not found')
 
-    result = await User.delete_user(user_id)
-
-    return {'message': 'User deleted'}
+    return {'message': 'User deleted successfully'}
 
 
 @router.post('/login', response_model=Token)

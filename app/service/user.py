@@ -36,8 +36,8 @@ class User:
        return exists
    
    @staticmethod
-   async def delete_user(id: int):
-       return await UserDAO.delete(id)
+   async def delete_user(id: int, orgid: int):
+       return await UserDAO.delete(id, orgid)
    
    @staticmethod
    async def update_user(user: UserBase):

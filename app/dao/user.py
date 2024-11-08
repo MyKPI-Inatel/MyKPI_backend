@@ -94,19 +94,17 @@ class UserDAO:
             await conn.close()
 
     @staticmethod
-    async def delete(id: int):
+    async def delete(id: int, orgid: int):
         conn = await get_database()
         try:
             query = """
-                DELETE FROM "user" WHERE id = $1
+                DELETE FROM "user" WHERE id = $1 AND orgid = $2
             """
-            result = await conn.execute(query, id)
+            result = await conn.execute(query, id, orgid)
             return result
             
-        except asyncpg.ForeignKeyViolationError:
-            raise HTTPException(HTTPStatus.CONFLICT, 
-                                "Unable to delete department: related data exists in another table.")
-        except asyncpg.PostgresError as e:            raise HTTPException(HTTPStatus.INTERNAL_SERVER_ERROR, f"Failed to delete user: {str(e)}")
+        except asyncpg.PostgresError as e:            
+            raise HTTPException(HTTPStatus.INTERNAL_SERVER_ERROR, f"Failed to delete user: {str(e)}")
         finally:
             await conn.close()
 
