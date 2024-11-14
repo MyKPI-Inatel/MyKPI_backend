@@ -42,3 +42,7 @@ class User:
    @staticmethod
    async def update_user(user: UserBase):
        return await UserDAO.update(user)
+   
+   @staticmethod
+   async def self_update_user(user: UserBase):
+       return await UserDAO.self_update(user)
