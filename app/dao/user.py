@@ -160,10 +160,10 @@ class UserDAO:
         try:
             query = """
                 UPDATE "user"
-                SET name = $1, email = $2, password = $3, usertype = $4, orgid = $5, deptid = $6
-                WHERE id = $7
+                SET deptid = $1
+                WHERE id = $2
             """
-            result = await conn.execute(query, user.name, user.email, user.password, user.usertype, user.orgid, user.deptid, user.id)
+            result = await conn.execute(query, user.deptid, user.id)
             return result
         except Exception as e:
             raise HTTPException(HTTPStatus.INTERNAL_SERVER_ERROR, f"Failed to update user: {str(e)}")
