@@ -4,7 +4,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 
 from internal.security import create_access_token, get_current_user, get_password_hash, verify_password, verify_permissions
 
-from model.user import EmployeeBase, UserBase, UserCreate, UserUpdate, EmployeeCreate
+from model.user import CurrentUser, EmployeeBase, UserBase, UserCreate, UserUpdate, EmployeeCreate
 from model.token import Token
 from model.user import UserType
 
@@ -13,7 +13,12 @@ from service.department import Department
 
 router = APIRouter()
 
-@router.post('/register', status_code=HTTPStatus.CREATED, response_model=UserBase)
+@router.post('/register',
+    status_code=HTTPStatus.CREATED,
+    response_model=UserBase,
+    summary="Create a new user",
+    description="This endpoint allows you to register yourself as an employee."
+    )
 async def create_user(user: UserCreate):
     exists = await User.exists(user.email)
 
@@ -30,9 +35,14 @@ async def create_user(user: UserCreate):
 
     return user_data
 
-@router.post('/employee', status_code=HTTPStatus.CREATED, response_model=UserBase)
+@router.post('/employee', 
+             status_code=HTTPStatus.CREATED, 
+             response_model=UserBase,
+             summary="Create a new employee, you must be an organization admin",
+             description="This endpoint allows you to create a new employee, you must be an organization admin. You can only create employees for your organization."
+             )
 async def create_user(user: EmployeeCreate, 
-                      current_user: User = Depends(get_current_user)):
+                      current_user: CurrentUser = Depends(get_current_user)):
 
     exists = await User.exists(user.email)
 
@@ -57,11 +67,15 @@ async def create_user(user: EmployeeCreate,
 
     return user_data
 
-@router.put('/users/{user_id}', response_model=UserBase)
+@router.put('/users/{user_id}/', 
+            status_code=HTTPStatus.OK,
+            response_model=UserBase,
+            summary="Update a user",
+            )
 def update_user(
     user_id: int,
     user: UserUpdate,
-    current_user: User = Depends(get_current_user),
+    current_user: CurrentUser = Depends(get_current_user),
 ):
     verify_permissions(current_user, UserType.employee, {'id': user_id})
     try:
@@ -80,7 +94,7 @@ def update_user(
 @router.delete('/users/{user_id}')
 async def delete_user(
     user_id: int,
-    current_user: User = Depends(get_current_user),
+    current_user: CurrentUser = Depends(get_current_user)
 ):
     verify_permissions(current_user, UserType.orgadmin, {'orgid': current_user.orgid})
     try:
@@ -113,7 +127,7 @@ async def login_for_access_token(
 # get users by orgid
 @router.get('/users', response_model=list[EmployeeBase])
 async def get_users_by_orgid(
-    current_user: User = Depends(get_current_user)
+    current_user: CurrentUser = Depends(get_current_user)
 ):
     verify_permissions(current_user, UserType.orgadmin, {'orgid': current_user.orgid})
 
