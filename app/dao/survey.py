@@ -20,7 +20,10 @@ class SurveyDAO:
                 record = await conn.fetchrow(query, survey.title, survey.orgid)
                 return SurveyBase(**record)
         except Exception as e:
-            raise HTTPException(HTTPStatus.INTERNAL_SERVER_ERROR, f"Failed to insert survey: {str(e)}")
+            raise HTTPException(
+                HTTPStatus.INTERNAL_SERVER_ERROR,
+                f"Failed to insert survey: {str(e)}",
+            ) from e
         finally:
             await conn.close()
 
@@ -34,7 +37,10 @@ class SurveyDAO:
             records = await conn.fetch(query)
             return [SurveyBase(**record) for record in records]
         except Exception as e:
-            raise HTTPException(HTTPStatus.INTERNAL_SERVER_ERROR, f"Failed to get surveys: {str(e)}")
+            raise HTTPException(
+                HTTPStatus.INTERNAL_SERVER_ERROR,
+                f"Failed to get surveys: {str(e)}",
+            ) from e
         finally:
             await conn.close()
 
@@ -51,7 +57,9 @@ class SurveyDAO:
             else:
                 raise HTTPException(HTTPStatus.NOT_FOUND, "Survey not found")
         except Exception as e:
-            raise HTTPException(HTTPStatus.INTERNAL_SERVER_ERROR, f"Failed to get survey: {str(e)}")
+            raise HTTPException(
+                HTTPStatus.INTERNAL_SERVER_ERROR, f"Failed to get survey: {str(e)}"
+            ) from e
         finally:
             await conn.close()
 
@@ -63,13 +71,16 @@ class SurveyDAO:
                 SELECT id, title, orgid FROM survey WHERE orgid = $1
             """
             records = await conn.fetch(query, orgid)
-            
+
             if records:
                 return [SurveyBase(**record) for record in records]
             else:
                 raise HTTPException(HTTPStatus.NOT_FOUND, "Survey not found")
         except Exception as e:
-            raise HTTPException(HTTPStatus.INTERNAL_SERVER_ERROR, f"Failed to get surveys: {str(e)}")
+            raise HTTPException(
+                HTTPStatus.INTERNAL_SERVER_ERROR,
+                f"Failed to get surveys: {str(e)}",
+            ) from e
         finally:
             await conn.close()
 
@@ -92,7 +103,10 @@ class SurveyDAO:
                 else:
                     raise HTTPException(HTTPStatus.NOT_FOUND, "Survey not found")
         except Exception as e:
-            raise HTTPException(HTTPStatus.INTERNAL_SERVER_ERROR, f"Failed to update survey: {str(e)}")
+            raise HTTPException(
+                HTTPStatus.INTERNAL_SERVER_ERROR,
+                f"Failed to update survey: {str(e)}",
+            ) from e
         finally:
             await conn.close()
 
@@ -110,11 +124,16 @@ class SurveyDAO:
                     return True
                 else:
                     raise HTTPException(HTTPStatus.NOT_FOUND, "Survey not found")
-        except asyncpg.ForeignKeyViolationError:
-            raise HTTPException(HTTPStatus.CONFLICT, 
-                                "Unable to delete survey: related data exists in another table.")
+        except asyncpg.ForeignKeyViolationError as e:
+            raise HTTPException(
+                HTTPStatus.CONFLICT,
+                "Unable to delete survey: related data exists in another table.",
+            ) from e
         except asyncpg.PostgresError as e:
-            raise HTTPException(HTTPStatus.INTERNAL_SERVER_ERROR, f"Failed to delete survey: {str(e)}")
+            raise HTTPException(
+                HTTPStatus.INTERNAL_SERVER_ERROR,
+                f"Failed to delete survey: {str(e)}",
+            ) from e
         finally:
             await conn.close()
 
@@ -134,7 +153,10 @@ class SurveyDAO:
             else:
                 raise HTTPException(HTTPStatus.NOT_FOUND, "No questions found for this survey")
         except Exception as e:
-            raise HTTPException(HTTPStatus.INTERNAL_SERVER_ERROR, f"Failed to get questions for survey: {str(e)}")
+            raise HTTPException(
+                HTTPStatus.INTERNAL_SERVER_ERROR,
+                f"Failed to get questions for survey: {str(e)}",
+            ) from e
         finally:
             await conn.close()
 
@@ -163,6 +185,9 @@ class SurveyDAO:
             else:
                 raise HTTPException(HTTPStatus.NOT_FOUND, "No unresponded surveys found")
         except Exception as e:
-            raise HTTPException(HTTPStatus.INTERNAL_SERVER_ERROR, f"Failed to get unresponded surveys: {str(e)}")
+            raise HTTPException(
+                HTTPStatus.INTERNAL_SERVER_ERROR,
+                f"Failed to get unresponded surveys: {str(e)}",
+            ) from e
         finally:
             await conn.close()

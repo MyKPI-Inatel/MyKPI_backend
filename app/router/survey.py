@@ -36,8 +36,7 @@ async def get_surveys(
 ):
     verify_permissions(current_user, UserType.superadmin)
 
-    surveys = await Survey.get_all_surveys()
-    return surveys
+    return await Survey.get_all_surveys()
 
 @router.get(
     "/{surveyid}", 
@@ -64,9 +63,8 @@ async def get_surveys_by_org(orgid: int,
     current_user: User = Depends(get_current_user)
 ):
     verify_permissions(current_user, UserType.employee, {'orgid': orgid})
-    
-    surveys = await Survey.get_survey_by_org(orgid)
-    return surveys
+
+    return await Survey.get_survey_by_org(orgid)
 
 @router.put(
     "/{surveyid}", 
@@ -112,5 +110,4 @@ async def get_unresponded_surveys(employee_id: int,
 ):
     verify_permissions(current_user, UserType.employee, {'id': employee_id})
 
-    surveys = await Survey.get_unresponded_surveys(employee_id)
-    return surveys
+    return await Survey.get_unresponded_surveys(employee_id)

@@ -22,8 +22,7 @@ router = APIRouter()
     description="This endpoint allows you to create a new question."
 )
 async def create_question(question: QuestionCreate):
-    new_question = await Question.create_question(question)
-    return new_question
+    return await Question.create_question(question)
 
 @router.post(
     "/{questionid}/survey/{surveyid}",
@@ -33,8 +32,7 @@ async def create_question(question: QuestionCreate):
 )
 async def sync_question_with_survey(questionid: int, surveyid: int):
     surveyquestion_data = SurveyQuestionBase(surveyid=surveyid, questionid=questionid)
-    survey_question = await SurveyQuestion.create_surveyquestion(surveyquestion_data)
-    return survey_question
+    return await SurveyQuestion.create_surveyquestion(surveyquestion_data)
 
 @router.get(
     "/",
@@ -43,8 +41,7 @@ async def sync_question_with_survey(questionid: int, surveyid: int):
     description="Retrieve a list of all questions."
 )
 async def get_all_questions():
-    questions = await Question.get_all_questions()
-    return questions
+    return await Question.get_all_questions()
 
 @router.get(
     "/survey/{surveyid}",
@@ -53,8 +50,7 @@ async def get_all_questions():
     description="Retrieve a list of all questions associated with a specific survey."
 )
 async def get_by_survey(surveyid: int):
-    questions = await Question.get_by_survey(surveyid)
-    return questions
+    return await Question.get_by_survey(surveyid)
     
 
 @router.get(
@@ -103,5 +99,4 @@ async def submit_responses(questionscores: QuestionToScore,
 
     verify_permissions(current_user, UserType.employee, {'orgid': survey_data.orgid, 'id': questionscores.employeeid})
 
-    result = await Question.add_question_score(questionscores)
-    return result
+    return await Question.add_question_score(questionscores)

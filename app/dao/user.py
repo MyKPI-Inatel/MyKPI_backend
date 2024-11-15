@@ -19,9 +19,12 @@ class UserDAO:
             async with conn.transaction():
                 result = await conn.fetchrow(query, user.email, user.name, user.password, user.usertype, user.orgid, user.deptid)
                 return UserBase(**result)
-            
+
         except Exception as e:
-            raise HTTPException(HTTPStatus.INTERNAL_SERVER_ERROR, f"Failed to insert user: {str(e)}")
+            raise HTTPException(
+                HTTPStatus.INTERNAL_SERVER_ERROR,
+                f"Failed to insert user: {str(e)}",
+            ) from e
         finally:
             await conn.close()
 
@@ -34,9 +37,12 @@ class UserDAO:
             """
             result = await conn.fetchval(query, email)
             return result is not None
-            
+
         except Exception as e:
-            raise HTTPException(HTTPStatus.INTERNAL_SERVER_ERROR, f"Failed to check if user exists: {str(e)}")
+            raise HTTPException(
+                HTTPStatus.INTERNAL_SERVER_ERROR,
+                f"Failed to check if user exists: {str(e)}",
+            ) from e
         finally:
             await conn.close()
 
@@ -49,11 +55,11 @@ class UserDAO:
             """
             result = await conn.fetchrow(query, id)
 
-            user = UserBase(**result)
-            return user
-            
+            return UserBase(**result)
         except Exception as e:
-            raise HTTPException(HTTPStatus.INTERNAL_SERVER_ERROR, f"Failed to get userss: {str(e)}")
+            raise HTTPException(
+                HTTPStatus.INTERNAL_SERVER_ERROR, f"Failed to get userss: {str(e)}"
+            ) from e
         finally:
             await conn.close()
 
@@ -67,11 +73,11 @@ class UserDAO:
             """
             async with conn.transaction():
                 result = await conn.fetch(query, orgid)
-                users = [EmployeeBase(**user) for user in result]
-                return users
-            
+                return [EmployeeBase(**user) for user in result]
         except Exception as e:
-            raise HTTPException(HTTPStatus.INTERNAL_SERVER_ERROR, f"Failed to get users: {str(e)}") 
+            raise HTTPException(
+                HTTPStatus.INTERNAL_SERVER_ERROR, f"Failed to get users: {str(e)}"
+            ) from e
         finally:
             await conn.close()
 
@@ -84,12 +90,12 @@ class UserDAO:
             """
             async with conn.transaction():
                 result = await conn.fetchrow(query, email)
-                
-                user = UserBase(**result) if result else None
-                return user
-        
+
+                return UserBase(**result) if result else None
         except Exception as e:
-            raise HTTPException(HTTPStatus.INTERNAL_SERVER_ERROR, f"Failed to get user: {str(e)}")
+            raise HTTPException(
+                HTTPStatus.INTERNAL_SERVER_ERROR, f"Failed to get user: {str(e)}"
+            ) from e
         finally:
             await conn.close()
 
@@ -100,11 +106,12 @@ class UserDAO:
             query = """
                 DELETE FROM "user" WHERE id = $1 AND orgid = $2
             """
-            result = await conn.execute(query, id, orgid)
-            return result
-            
-        except asyncpg.PostgresError as e:            
-            raise HTTPException(HTTPStatus.INTERNAL_SERVER_ERROR, f"Failed to delete user: {str(e)}")
+            return await conn.execute(query, id, orgid)
+        except asyncpg.PostgresError as e:        
+            raise HTTPException(
+                HTTPStatus.INTERNAL_SERVER_ERROR,
+                f"Failed to delete user: {str(e)}",
+            ) from e
         finally:
             await conn.close()
 
@@ -115,10 +122,12 @@ class UserDAO:
             query = """
                 SELECT password FROM "user" WHERE email = $1
             """
-            result = await conn.fetchval(query, email)
-            return result
+            return await conn.fetchval(query, email)
         except Exception as e:
-            raise HTTPException(HTTPStatus.INTERNAL_SERVER_ERROR, f"Failed to get password: {str(e)}")
+            raise HTTPException(
+                HTTPStatus.INTERNAL_SERVER_ERROR,
+                f"Failed to get password: {str(e)}",
+            ) from e
         finally:
             await conn.close()
 
@@ -131,10 +140,12 @@ class UserDAO:
                 SET name = $1, email = $2, password = $3
                 WHERE id = $5
             """
-            result = await conn.execute(query, user.name, user.email, user.password)
-            return result
+            return await conn.execute(query, user.name, user.email, user.password)
         except Exception as e:
-            raise HTTPException(HTTPStatus.INTERNAL_SERVER_ERROR, f"Failed to update user: {str(e)}")
+            raise HTTPException(
+                HTTPStatus.INTERNAL_SERVER_ERROR,
+                f"Failed to update user: {str(e)}",
+            ) from e
         finally:
             await conn.close()
 
@@ -147,10 +158,21 @@ class UserDAO:
                 SET name = $1, password = $2, email = $3, usertype = $4, orgid = $5, deptid = $6
                 WHERE id = $7
             """
-            result = await conn.execute(query, user.name, user.password, user.email, user.usertype, user.orgid, user.deptid, user.id)
-            return result
+            return await conn.execute(
+                query,
+                user.name,
+                user.password,
+                user.email,
+                user.usertype,
+                user.orgid,
+                user.deptid,
+                user.id,
+            )
         except Exception as e:
-            raise HTTPException(HTTPStatus.INTERNAL_SERVER_ERROR, f"Failed to update user: {str(e)}")
+            raise HTTPException(
+                HTTPStatus.INTERNAL_SERVER_ERROR,
+                f"Failed to update user: {str(e)}",
+            ) from e
         finally:
             await conn.close()
 
@@ -163,9 +185,11 @@ class UserDAO:
                 SET deptid = $1
                 WHERE id = $2
             """
-            result = await conn.execute(query, user.deptid, user.id)
-            return result
+            return await conn.execute(query, user.deptid, user.id)
         except Exception as e:
-            raise HTTPException(HTTPStatus.INTERNAL_SERVER_ERROR, f"Failed to update user: {str(e)}")
+            raise HTTPException(
+                HTTPStatus.INTERNAL_SERVER_ERROR,
+                f"Failed to update user: {str(e)}",
+            ) from e
         finally:
             await conn.close()

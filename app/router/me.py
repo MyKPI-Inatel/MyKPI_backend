@@ -14,7 +14,7 @@ router = APIRouter()
 def update_me(
     user: UserUpdate,
     current_user: CurrentUser = Depends(get_current_user),
-    
+
 ):
     verify_permissions(current_user, UserType.employee)
     try:
@@ -22,12 +22,9 @@ def update_me(
         current_user.password = get_password_hash(user.password)
         current_user.email = user.email
 
-        user_data = User.self_update_user(current_user)
-
-        return user_data
-
-    except HTTPException:
-        raise HTTPException(HTTPStatus.CONFLICT, 'Email already exists')
+        return User.self_update_user(current_user)
+    except HTTPException as e:
+        raise HTTPException(HTTPStatus.CONFLICT, 'Email already exists') from e
     
 @router.get('/',
             response_model=UserBase,

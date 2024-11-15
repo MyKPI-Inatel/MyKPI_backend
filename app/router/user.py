@@ -24,16 +24,14 @@ async def create_user(user: UserCreate):
 
     if exists:
         raise HTTPException(HTTPStatus.BAD_REQUEST, 'Email already exists')
-    
+
     user = UserBase(**user.model_dump(), usertype='employee')
 
     hashed_password = get_password_hash(user.password)
 
     user.password = hashed_password
 
-    user_data = await User.create_user(user)
-
-    return user_data
+    return await User.create_user(user)
 
 @router.post('/employee', 
              status_code=HTTPStatus.CREATED, 
@@ -48,7 +46,7 @@ async def create_user(user: EmployeeCreate,
 
     if exists:
         raise HTTPException(HTTPStatus.BAD_REQUEST, 'Email already exists')
-    
+
     user = UserBase(**user.model_dump(), usertype='employee', orgid=current_user.orgid, password="Changeme_123")
 
     verify_permissions(current_user, UserType.orgadmin, {'orgid': user.orgid})
@@ -63,9 +61,7 @@ async def create_user(user: EmployeeCreate,
     except HTTPException:
         raise HTTPException(HTTPStatus.BAD_REQUEST, 'Department does not belong to the organization')
 
-    user_data = await User.create_user(user)
-
-    return user_data
+    return await User.create_user(user)
 
 @router.put('/users/{user_id}/', 
             status_code=HTTPStatus.OK,
@@ -83,12 +79,9 @@ def update_user(
         current_user.password = get_password_hash(user.password)
         current_user.email = user.email
 
-        user_data = User.update_user(current_user)
-
-        return user_data
-
-    except HTTPException:
-        raise HTTPException(HTTPStatus.CONFLICT, 'Email already exists')
+        return User.update_user(current_user)
+    except HTTPException as e:
+        raise HTTPException(HTTPStatus.CONFLICT, 'Email already exists') from e
 
 
 @router.delete('/users/{user_id}')
@@ -98,9 +91,9 @@ async def delete_user(
 ):
     verify_permissions(current_user, UserType.orgadmin, {'orgid': current_user.orgid})
     try:
-        result = await User.delete_user(user_id, current_user.orgid)
-    except HTTPException:
-        raise HTTPException(HTTPStatus.NOT_FOUND, 'User not found')
+        await User.delete_user(user_id, current_user.orgid)
+    except HTTPException as e:
+        raise HTTPException(HTTPStatus.NOT_FOUND, 'User not found') from e
 
     return {'message': 'User deleted successfully'}
 
@@ -131,6 +124,4 @@ async def get_users_by_orgid(
 ):
     verify_permissions(current_user, UserType.orgadmin, {'orgid': current_user.orgid})
 
-    users = await User.get_users_by_orgid(current_user.orgid)
-
-    return users
+    return await User.get_users_by_orgid(current_user.orgid)

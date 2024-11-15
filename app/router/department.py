@@ -15,8 +15,7 @@ router = APIRouter()
     description="This endpoint allows you to create a new department."
 )
 async def create_department(department: DepartmentCreate):
-    new_department = await Department.create_department(department)
-    return new_department
+    return await Department.create_department(department)
 
 @router.get(
     "/org/{orgid}", 
@@ -25,8 +24,7 @@ async def create_department(department: DepartmentCreate):
     description="Retrieve a list of all departments associated with a specific organization ID."
 )
 async def get_departments(orgid: int):
-    departments = await Department.get_department_by_org(orgid)
-    return departments
+    return await Department.get_department_by_org(orgid)
 
 @router.get(
     "/org/{orgid}/{departmentid}", 

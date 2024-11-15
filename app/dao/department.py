@@ -20,7 +20,10 @@ class DepartmentDAO:
                 record = await conn.fetchrow(query, department.name, department.orgid)
                 return DepartmentBase(**record)
         except Exception as e:
-            raise HTTPException(HTTPStatus.INTERNAL_SERVER_ERROR, f"Failed to insert department: {str(e)}")
+            raise HTTPException(
+                HTTPStatus.INTERNAL_SERVER_ERROR,
+                f"Failed to insert department: {str(e)}",
+            ) from e
         finally:
             await conn.close()
 
@@ -37,7 +40,10 @@ class DepartmentDAO:
             else:
                 raise HTTPException(HTTPStatus.NOT_FOUND, "Department not found")
         except asyncpg.PostgresError as e:
-            raise HTTPException(HTTPStatus.INTERNAL_SERVER_ERROR, f"Failed to get department: {str(e)}")
+            raise HTTPException(
+                HTTPStatus.INTERNAL_SERVER_ERROR,
+                f"Failed to get department: {str(e)}",
+            ) from e
         finally:
             await conn.close()
     
@@ -52,7 +58,10 @@ class DepartmentDAO:
             records = await conn.fetch(query, orgid)
             return [DepartmentBase(**record) for record in records]
         except Exception as e:
-            raise HTTPException(HTTPStatus.INTERNAL_SERVER_ERROR, f"Failed to get departments: {str(e)}")
+            raise HTTPException(
+                HTTPStatus.INTERNAL_SERVER_ERROR,
+                f"Failed to get departments: {str(e)}",
+            ) from e
         finally:
             await conn.close()
 
@@ -60,7 +69,7 @@ class DepartmentDAO:
     async def update(deptid: int, department: DepartmentUpdate, orgid: int=None):
         conn = await get_database()
         try:
-            query = f"""
+            query = """
                 UPDATE department SET name = $1 WHERE id = $2 AND orgid = $3
                 RETURNING id, name, orgid
             """
@@ -71,7 +80,10 @@ class DepartmentDAO:
                 else:
                     raise HTTPException(HTTPStatus.NOT_FOUND, "Department not found")
         except Exception as e:
-            raise HTTPException(HTTPStatus.INTERNAL_SERVER_ERROR, f"Failed to update department: {str(e)}")
+            raise HTTPException(
+                HTTPStatus.INTERNAL_SERVER_ERROR,
+                f"Failed to update department: {str(e)}",
+            ) from e
         finally:
             await conn.close()
 
@@ -89,11 +101,16 @@ class DepartmentDAO:
                     return True
                 else:
                     raise HTTPException(HTTPStatus.NOT_FOUND, "Department not found")
-        except asyncpg.ForeignKeyViolationError:
-            raise HTTPException(HTTPStatus.CONFLICT, 
-                                "Unable to delete department: related data exists in another table.")
+        except asyncpg.ForeignKeyViolationError as e:
+            raise HTTPException(
+                HTTPStatus.CONFLICT,
+                "Unable to delete department: related data exists in another table.",
+            ) from e
         except asyncpg.PostgresError as e:
-            raise HTTPException(HTTPStatus.INTERNAL_SERVER_ERROR, f"Failed to delete department: {str(e)}")
+            raise HTTPException(
+                HTTPStatus.INTERNAL_SERVER_ERROR,
+                f"Failed to delete department: {str(e)}",
+            ) from e
         finally:
             await conn.close()
 
@@ -110,6 +127,9 @@ class DepartmentDAO:
             else:
                 raise HTTPException(HTTPStatus.NOT_FOUND, "Department not found")
         except asyncpg.PostgresError as e:
-            raise HTTPException(HTTPStatus.INTERNAL_SERVER_ERROR, f"Failed to get last department: {str(e)}")
+            raise HTTPException(
+                HTTPStatus.INTERNAL_SERVER_ERROR,
+                f"Failed to get last department: {str(e)}",
+            ) from e
         finally:
             await conn.close()

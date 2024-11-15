@@ -1,5 +1,4 @@
 import pytest, pytest_asyncio
-from http import HTTPStatus
 from httpx import ASGITransport, AsyncClient
 
 from dao.database import Database

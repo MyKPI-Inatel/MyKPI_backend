@@ -15,8 +15,7 @@ router = APIRouter()
     description="This endpoint allows you to create a new organization."
 )
 async def create_organization(organization: OrganizationCreate):
-    new_organization = await Organization.create_organization(organization)
-    return new_organization
+    return await Organization.create_organization(organization)
 
 @router.get(
     "/", 
@@ -25,8 +24,7 @@ async def create_organization(organization: OrganizationCreate):
     description="Retrieve a list of all organizations."
 )
 async def get_organizations():
-    organizations = await Organization.get_all_organizations()
-    return organizations
+    return await Organization.get_all_organizations()
 
 @router.get(
     "/{organizationid}", 

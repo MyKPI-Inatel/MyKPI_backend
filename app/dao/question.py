@@ -19,7 +19,10 @@ class QuestionDAO:
                 record = await conn.fetchrow(query, question.title, question.scorefactor)
                 return QuestionBase(**record)
         except Exception as e:
-            raise HTTPException(HTTPStatus.INTERNAL_SERVER_ERROR, f"Failed to insert question: {str(e)}")
+            raise HTTPException(
+                HTTPStatus.INTERNAL_SERVER_ERROR,
+                f"Failed to insert question: {str(e)}",
+            ) from e
         finally:
             await conn.close()
 
@@ -37,7 +40,10 @@ class QuestionDAO:
             records = await conn.fetch(query)
             return [QuestionBase(**record) for record in records]
         except Exception as e:
-            raise HTTPException(HTTPStatus.INTERNAL_SERVER_ERROR, f"Failed to get questions: {str(e)}")
+            raise HTTPException(
+                HTTPStatus.INTERNAL_SERVER_ERROR,
+                f"Failed to get questions: {str(e)}",
+            ) from e
         finally:
             await conn.close()
 
@@ -58,7 +64,10 @@ class QuestionDAO:
             else:
                 raise HTTPException(HTTPStatus.NOT_FOUND, "Question not found")
         except Exception as e:
-            raise HTTPException(HTTPStatus.INTERNAL_SERVER_ERROR, f"Failed to get question: {str(e)}")
+            raise HTTPException(
+                HTTPStatus.INTERNAL_SERVER_ERROR,
+                f"Failed to get question: {str(e)}",
+            ) from e
         finally:
             await conn.close()
 
@@ -77,7 +86,10 @@ class QuestionDAO:
             records = await conn.fetch(query, surveyid)
             return [QuestionBase(**record) for record in records]
         except Exception as e:
-            raise HTTPException(HTTPStatus.INTERNAL_SERVER_ERROR, f"Failed to get questions for survey: {str(e)}")
+            raise HTTPException(
+                HTTPStatus.INTERNAL_SERVER_ERROR,
+                f"Failed to get questions for survey: {str(e)}",
+            ) from e
         finally:
             await conn.close()
 
@@ -99,7 +111,10 @@ class QuestionDAO:
                 else:
                     raise HTTPException(HTTPStatus.NOT_FOUND, "Question not found")
         except Exception as e:
-            raise HTTPException(HTTPStatus.INTERNAL_SERVER_ERROR, f"Failed to update question: {str(e)}")
+            raise HTTPException(
+                HTTPStatus.INTERNAL_SERVER_ERROR,
+                f"Failed to update question: {str(e)}",
+            ) from e
         finally:
             await conn.close()
 
@@ -117,8 +132,11 @@ class QuestionDAO:
                     return True
                 else:
                     raise HTTPException(HTTPStatus.NOT_FOUND, "Question not found")
-        except asyncpg.ForeignKeyViolationError:
-            raise HTTPException(HTTPStatus.CONFLICT, "Unable to delete question: related data exists in another table.")
+        except asyncpg.ForeignKeyViolationError as e:
+            raise HTTPException(
+                HTTPStatus.CONFLICT,
+                "Unable to delete question: related data exists in another table.",
+            ) from e
         except Exception as e:
             raise HTTPException(HTTPStatus.INTERNAL_SERVER_ERROR, f"Failed to delete question: {str(e)}")
         finally:
@@ -148,6 +166,9 @@ class QuestionDAO:
                 else:
                     raise HTTPException(HTTPStatus.INTERNAL_SERVER_ERROR, "Failed to add question score")
         except Exception as e:
-            raise HTTPException(HTTPStatus.INTERNAL_SERVER_ERROR, f"Failed to add question score: {str(e)}")
+            raise HTTPException(
+                HTTPStatus.INTERNAL_SERVER_ERROR,
+                f"Failed to add question score: {str(e)}",
+            ) from e
         finally:
             await conn.close()
