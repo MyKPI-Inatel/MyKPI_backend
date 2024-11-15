@@ -2,7 +2,7 @@ from http import HTTPStatus
 from fastapi import APIRouter, Depends, HTTPException
 from typing import List
 
-from internal.security import get_current_user
+from internal.security import get_current_user, verify_permissions
 from model.user import UserType, CurrentUser
 from model.department import DepartmentBase, DepartmentCreate, DepartmentUpdate
 
@@ -19,7 +19,7 @@ router = APIRouter()
 async def create_department(department: DepartmentCreate,
     current_user: CurrentUser = Depends(get_current_user)
 ):
-    
+    verify_permissions(current_user, UserType.orgadmin, {'orgid': department.orgid})
     return await Department.create_department(department)
 
 @router.get(
@@ -31,6 +31,7 @@ async def create_department(department: DepartmentCreate,
 async def get_departments(orgid: int,
     current_user: CurrentUser = Depends(get_current_user)
 ):
+    verify_permissions(current_user, UserType.orgadmin, {'orgid': orgid})
     return await Department.get_department_by_org(orgid)
 
 @router.get(
@@ -42,6 +43,7 @@ async def get_departments(orgid: int,
 async def get_department(departmentid: int, orgid: int=None,
     current_user: CurrentUser = Depends(get_current_user)
 ):
+    verify_permissions(current_user, UserType.orgadmin, {'orgid': orgid})
     department = await Department.get_department(departmentid, orgid)
     if department is None:
         raise HTTPException(HTTPStatus.NOT_FOUND, "Department not found")
@@ -56,6 +58,7 @@ async def get_department(departmentid: int, orgid: int=None,
 async def update_department(departmentid: int, department: DepartmentUpdate, orgid: int=None,
     current_user: CurrentUser = Depends(get_current_user)
 ):
+    verify_permissions(current_user, UserType.orgadmin, {'orgid': orgid})
     updated_department = await Department.update_department(departmentid, department, orgid)
     if updated_department is None:
         raise HTTPException(HTTPStatus.BAD_REQUEST, "Error updating department")
@@ -69,6 +72,7 @@ async def update_department(departmentid: int, department: DepartmentUpdate, org
 async def delete_department(orgid: int, departmentid: int,
     current_user: CurrentUser = Depends(get_current_user)
 ):
+    verify_permissions(current_user, UserType.orgadmin, {'orgid': orgid})
     result = await Department.delete_department(orgid, departmentid)
     if not result:
         raise HTTPException(HTTPStatus.NOT_FOUND, "Department not found")
