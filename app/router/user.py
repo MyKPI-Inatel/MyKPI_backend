@@ -4,7 +4,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 
 from internal.security import create_access_token, get_current_user, get_password_hash, verify_password, verify_permissions
 
-from model.user import CurrentUser, EmployeeBase, UserBase, UserCreate, UserUpdate, EmployeeCreate
+from model.user import UserType, CurrentUser, EmployeeBase, UserBase, UserCreate, UserUpdate, EmployeeCreate
 from model.token import Token
 from model.user import UserType
 
@@ -58,8 +58,11 @@ async def create_user(user: EmployeeCreate,
     #verify if department belongs to the organization
     try:
         await Department.get_department(user.deptid, user.orgid)
-    except HTTPException:
-        raise HTTPException(HTTPStatus.BAD_REQUEST, 'Department does not belong to the organization')
+    except HTTPException as e:
+        raise HTTPException(
+            HTTPStatus.BAD_REQUEST,
+            'Department does not belong to the organization',
+        ) from e
 
     return await User.create_user(user)
 
@@ -71,7 +74,7 @@ async def create_user(user: EmployeeCreate,
 def update_user(
     user_id: int,
     user: UserUpdate,
-    current_user: CurrentUser = Depends(get_current_user),
+    current_user: CurrentUser = Depends(get_current_user)
 ):
     verify_permissions(current_user, UserType.employee, {'id': user_id})
     try:

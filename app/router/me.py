@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException
 
 from internal.security import get_current_user, get_password_hash, verify_permissions
 
-from model.user import CurrentUser, UserBase, UserUpdate
+from model.user import UserType, CurrentUser, UserBase, UserUpdate
 from model.user import UserType
 
 from service.user import User
@@ -11,10 +11,9 @@ from service.user import User
 router = APIRouter()
 
 @router.put('/', response_model=UserBase)
-def update_me(
+async def update_me(
     user: UserUpdate,
-    current_user: CurrentUser = Depends(get_current_user),
-
+    current_user: CurrentUser = Depends(get_current_user)
 ):
     verify_permissions(current_user, UserType.employee)
     try:
@@ -31,5 +30,7 @@ def update_me(
             summary="Get current user",
             description="Get the current user's details."
             )
-async def get_me(current_user: CurrentUser = Depends(get_current_user)):
+async def get_me(
+    current_user: CurrentUser = Depends(get_current_user)
+):
     return current_user

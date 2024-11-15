@@ -5,9 +5,8 @@ from typing import List
 from internal.security import get_current_user, verify_permissions
 
 from model.survey import SurveyBase, SurveyCreate, SurveyUpdate, SurveyResponse
-from model.user import UserType
+from model.user import UserType, CurrentUser
 
-from service.user import User
 from service.survey import Survey
 
 router = APIRouter()
@@ -19,7 +18,7 @@ router = APIRouter()
     description="This endpoint allows you to create a new survey."
 )
 async def create_survey(survey: SurveyCreate,
-    current_user: User = Depends(get_current_user)
+    current_user: CurrentUser = Depends(get_current_user)
 ):
     verify_permissions(current_user, UserType.orgadmin, {'orgid': survey.orgid})
 
@@ -32,7 +31,7 @@ async def create_survey(survey: SurveyCreate,
     description="Retrieve a list of all surveys available."
 )
 async def get_surveys(
-    current_user: User = Depends(get_current_user)
+    current_user: CurrentUser = Depends(get_current_user)
 ):
     verify_permissions(current_user, UserType.superadmin)
 
@@ -45,7 +44,7 @@ async def get_surveys(
     description="Retrieve a specific survey by its ID."
 )
 async def get_survey(surveyid: int,
-    current_user: User = Depends(get_current_user)
+    current_user: CurrentUser = Depends(get_current_user)
 ):
     survey = await Survey.get_survey(surveyid)
     
@@ -60,7 +59,7 @@ async def get_survey(surveyid: int,
     description="Retrieve a list of all surveys associated with a specific organization ID."
 )
 async def get_surveys_by_org(orgid: int,
-    current_user: User = Depends(get_current_user)
+    current_user: CurrentUser = Depends(get_current_user)
 ):
     verify_permissions(current_user, UserType.employee, {'orgid': orgid})
 
@@ -73,7 +72,7 @@ async def get_surveys_by_org(orgid: int,
     description="Update the details of a specific survey by its ID."
 )
 async def update_survey(surveyid: int, survey: SurveyUpdate,
-    current_user: User = Depends(get_current_user)
+    current_user: CurrentUser = Depends(get_current_user)
 ):
     verify_permissions(current_user, UserType.orgadmin, {'orgid': survey.orgid})
 
@@ -88,7 +87,7 @@ async def update_survey(surveyid: int, survey: SurveyUpdate,
     description="Delete a specific survey by its ID."
 )
 async def delete_survey(surveyid: int,
-    current_user: User = Depends(get_current_user)
+    current_user: CurrentUser = Depends(get_current_user)
 ):
     survey = await Survey.get_survey(surveyid)
     
@@ -106,7 +105,7 @@ async def delete_survey(surveyid: int,
     description="Retrieve a list of all surveys that have not been responded by the user."
 )
 async def get_unresponded_surveys(employee_id: int,
-    current_user: User = Depends(get_current_user)
+    current_user: CurrentUser = Depends(get_current_user)
 ):
     verify_permissions(current_user, UserType.employee, {'id': employee_id})
 
