@@ -14,8 +14,8 @@ from service.survey import Survey
 
 router = APIRouter()
 
-@router.post(
-    "/", 
+@router.post("/",
+    status_code=HTTPStatus.CREATED,
     response_model=QuestionBase,
     summary="Create a new question",
     description="This endpoint allows you to create a new question."
@@ -27,6 +27,7 @@ async def create_question(question: QuestionCreate,
 
 @router.post(
     "/{questionid}/survey/{surveyid}",
+    status_code=HTTPStatus.CREATED,
     response_model=SurveyQuestionBase,
     summary="Associate a question with a survey",
     description="This endpoint allows you to associate a question with a survey."
@@ -37,8 +38,8 @@ async def sync_question_with_survey(questionid: int, surveyid: int,
     surveyquestion_data = SurveyQuestionBase(surveyid=surveyid, questionid=questionid)
     return await SurveyQuestion.create_surveyquestion(surveyquestion_data)
 
-@router.get(
-    "/",
+@router.get("/",
+    status_code=HTTPStatus.OK,
     response_model=List[QuestionBase],
     summary="Retrieve all questions",
     description="Retrieve a list of all questions."
@@ -50,6 +51,7 @@ async def get_all_questions(
 
 @router.get(
     "/survey/{surveyid}",
+    status_code=HTTPStatus.OK,
     response_model=List[QuestionBase],
     summary="Retrieve all questions for a specific survey",
     description="Retrieve a list of all questions associated with a specific survey."
@@ -60,6 +62,7 @@ async def get_by_survey(surveyid: int):
 
 @router.get(
     "/{questionid}",
+    status_code=HTTPStatus.OK,
     response_model=QuestionBase,
     summary="Retrieve a specific question",
     description="Retrieve a question by its ID."
@@ -74,6 +77,7 @@ async def get_question(questionid: int,
 
 @router.put(
     "/{questionid}",
+    status_code=HTTPStatus.OK,
     response_model=QuestionBase,
     summary="Update a specific question",
     description="Update a question by its ID with the provided data."
@@ -88,6 +92,7 @@ async def update_question(questionid: int, question: QuestionUpdate,
 
 @router.delete(
     "/{questionid}",
+    status_code=HTTPStatus.OK,
     summary="Delete a specific question",
     description="Delete a question by its ID."
 )
@@ -101,6 +106,8 @@ async def delete_question(questionid: int,
 
 @router.post(
     "/respond/",
+    status_code=HTTPStatus.CREATED,
+    response_model=QuestionBase,
     summary="Submit responses to questions",
     description="Submit responses to questions."
 )
