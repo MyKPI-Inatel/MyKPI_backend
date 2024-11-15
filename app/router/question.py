@@ -20,9 +20,7 @@ router = APIRouter()
     summary="Create a new question",
     description="This endpoint allows you to create a new question."
 )
-async def create_question(question: QuestionCreate,
-    current_user: CurrentUser = Depends(get_current_user)
-):
+async def create_question(question: QuestionCreate):
     return await Question.create_question(question)
 
 @router.post(
@@ -32,9 +30,7 @@ async def create_question(question: QuestionCreate,
     summary="Associate a question with a survey",
     description="This endpoint allows you to associate a question with a survey."
 )
-async def sync_question_with_survey(questionid: int, surveyid: int,
-    current_user: CurrentUser = Depends(get_current_user)
-):
+async def sync_question_with_survey(questionid: int, surveyid: int):
     surveyquestion_data = SurveyQuestionBase(surveyid=surveyid, questionid=questionid)
     return await SurveyQuestion.create_surveyquestion(surveyquestion_data)
 
@@ -44,9 +40,7 @@ async def sync_question_with_survey(questionid: int, surveyid: int,
     summary="Retrieve all questions",
     description="Retrieve a list of all questions."
 )
-async def get_all_questions(
-    current_user: CurrentUser = Depends(get_current_user)
-):
+async def get_all_questions():
     return await Question.get_all_questions()
 
 @router.get(
@@ -67,9 +61,7 @@ async def get_by_survey(surveyid: int):
     summary="Retrieve a specific question",
     description="Retrieve a question by its ID."
 )
-async def get_question(questionid: int,
-    current_user: CurrentUser = Depends(get_current_user)
-):
+async def get_question(questionid: int):
     question = await Question.get_question(questionid)
     if question is None:
         raise HTTPException(HTTPStatus.NOT_FOUND, "Question not found")
@@ -82,9 +74,7 @@ async def get_question(questionid: int,
     summary="Update a specific question",
     description="Update a question by its ID with the provided data."
 )
-async def update_question(questionid: int, question: QuestionUpdate,
-    current_user: CurrentUser = Depends(get_current_user)
-):
+async def update_question(questionid: int, question: QuestionUpdate):
     updated_question = await Question.update_question(questionid, question)
     if updated_question is None:
         raise HTTPException(HTTPStatus.BAD_REQUEST, "Error updating question")
@@ -96,9 +86,7 @@ async def update_question(questionid: int, question: QuestionUpdate,
     summary="Delete a specific question",
     description="Delete a question by its ID."
 )
-async def delete_question(questionid: int,
-    current_user: CurrentUser = Depends(get_current_user)
-):
+async def delete_question(questionid: int):
     result = await Question.delete_question(questionid)
     if not result:
         raise HTTPException(HTTPStatus.NOT_FOUND, "Question not found")
@@ -111,9 +99,7 @@ async def delete_question(questionid: int,
     summary="Submit responses to questions",
     description="Submit responses to questions."
 )
-async def submit_responses(questionscores: QuestionToScore,
-    current_user: CurrentUser = Depends(get_current_user)
-):
+async def submit_responses(questionscores: QuestionToScore):
     survey_data = await Survey.get_survey(questionscores.surveyid)
 
     verify_permissions(current_user, UserType.employee, {'orgid': survey_data.orgid, 'id': questionscores.employeeid})
