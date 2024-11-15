@@ -91,7 +91,6 @@ def update_user(
 @router.delete(
     '/users/{user_id}',
     status_code=HTTPStatus.OK,
-    response_model=dict(message=str),
     summary="Delete a user",
     description="Delete a specific user by its ID."
 )

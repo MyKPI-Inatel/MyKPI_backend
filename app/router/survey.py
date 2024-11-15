@@ -87,7 +87,6 @@ async def update_survey(surveyid: int, survey: SurveyUpdate,
 @router.delete(
     "/{surveyid}",
     status_code=HTTPStatus.OK,
-    response_model=dict(message=str),
     summary="Delete a survey", 
     description="Delete a specific survey by its ID."
 )

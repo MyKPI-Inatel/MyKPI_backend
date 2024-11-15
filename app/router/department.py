@@ -70,7 +70,6 @@ async def update_department(departmentid: int, department: DepartmentUpdate, org
 @router.delete(
     "/org/{orgid}/{departmentid}",
     status_code=HTTPStatus.OK,
-    response_model=dict(message=str),
     summary="Delete a department", 
     description="Delete a specific department by its ID."
 )
