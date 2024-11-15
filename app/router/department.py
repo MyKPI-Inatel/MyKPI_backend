@@ -11,7 +11,8 @@ from service.department import Department
 router = APIRouter()
 
 @router.post(
-    "/", 
+    "/",
+    status_code=HTTPStatus.CREATED, 
     response_model=DepartmentBase, 
     summary="Create a new department", 
     description="This endpoint allows you to create a new department."
@@ -23,7 +24,8 @@ async def create_department(department: DepartmentCreate,
     return await Department.create_department(department)
 
 @router.get(
-    "/org/{orgid}", 
+    "/org/{orgid}",
+    status_code=HTTPStatus.OK,
     response_model=List[DepartmentBase], 
     summary="Get all departments by organization ID", 
     description="Retrieve a list of all departments associated with a specific organization ID."
@@ -35,7 +37,8 @@ async def get_departments(orgid: int,
     return await Department.get_department_by_org(orgid)
 
 @router.get(
-    "/org/{orgid}/{departmentid}", 
+    "/org/{orgid}/{departmentid}",
+    status_code=HTTPStatus.OK,
     response_model=DepartmentBase, 
     summary="Get a department by ID", 
     description="Retrieve a specific department by its ID."
@@ -50,7 +53,8 @@ async def get_department(departmentid: int, orgid: int=None,
     return department
 
 @router.put(
-    "/org/{orgid}/{departmentid}", 
+    "/org/{orgid}/{departmentid}",
+    status_code=HTTPStatus.OK,
     response_model=DepartmentBase, 
     summary="Update a department", 
     description="Update the details of a specific department by its ID."
@@ -65,7 +69,9 @@ async def update_department(departmentid: int, department: DepartmentUpdate, org
     return updated_department
 
 @router.delete(
-    "/org/{orgid}/{departmentid}", 
+    "/org/{orgid}/{departmentid}",
+    status_code=HTTPStatus.OK,
+    response_model=dict(message=str),
     summary="Delete a department", 
     description="Delete a specific department by its ID."
 )
