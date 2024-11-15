@@ -10,8 +10,7 @@ from service.department import Department
 
 router = APIRouter()
 
-@router.post(
-    "/",
+@router.post("/",
     status_code=HTTPStatus.CREATED, 
     response_model=DepartmentBase, 
     summary="Create a new department", 

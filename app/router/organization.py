@@ -10,8 +10,8 @@ from service.organization import Organization
 
 router = APIRouter()
 
-@router.post(
-    "/", 
+@router.post("/",
+    status_code=HTTPStatus.CREATED,
     response_model=OrganizationBase, 
     summary="Create a new organization", 
     description="This endpoint allows you to create a new organization."
@@ -21,8 +21,8 @@ async def create_organization(organization: OrganizationCreate,
 ):
     return await Organization.create_organization(organization)
 
-@router.get(
-    "/", 
+@router.get("/",
+    status_code=HTTPStatus.OK,
     response_model=List[OrganizationBase], 
     summary="Get all organizations", 
     description="Retrieve a list of all organizations."
@@ -33,7 +33,8 @@ async def get_organizations(
     return await Organization.get_all_organizations()
 
 @router.get(
-    "/{organizationid}", 
+    "/{organizationid}",
+    status_code=HTTPStatus.OK,
     response_model=OrganizationBase, 
     summary="Get a organization by ID", 
     description="Retrieve a specific organization by its ID."
@@ -47,7 +48,8 @@ async def get_organization(organizationid: int,
     return organization
 
 @router.put(
-    "/{organizationid}", 
+    "/{organizationid}",
+    status_code=HTTPStatus.OK,
     response_model=OrganizationBase, 
     summary="Update a organization", 
     description="Update the details of a specific organization by its ID."
@@ -61,7 +63,9 @@ async def update_organization(organizationid: int, organization: OrganizationUpd
     return updated_organization
 
 @router.delete(
-    "/{organizationid}", 
+    "/{organizationid}",
+    status_code=HTTPStatus.OK,
+    response_model=dict(message=str),
     summary="Delete a organization", 
     description="Delete a specific organization by its ID."
 )
