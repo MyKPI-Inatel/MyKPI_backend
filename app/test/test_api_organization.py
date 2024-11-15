@@ -24,7 +24,7 @@ async def test_api_create_organization(reset_database):
         response = await client.post("/api/v1/organizations/", json=organization_data)
 
         # Assert the response status code
-        assert response.status_code == 200
+        assert response.status_code == HTTPStatus.OK
         
         # Assert the returned data matches the expected format
         assert response.json() == {
@@ -45,7 +45,7 @@ async def test_api_get_organization(reset_database):
         response = await client.get(f"/api/v1/organizations/{orgid}")
 
         # Assert the response status code
-        assert response.status_code == 200
+        assert response.status_code == HTTPStatus.OK
         
         # Assert the returned data matches the expected format
         assert response.json() == {
@@ -64,7 +64,7 @@ async def test_api_get_all_organizations(reset_database):
         response = await client.get("/api/v1/organizations/")
 
         # Assert the response status code
-        assert response.status_code == 200
+        assert response.status_code == HTTPStatus.OK
         
         # Assert the returned data matches the expected format
         assert response.json() == [
@@ -89,7 +89,7 @@ async def test_api_update_organization(reset_database):
         response = await client.put(f"/api/v1/organizations/{orgid}", json=organization_data)
 
         # Assert the response status code
-        assert response.status_code == 200
+        assert response.status_code == HTTPStatus.OK
         
         # Assert the returned data matches the expected format
         assert response.json() == {
@@ -131,7 +131,7 @@ async def test_api_delete_organization(reset_database):
         response = await client.delete(f"/api/v1/organizations/{orgid}")
 
         # Assert the response status code
-        assert response.status_code == 200
+        assert response.status_code == HTTPStatus.OK
 
         assert response.json() == {
             "message": "Organization deleted successfully"

@@ -29,7 +29,7 @@ async def test_api_create_department(reset_database):
         response = await client.post("/api/v1/departments/", json=department_data)
 
         # Assert the response status code
-        assert response.status_code == 200
+        assert response.status_code == HTTPStatus.CREATED
         
         # Assert the returned data matches the expected format
         assert response.json() == {
@@ -48,7 +48,7 @@ async def test_api_get_department(reset_database):
         response = await client.get("/api/v1/departments/org/1/1")
 
         # Assert the response status code
-        assert response.status_code == 200
+        assert response.status_code == HTTPStatus.OK
         
         # Assert the returned data matches the expected format
         assert response.json() == {
@@ -70,7 +70,7 @@ async def test_api_get_departments_by_org(reset_database):
         response = await client.get(f"/api/v1/departments/org/{orgid}")
 
         # Assert the response status code
-        assert response.status_code == 200
+        assert response.status_code == HTTPStatus.OK
         
         # Assert the returned data matches the expected format
         assert response.json() == [
@@ -93,7 +93,7 @@ async def test_api_update_department(reset_database):
         orgid = 2
         response = await client.put(f"/api/v1/departments/org/{orgid}/{departmentid}", json=department_data)
 
-        assert response.status_code == 200
+        assert response.status_code == HTTPStatus.OK
         
         assert response.json() == {
             "id": 3,
@@ -136,7 +136,7 @@ async def test_api_delete_department(reset_database):
         # delete the department
         response = await client.delete(f"/api/v1/departments/org/{orgid}/{departmentid}")
 
-        assert response.status_code == 200
+        assert response.status_code == HTTPStatus.OK
         assert response.json() == {
             "message": "Department deleted successfully"
         }

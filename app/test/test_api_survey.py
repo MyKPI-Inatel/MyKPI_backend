@@ -1,3 +1,4 @@
+from http import HTTPStatus
 import pytest, pytest_asyncio
 from httpx import ASGITransport, AsyncClient
 
@@ -34,7 +35,7 @@ async def test_api_create_survey(reset_database, access_token):
         response = await client.post("/api/v1/surveys/", json=survey_data, headers=headers)
 
         # Assert the response status code
-        assert response.status_code == 200
+        assert response.status_code == HTTPStatus.CREATED
         
         # Assert the returned data matches the expected format
         response_json = response.json()
