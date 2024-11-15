@@ -1,3 +1,4 @@
+from http import HTTPStatus
 from fastapi import APIRouter, Depends
 from typing import List
 
@@ -11,7 +12,8 @@ from service.survey import Survey
 router = APIRouter()
 
 @router.get(
-    "/{surveyid}", 
+    "/{surveyid}",
+    status_code=HTTPStatus.OK,
     response_model=List, 
     summary="Retrieve all reports", 
     description="Retrieve a list of all reports available."
