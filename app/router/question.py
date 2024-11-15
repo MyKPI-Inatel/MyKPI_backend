@@ -92,6 +92,16 @@ async def delete_question(questionid: int):
         raise HTTPException(HTTPStatus.NOT_FOUND, "Question not found")
     return {"message": "Question deleted successfully"}
 
+@router.delete(
+    "/{questionid}/survey/{surveyid}",
+    summary="Remove a question from a survey",
+    description="Remove a question from a survey."
+)
+async def remove_question_from_survey(questionid: int, surveyid: int):
+    surveyquestion_data = SurveyQuestionBase(surveyid=surveyid, questionid=questionid)
+    result = await SurveyQuestion.delete_surveyquestion(surveyquestion_data)
+    return {"message": "Question removed from survey successfully"}
+
 @router.post(
     "/respond/",
     status_code=HTTPStatus.CREATED,
