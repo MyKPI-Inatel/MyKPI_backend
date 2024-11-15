@@ -10,7 +10,12 @@ from service.user import User
 
 router = APIRouter()
 
-@router.put('/', response_model=UserBase)
+@router.put('/',
+    status_code=HTTPStatus.OK,
+    response_model=UserBase,
+    summary="Update current user",
+    description="Update the current user's details.",
+)
 async def update_me(
     user: UserUpdate,
     current_user: CurrentUser = Depends(get_current_user)
@@ -26,10 +31,11 @@ async def update_me(
         raise HTTPException(HTTPStatus.CONFLICT, 'Email already exists') from e
     
 @router.get('/',
-            response_model=UserBase,
-            summary="Get current user",
-            description="Get the current user's details."
-            )
+    status_code=HTTPStatus.OK,
+    response_model=UserBase,
+    summary="Get current user",
+    description="Get the current user's details."
+)
 async def get_me(
     current_user: CurrentUser = Depends(get_current_user)
 ):
