@@ -1,4 +1,4 @@
-import pytest, pytest_asyncio
+import pytest
 from http import HTTPStatus
 from httpx import ASGITransport, AsyncClient
 
@@ -6,19 +6,10 @@ from service.department import Department
 
 from main import appServer
 
-@pytest_asyncio.fixture
-async def access_token():
-    async with AsyncClient(transport=ASGITransport(app=appServer), base_url="http://test") as client:
-        login_data = {
-            "username": "admin@inatel.br",
-            "password": "senha"
-        }
-        response = await client.post("/api/v1/login", data=login_data)
-        return response.json()["access_token"]
-
 @pytest.mark.asyncio
 @pytest.mark.dept
 @pytest.mark.functional
+@pytest.mark.orgadmin
 async def test_api_create_department(access_token):
     async with AsyncClient(transport=ASGITransport(app=appServer), base_url="http://test") as client:
 
@@ -46,9 +37,11 @@ async def test_api_create_department(access_token):
             "orgid": orgid
         }
 
+
 @pytest.mark.asyncio
 @pytest.mark.dept
 @pytest.mark.functional
+@pytest.mark.orgadmin
 async def test_api_get_department(access_token):
     async with AsyncClient(transport=ASGITransport(app=appServer), base_url="http://test") as client:
 
@@ -71,6 +64,7 @@ async def test_api_get_department(access_token):
 @pytest.mark.asyncio
 @pytest.mark.dept
 @pytest.mark.functional
+@pytest.mark.orgadmin
 async def test_api_get_departments_by_org(access_token):
     async with AsyncClient(transport=ASGITransport(app=appServer), base_url="http://test") as client:
 
@@ -94,6 +88,7 @@ async def test_api_get_departments_by_org(access_token):
 @pytest.mark.asyncio
 @pytest.mark.dept
 @pytest.mark.functional
+@pytest.mark.orgadmin
 async def test_api_update_department(access_token):
     async with AsyncClient(transport=ASGITransport(app=appServer), base_url="http://test") as client:
 
@@ -114,9 +109,11 @@ async def test_api_update_department(access_token):
             "orgid": orgid
         }
 
+
 @pytest.mark.asyncio
 @pytest.mark.dept
 @pytest.mark.functional
+@pytest.mark.orgadmin
 async def test_api_conflict_deleting_department(access_token):
     async with AsyncClient(transport=ASGITransport(app=appServer), base_url="http://test") as client:
 
@@ -132,9 +129,11 @@ async def test_api_conflict_deleting_department(access_token):
             "detail": "Unable to delete department: related data exists in another table."
         }
 
+
 @pytest.mark.asyncio
 @pytest.mark.dept
 @pytest.mark.functional
+@pytest.mark.orgadmin
 async def test_api_delete_department(access_token):
     async with AsyncClient(transport=ASGITransport(app=appServer), base_url="http://test") as client:
 
