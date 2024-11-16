@@ -52,7 +52,6 @@ async def get_all_questions():
 )
 async def get_by_survey(surveyid: int):
     return await Question.get_by_survey(surveyid)
-    
 
 @router.get(
     "/{questionid}",
@@ -99,7 +98,8 @@ async def delete_question(questionid: int):
 )
 async def remove_question_from_survey(questionid: int, surveyid: int):
     surveyquestion_data = SurveyQuestionBase(surveyid=surveyid, questionid=questionid)
-    result = await SurveyQuestion.delete_surveyquestion(surveyquestion_data)
+    await SurveyQuestion.delete_surveyquestion(surveyquestion_data)
+
     return {"message": "Question removed from survey successfully"}
 
 @router.post(
@@ -109,7 +109,10 @@ async def remove_question_from_survey(questionid: int, surveyid: int):
     summary="Submit responses to questions",
     description="Submit responses to questions."
 )
-async def submit_responses(questionscores: QuestionToScore):
+async def submit_responses(questionscores: QuestionToScore,
+    current_user: CurrentUser = Depends(get_current_user)
+):
+
     survey_data = await Survey.get_survey(questionscores.surveyid)
 
     verify_permissions(current_user, UserType.employee, {'orgid': survey_data.orgid, 'id': questionscores.employeeid})
