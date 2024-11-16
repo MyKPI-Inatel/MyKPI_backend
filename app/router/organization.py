@@ -2,7 +2,7 @@ from http import HTTPStatus
 from fastapi import APIRouter, Depends, HTTPException
 from typing import List
 
-from internal.security import get_current_user
+from internal.security import get_current_user, verify_permissions
 from model.user import UserType, CurrentUser
 from model.organization import OrganizationBase, OrganizationCreate, OrganizationUpdate
 
@@ -19,6 +19,7 @@ router = APIRouter()
 async def create_organization(organization: OrganizationCreate,
     current_user: CurrentUser = Depends(get_current_user)
 ):
+    verify_permissions(current_user, UserType.superadmin)
     return await Organization.create_organization(organization)
 
 @router.get("/",
@@ -30,48 +31,52 @@ async def create_organization(organization: OrganizationCreate,
 async def get_organizations(
     current_user: CurrentUser = Depends(get_current_user)
 ):
+    verify_permissions(current_user, UserType.superadmin)
     return await Organization.get_all_organizations()
 
 @router.get(
-    "/{organizationid}",
+    "/{orgid}",
     status_code=HTTPStatus.OK,
     response_model=OrganizationBase, 
     summary="Get a organization by ID", 
     description="Retrieve a specific organization by its ID."
 )
-async def get_organization(organizationid: int,
+async def get_organization(orgid: int,
     current_user: CurrentUser = Depends(get_current_user)
 ):
-    organization = await Organization.get_organization(organizationid)
+    verify_permissions(current_user, UserType.orgadmin, {'orgid': orgid})
+    organization = await Organization.get_organization(orgid)
     if organization is None:
         raise HTTPException(HTTPStatus.NOT_FOUND, "Organization not found")
     return organization
 
 @router.put(
-    "/{organizationid}",
+    "/{orgid}",
     status_code=HTTPStatus.OK,
     response_model=OrganizationBase, 
     summary="Update a organization", 
     description="Update the details of a specific organization by its ID."
 )
-async def update_organization(organizationid: int, organization: OrganizationUpdate,
+async def update_organization(orgid: int, organization: OrganizationUpdate,
     current_user: CurrentUser = Depends(get_current_user)
 ):
-    updated_organization = await Organization.update_organization(organizationid, organization)
+    verify_permissions(current_user, UserType.orgadmin, {'orgid': orgid})
+    updated_organization = await Organization.update_organization(orgid, organization)
     if updated_organization is None:
         raise HTTPException(HTTPStatus.BAD_REQUEST, "Error updating organization")
     return updated_organization
 
 @router.delete(
-    "/{organizationid}",
+    "/{orgid}",
     status_code=HTTPStatus.OK,
     summary="Delete a organization", 
     description="Delete a specific organization by its ID."
 )
-async def delete_organization(organizationid: int,
+async def delete_organization(orgid: int,
     current_user: CurrentUser = Depends(get_current_user)
 ):
-    result = await Organization.delete_organization(organizationid)
+    verify_permissions(current_user, UserType.superadmin)
+    result = await Organization.delete_organization(orgid)
     if not result:
         raise HTTPException(HTTPStatus.NOT_FOUND, "Organization not found")
     return {"message": "Organization deleted successfully"}
