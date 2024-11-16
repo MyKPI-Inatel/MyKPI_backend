@@ -107,3 +107,28 @@ async def test_api_update_survey(reset_database, access_token_orgadmin):
         response_json = response.json()
         assert response_json["title"] == "Updated Survey"
         assert response_json["orgid"] == 2
+
+@pytest.mark.asyncio
+@pytest.mark.survey
+@pytest.mark.functional
+async def test_api_delete_survey(reset_database, access_token_orgadmin):
+    async with AsyncClient(transport=ASGITransport(app=appServer), base_url="http://test") as client:
+
+        orgid = 2
+        survey_data = {
+            "title": "Survey at Inatel",
+            "orgid": orgid
+        }
+        headers = {"Authorization": f"Bearer {access_token_orgadmin}"}
+
+        # create a survey
+        response = await client.post("/api/v1/surveys/", json=survey_data, headers=headers)
+        surveyid = response.json()["id"]
+
+        # delete the survey
+        response = await client.delete(f"/api/v1/surveys/{surveyid}", headers=headers)
+
+        assert response.status_code == HTTPStatus.OK
+        assert response.json() == {
+            "message": "Survey deleted successfully"
+        }
