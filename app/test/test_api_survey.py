@@ -73,3 +73,19 @@ async def test_api_get_survey(reset_database, access_token_orgadmin):
         response_json = response.json()
         assert response_json["title"] == "Survey at Inatel"
         assert response_json["orgid"] == 2
+
+@pytest.mark.asyncio
+@pytest.mark.survey
+@pytest.mark.functional
+async def test_api_get_surveys_by_org(reset_database, access_token_orgadmin):
+    async with AsyncClient(transport=ASGITransport(app=appServer), base_url="http://test") as client:
+        headers = {"Authorization": f"Bearer {access_token_orgadmin}"}
+        survey_data = {"title": "Survey at Inatel", "orgid": 2}
+        await client.post("/api/v1/surveys/", json=survey_data, headers=headers)
+
+        response = await client.get("/api/v1/surveys/org/2", headers=headers)
+        assert response.status_code == HTTPStatus.OK
+        
+        response_json = response.json()
+        assert isinstance(response_json, list)
+        assert any(survey["orgid"] == 2 for survey in response_json)
