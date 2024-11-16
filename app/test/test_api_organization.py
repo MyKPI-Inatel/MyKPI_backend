@@ -11,7 +11,7 @@ async def reset_database():
     await Database.reset_database()
 
 @pytest_asyncio.fixture
-async def access_token():
+async def access_token_superadmin():
     async with AsyncClient(transport=ASGITransport(app=appServer), base_url="http://test") as client:
         login_data = {
             "username": "admin@mykpi.online",
@@ -20,16 +20,26 @@ async def access_token():
         response = await client.post("/api/v1/login", data=login_data)
         return response.json()["access_token"]
 
+@pytest_asyncio.fixture
+async def access_token_orgadmin():
+    async with AsyncClient(transport=ASGITransport(app=appServer), base_url="http://test") as client:
+        login_data = {
+            "username": "admin@inatel.br",
+            "password": "senha"
+        }
+        response = await client.post("/api/v1/login", data=login_data)
+        return response.json()["access_token"]
+
 @pytest.mark.asyncio
 @pytest.mark.org
 @pytest.mark.functional
-async def test_api_create_organization(reset_database, access_token):
+async def test_api_create_organization(reset_database, access_token_superadmin):
     async with AsyncClient(transport=ASGITransport(app=appServer), base_url="http://test") as client:
         # Sample data for the organization
         organization_data = {
             "name": "Netflix"
         }
-        headers = {"Authorization": f"Bearer {access_token}"}
+        headers = {"Authorization": f"Bearer {access_token_superadmin}"}
         
         # Send a POST request to create a organization
         response = await client.post("/api/v1/organizations/", json=organization_data, headers=headers)
@@ -47,11 +57,11 @@ async def test_api_create_organization(reset_database, access_token):
 @pytest.mark.asyncio
 @pytest.mark.org
 @pytest.mark.functional
-async def test_api_get_organization(reset_database, access_token):
+async def test_api_get_organization(reset_database, access_token_orgadmin):
     async with AsyncClient(transport=ASGITransport(app=appServer), base_url="http://test") as client:
 
-        orgid = 1
-        headers = {"Authorization": f"Bearer {access_token}"}
+        orgid = 2
+        headers = {"Authorization": f"Bearer {access_token_orgadmin}"}
 
         # Send a GET request to create a organization
         response = await client.get(f"/api/v1/organizations/{orgid}", headers=headers)
@@ -61,18 +71,18 @@ async def test_api_get_organization(reset_database, access_token):
         
         # Assert the returned data matches the expected format
         assert response.json() == {
-            "id": 1,
-            "name": "MY-KPI"
+            "id": 2,
+            "name": "INATEL"
         }
 
 
 @pytest.mark.asyncio
 @pytest.mark.org
 @pytest.mark.functional
-async def test_api_get_all_organizations(reset_database, access_token):
+async def test_api_get_all_organizations(reset_database, access_token_superadmin):
     async with AsyncClient(transport=ASGITransport(app=appServer), base_url="http://test") as client:
 
-        headers = {"Authorization": f"Bearer {access_token}"}
+        headers = {"Authorization": f"Bearer {access_token_superadmin}"}
 
         # Send a GET request to create a organization
         response = await client.get("/api/v1/organizations/", headers=headers)
@@ -91,14 +101,14 @@ async def test_api_get_all_organizations(reset_database, access_token):
 @pytest.mark.asyncio
 @pytest.mark.org
 @pytest.mark.functional
-async def test_api_update_organization(reset_database, access_token):
+async def test_api_update_organization(reset_database, access_token_orgadmin):
     async with AsyncClient(transport=ASGITransport(app=appServer), base_url="http://test") as client:
 
-        orgid = 1
+        orgid = 2
         organization_data = {
             "name": "Netflix"
         }
-        headers = {"Authorization": f"Bearer {access_token}"}
+        headers = {"Authorization": f"Bearer {access_token_orgadmin}"}
 
         # Send a PUT request to create a organization
         response = await client.put(f"/api/v1/organizations/{orgid}", json=organization_data, headers=headers)
@@ -108,7 +118,7 @@ async def test_api_update_organization(reset_database, access_token):
         
         # Assert the returned data matches the expected format
         assert response.json() == {
-            "id": 1,
+            "id": 2,
             "name": "Netflix"
         }
 
@@ -116,11 +126,11 @@ async def test_api_update_organization(reset_database, access_token):
 @pytest.mark.asyncio
 @pytest.mark.org
 @pytest.mark.functional
-async def test_api_conflict_deleting_organization(reset_database, access_token):
+async def test_api_conflict_deleting_organization(reset_database, access_token_superadmin):
     async with AsyncClient(transport=ASGITransport(app=appServer), base_url="http://test") as client:
 
         orgid = 1
-        headers = {"Authorization": f"Bearer {access_token}"}
+        headers = {"Authorization": f"Bearer {access_token_superadmin}"}
 
         response = await client.delete(f"/api/v1/organizations/{orgid}", headers=headers)
 
@@ -134,11 +144,11 @@ async def test_api_conflict_deleting_organization(reset_database, access_token):
 @pytest.mark.asyncio
 @pytest.mark.org
 @pytest.mark.functional
-async def test_api_delete_organization(reset_database, access_token):
+async def test_api_delete_organization(reset_database, access_token_superadmin):
     async with AsyncClient(transport=ASGITransport(app=appServer), base_url="http://test") as client:
 
         orgname = "Netflix"
-        headers = {"Authorization": f"Bearer {access_token}"}
+        headers = {"Authorization": f"Bearer {access_token_superadmin}"}
 
         # create organization
         response = await client.post("/api/v1/organizations/", json={"name": orgname}, headers=headers)
