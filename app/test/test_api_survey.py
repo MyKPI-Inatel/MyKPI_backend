@@ -2,12 +2,7 @@ from http import HTTPStatus
 import pytest, pytest_asyncio
 from httpx import ASGITransport, AsyncClient
 
-from dao.database import Database
 from main import appServer
-
-@pytest_asyncio.fixture()
-async def reset_database():
-    await Database.reset_database()
 
 @pytest_asyncio.fixture
 async def access_token_orgadmin():
@@ -32,7 +27,7 @@ async def access_token_superadmin():
 @pytest.mark.asyncio
 @pytest.mark.survey
 @pytest.mark.functional
-async def test_api_create_survey(reset_database, access_token_orgadmin):
+async def test_api_create_survey(access_token_orgadmin):
     async with AsyncClient(transport=ASGITransport(app=appServer), base_url="http://test") as client:
         survey_data = {"title": "Survey at Inatel", "orgid": 2}
         headers = {"Authorization": f"Bearer {access_token_orgadmin}"}
@@ -48,7 +43,7 @@ async def test_api_create_survey(reset_database, access_token_orgadmin):
 @pytest.mark.asyncio
 @pytest.mark.survey
 @pytest.mark.functional
-async def test_api_get_surveys(reset_database, access_token_superadmin):
+async def test_api_get_surveys(access_token_superadmin):
     async with AsyncClient(transport=ASGITransport(app=appServer), base_url="http://test") as client:
         headers = {"Authorization": f"Bearer {access_token_superadmin}"}
         response = await client.get("/api/v1/surveys/", headers=headers)
@@ -60,7 +55,7 @@ async def test_api_get_surveys(reset_database, access_token_superadmin):
 @pytest.mark.asyncio
 @pytest.mark.survey
 @pytest.mark.functional
-async def test_api_get_survey(reset_database, access_token_orgadmin):
+async def test_api_get_survey(access_token_orgadmin):
     async with AsyncClient(transport=ASGITransport(app=appServer), base_url="http://test") as client:
         headers = {"Authorization": f"Bearer {access_token_orgadmin}"}
         survey_data = {"title": "Survey at Inatel", "orgid": 2}
@@ -77,7 +72,7 @@ async def test_api_get_survey(reset_database, access_token_orgadmin):
 @pytest.mark.asyncio
 @pytest.mark.survey
 @pytest.mark.functional
-async def test_api_get_surveys_by_org(reset_database, access_token_orgadmin):
+async def test_api_get_surveys_by_org(access_token_orgadmin):
     async with AsyncClient(transport=ASGITransport(app=appServer), base_url="http://test") as client:
         headers = {"Authorization": f"Bearer {access_token_orgadmin}"}
         survey_data = {"title": "Survey at Inatel", "orgid": 2}
@@ -93,7 +88,7 @@ async def test_api_get_surveys_by_org(reset_database, access_token_orgadmin):
 @pytest.mark.asyncio
 @pytest.mark.survey
 @pytest.mark.functional
-async def test_api_update_survey(reset_database, access_token_orgadmin):
+async def test_api_update_survey(access_token_orgadmin):
     async with AsyncClient(transport=ASGITransport(app=appServer), base_url="http://test") as client:
         headers = {"Authorization": f"Bearer {access_token_orgadmin}"}
         survey_data = {"title": "Survey at Inatel", "orgid": 2}
@@ -111,7 +106,7 @@ async def test_api_update_survey(reset_database, access_token_orgadmin):
 @pytest.mark.asyncio
 @pytest.mark.survey
 @pytest.mark.functional
-async def test_api_delete_survey(reset_database, access_token_orgadmin):
+async def test_api_delete_survey(access_token_orgadmin):
     async with AsyncClient(transport=ASGITransport(app=appServer), base_url="http://test") as client:
 
         orgid = 2

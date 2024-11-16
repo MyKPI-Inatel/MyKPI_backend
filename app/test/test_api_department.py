@@ -2,14 +2,9 @@ import pytest, pytest_asyncio
 from http import HTTPStatus
 from httpx import ASGITransport, AsyncClient
 
-from dao.database import Database
 from service.department import Department
 
 from main import appServer
-
-@pytest_asyncio.fixture()
-async def reset_database():
-    await Database.reset_database()
 
 @pytest_asyncio.fixture
 async def access_token():
@@ -24,7 +19,7 @@ async def access_token():
 @pytest.mark.asyncio
 @pytest.mark.dept
 @pytest.mark.functional
-async def test_api_create_department(reset_database, access_token):
+async def test_api_create_department(access_token):
     async with AsyncClient(transport=ASGITransport(app=appServer), base_url="http://test") as client:
 
         last_id = await Department.get_last_id()
@@ -54,7 +49,7 @@ async def test_api_create_department(reset_database, access_token):
 @pytest.mark.asyncio
 @pytest.mark.dept
 @pytest.mark.functional
-async def test_api_get_department(reset_database, access_token):
+async def test_api_get_department(access_token):
     async with AsyncClient(transport=ASGITransport(app=appServer), base_url="http://test") as client:
 
         headers = {"Authorization": f"Bearer {access_token}"}
@@ -76,7 +71,7 @@ async def test_api_get_department(reset_database, access_token):
 @pytest.mark.asyncio
 @pytest.mark.dept
 @pytest.mark.functional
-async def test_api_get_departments_by_org(reset_database, access_token):
+async def test_api_get_departments_by_org(access_token):
     async with AsyncClient(transport=ASGITransport(app=appServer), base_url="http://test") as client:
 
         orgid = 2
@@ -99,7 +94,7 @@ async def test_api_get_departments_by_org(reset_database, access_token):
 @pytest.mark.asyncio
 @pytest.mark.dept
 @pytest.mark.functional
-async def test_api_update_department(reset_database, access_token):
+async def test_api_update_department(access_token):
     async with AsyncClient(transport=ASGITransport(app=appServer), base_url="http://test") as client:
 
         departmentid = 2
@@ -122,7 +117,7 @@ async def test_api_update_department(reset_database, access_token):
 @pytest.mark.asyncio
 @pytest.mark.dept
 @pytest.mark.functional
-async def test_api_conflict_deleting_department(reset_database, access_token):
+async def test_api_conflict_deleting_department(access_token):
     async with AsyncClient(transport=ASGITransport(app=appServer), base_url="http://test") as client:
 
         departmentid = 2
@@ -140,7 +135,7 @@ async def test_api_conflict_deleting_department(reset_database, access_token):
 @pytest.mark.asyncio
 @pytest.mark.dept
 @pytest.mark.functional
-async def test_api_delete_department(reset_database, access_token):
+async def test_api_delete_department(access_token):
     async with AsyncClient(transport=ASGITransport(app=appServer), base_url="http://test") as client:
 
         orgid = 2

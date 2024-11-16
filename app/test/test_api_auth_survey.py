@@ -3,13 +3,7 @@ import pytest
 import pytest_asyncio
 from httpx import ASGITransport, AsyncClient
 
-from dao.database import Database
 from main import appServer
-
-# Fixture para resetar o banco de dados
-@pytest_asyncio.fixture()
-async def reset_database():
-    await Database.reset_database()
 
 # Função auxiliar para obter o token de acesso
 async def get_access_token(username, password):
@@ -33,7 +27,7 @@ async def access_token_employee():
 @pytest.mark.survey
 @pytest.mark.functional
 @pytest.mark.auth
-async def test_api_get_surveys_orgadmin(reset_database, access_token_orgadmin):
+async def test_api_auth_get_surveys_orgadmin(access_token_orgadmin):
     async with AsyncClient(transport=ASGITransport(app=appServer), base_url="http://test") as client:
         headers = {"Authorization": f"Bearer {access_token_orgadmin}"}
         response = await client.get("/api/v1/surveys/", headers=headers)
@@ -44,7 +38,7 @@ async def test_api_get_surveys_orgadmin(reset_database, access_token_orgadmin):
 @pytest.mark.survey
 @pytest.mark.functional
 @pytest.mark.auth
-async def test_api_get_surveys_employee(reset_database, access_token_employee):
+async def test_api_auth_get_surveys_employee(access_token_employee):
     async with AsyncClient(transport=ASGITransport(app=appServer), base_url="http://test") as client:
         headers = {"Authorization": f"Bearer {access_token_employee}"}
         response = await client.get("/api/v1/surveys/", headers=headers)

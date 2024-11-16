@@ -1,19 +1,13 @@
 from http import HTTPStatus
-import pytest, pytest_asyncio
+import pytest
 from httpx import ASGITransport, AsyncClient
 
-from dao.database import Database
-
 from main import appServer
-
-@pytest_asyncio.fixture()
-async def reset_database():
-    await Database.reset_database()
 
 @pytest.mark.asyncio
 @pytest.mark.quest
 @pytest.mark.functional
-async def test_api_create_question(reset_database):
+async def test_api_create_question():
     async with AsyncClient(transport=ASGITransport(app=appServer), base_url="http://test") as client:
         # Sample data for the question
         question_data = {
