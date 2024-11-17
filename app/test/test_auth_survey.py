@@ -61,6 +61,18 @@ async def test_auth_get_surveys_orgadmin(access_token):
 @pytest.mark.functional
 @pytest.mark.auth
 @pytest.mark.employee
+async def test_auth_get_surveys_employee(access_token):
+    async with AsyncClient(transport=ASGITransport(app=appServer), base_url="http://test") as client:
+        headers = {"Authorization": f"Bearer {access_token}"}
+        response = await client.get("/api/v1/surveys/", headers=headers)
+        assert response.status_code == HTTPStatus.FORBIDDEN
+
+
+@pytest.mark.asyncio
+@pytest.mark.survey
+@pytest.mark.functional
+@pytest.mark.auth
+@pytest.mark.employee
 async def test_auth_get_survey_employee(access_token):
     async with AsyncClient(transport=ASGITransport(app=appServer), base_url="http://test") as client:
         headers = {"Authorization": f"Bearer {access_token}"}
