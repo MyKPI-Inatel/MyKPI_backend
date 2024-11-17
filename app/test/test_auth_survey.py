@@ -214,3 +214,17 @@ async def test_auth_delete_survey_unauthenticated():
         response = await client.delete("/api/v1/surveys/2")
 
         assert response.status_code == HTTPStatus.UNAUTHORIZED
+
+
+@pytest.mark.asyncio
+@pytest.mark.survey
+@pytest.mark.functional
+@pytest.mark.orgadmin
+async def test_auth_delete_survey_from_wrong_org(access_token):
+    async with AsyncClient(transport=ASGITransport(app=appServer), base_url="http://test") as client:
+
+        headers = {"Authorization": f"Bearer {access_token}"}
+
+        response = await client.delete("/api/v1/surveys/1", headers=headers)
+
+        assert response.status_code == HTTPStatus.FORBIDDEN
