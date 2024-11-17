@@ -6,59 +6,56 @@ from internal.security import get_current_user, verify_permissions
 
 from model.question import QuestionBase, QuestionCreate, QuestionToScore, QuestionUpdate
 from model.surveyquestion import SurveyQuestionBase
-from model.user import UserType
+from model.user import UserType, CurrentUser
 
 from service.question import Question
 from service.surveyquestion import SurveyQuestion
-from service.user import User
 from service.survey import Survey
 
 router = APIRouter()
 
-@router.post(
-    "/", 
+@router.post("/",
+    status_code=HTTPStatus.CREATED,
     response_model=QuestionBase,
     summary="Create a new question",
     description="This endpoint allows you to create a new question."
 )
 async def create_question(question: QuestionCreate):
-    new_question = await Question.create_question(question)
-    return new_question
+    return await Question.create_question(question)
 
 @router.post(
     "/{questionid}/survey/{surveyid}",
+    status_code=HTTPStatus.CREATED,
     response_model=SurveyQuestionBase,
     summary="Associate a question with a survey",
     description="This endpoint allows you to associate a question with a survey."
 )
 async def sync_question_with_survey(questionid: int, surveyid: int):
     surveyquestion_data = SurveyQuestionBase(surveyid=surveyid, questionid=questionid)
-    survey_question = await SurveyQuestion.create_surveyquestion(surveyquestion_data)
-    return survey_question
+    return await SurveyQuestion.create_surveyquestion(surveyquestion_data)
 
-@router.get(
-    "/",
+@router.get("/",
+    status_code=HTTPStatus.OK,
     response_model=List[QuestionBase],
     summary="Retrieve all questions",
     description="Retrieve a list of all questions."
 )
 async def get_all_questions():
-    questions = await Question.get_all_questions()
-    return questions
+    return await Question.get_all_questions()
 
 @router.get(
     "/survey/{surveyid}",
+    status_code=HTTPStatus.OK,
     response_model=List[QuestionBase],
     summary="Retrieve all questions for a specific survey",
     description="Retrieve a list of all questions associated with a specific survey."
 )
 async def get_by_survey(surveyid: int):
-    questions = await Question.get_by_survey(surveyid)
-    return questions
-    
+    return await Question.get_by_survey(surveyid)
 
 @router.get(
     "/{questionid}",
+    status_code=HTTPStatus.OK,
     response_model=QuestionBase,
     summary="Retrieve a specific question",
     description="Retrieve a question by its ID."
@@ -71,6 +68,7 @@ async def get_question(questionid: int):
 
 @router.put(
     "/{questionid}",
+    status_code=HTTPStatus.OK,
     response_model=QuestionBase,
     summary="Update a specific question",
     description="Update a question by its ID with the provided data."
@@ -83,6 +81,7 @@ async def update_question(questionid: int, question: QuestionUpdate):
 
 @router.delete(
     "/{questionid}",
+    status_code=HTTPStatus.OK,
     summary="Delete a specific question",
     description="Delete a question by its ID."
 )
@@ -92,16 +91,30 @@ async def delete_question(questionid: int):
         raise HTTPException(HTTPStatus.NOT_FOUND, "Question not found")
     return {"message": "Question deleted successfully"}
 
+@router.delete(
+    "/{questionid}/survey/{surveyid}",
+    summary="Remove a question from a survey",
+    description="Remove a question from a survey."
+)
+async def remove_question_from_survey(questionid: int, surveyid: int):
+    surveyquestion_data = SurveyQuestionBase(surveyid=surveyid, questionid=questionid)
+    await SurveyQuestion.delete_surveyquestion(surveyquestion_data)
+
+    return {"message": "Question removed from survey successfully"}
+
 @router.post(
     "/respond/",
+    status_code=HTTPStatus.CREATED,
+    response_model=QuestionBase,
     summary="Submit responses to questions",
     description="Submit responses to questions."
 )
 async def submit_responses(questionscores: QuestionToScore,
-                           current_user: User = Depends(get_current_user)):
+    current_user: CurrentUser = Depends(get_current_user)
+):
+
     survey_data = await Survey.get_survey(questionscores.surveyid)
 
     verify_permissions(current_user, UserType.employee, {'orgid': survey_data.orgid, 'id': questionscores.employeeid})
 
-    result = await Question.add_question_score(questionscores)
-    return result
+    return await Question.add_question_score(questionscores)

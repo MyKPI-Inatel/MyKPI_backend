@@ -8,7 +8,7 @@ from zoneinfo import ZoneInfo
 
 from http import HTTPStatus
 
-from jwt import DecodeError, decode, encode
+from jwt import DecodeError, decode, encode, exceptions
 from pwdlib import PasswordHash
 
 from model.user import UserBase, UserType
@@ -27,9 +27,8 @@ def create_access_token(data: dict):
     expire = datetime.now(tz=ZoneInfo('UTC')) + timedelta(
         minutes=ACCESS_TOKEN_EXPIRE_MINUTES
     )
-    to_encode.update({'exp': expire})
-    encoded_jwt = encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
-    return encoded_jwt
+    to_encode['exp'] = expire
+    return encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
 
 def get_password_hash(password: str):
@@ -53,17 +52,18 @@ async def get_current_user(
 
     try:
         payload = decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        username: str = payload.get('sub')
-        if not username:
+        if username := payload.get('sub'):
+            token_data = TokenData(username=username)
+        else:
             raise credentials_exception
-        token_data = TokenData(username=username)
-    except DecodeError:
-        raise credentials_exception
-    except jwt.exceptions.ExpiredSignatureError:
+    except DecodeError as e:
+        raise credentials_exception from e
+    except exceptions.ExpiredSignatureError as e:
         raise HTTPException(
-            HTTPStatus.UNAUTHORIZED, 'Token expired',
+            HTTPStatus.UNAUTHORIZED,
+            'Token expired',
             headers={'WWW-Authenticate': 'Bearer'},
-        )
+        ) from e
 
     user = await User.get_user_by_email(token_data.username)
 

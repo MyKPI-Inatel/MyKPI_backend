@@ -12,23 +12,19 @@ class Question:
 
     @staticmethod
     async def get_all_questions() -> list[QuestionBase]:
-        questions_data = await QuestionDAO.get_all()
-        return questions_data
+        return await QuestionDAO.get_all()
 
     @staticmethod
     async def get_question(questionid: int) -> QuestionBase:
-        question_data = await QuestionDAO.get(questionid)
-        return question_data
+        return await QuestionDAO.get(questionid)
     
     @staticmethod
     async def get_by_survey(surveyid: int) -> list[QuestionBase]:
-        questions_data = await QuestionDAO.get_by_survey(surveyid)
-        return questions_data
+        return await QuestionDAO.get_by_survey(surveyid)
 
     @staticmethod
     async def update_question(questionid: int, question_data: QuestionUpdate) -> QuestionBase:
-        updated_question_data = await QuestionDAO.update(questionid, question_data)
-        return updated_question_data
+        return await QuestionDAO.update(questionid, question_data)
 
     @staticmethod
     async def delete_question(questionid: int) -> bool:

@@ -56,3 +56,11 @@ class UserUpdate(BaseModel):
     usertype: Optional[UserType]
     orgid: Optional[int]
     deptid: Optional[int]
+
+class CurrentUser(BaseModel):
+    id: int
+    email: str
+    name: str
+    usertype: UserType
+    orgid: int
+    deptid: int

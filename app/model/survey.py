@@ -14,7 +14,6 @@ class SurveyCreate(BaseModel):
 
 class SurveyUpdate(BaseModel):
     title: Optional[str] = None
-    orgid: Optional[int] = None
 
 class SurveyResponse(BaseModel):
     id: int

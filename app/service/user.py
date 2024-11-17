@@ -7,8 +7,7 @@ from model.user import UserBase
 class User:
    @staticmethod
    async def create_user(user: UserBase):
-       result = await UserDAO.insert(user)
-       return result
+      return await UserDAO.insert(user)
 
    @staticmethod
    async def get_user_by_email(email: str):
@@ -26,14 +25,11 @@ class User:
 
    @staticmethod
    async def get_user_by_id(id: int):
-       
-       user_data = await UserDAO.get(id)
-       return user_data
+      return await UserDAO.get(id)
    
    @staticmethod
    async def exists(email: str):
-       exists = await UserDAO.exists(email)
-       return exists
+      return await UserDAO.exists(email)
    
    @staticmethod
    async def delete_user(id: int, orgid: int):
@@ -42,3 +38,7 @@ class User:
    @staticmethod
    async def update_user(user: UserBase):
        return await UserDAO.update(user)
+   
+   @staticmethod
+   async def self_update_user(user: UserBase):
+       return await UserDAO.self_update(user)

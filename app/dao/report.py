@@ -28,6 +28,9 @@ class ReportDAO:
             records = await conn.fetch(query, surveyid)
             return [ReportBySurvey(**record) for record in records]
         except Exception as e:
-            raise HTTPException(HTTPStatus.INTERNAL_SERVER_ERROR, f"Failed to get surveys: {str(e)}")
+            raise HTTPException(
+                HTTPStatus.INTERNAL_SERVER_ERROR,
+                f"Failed to get surveys: {str(e)}",
+            ) from e
         finally:
             await conn.close()

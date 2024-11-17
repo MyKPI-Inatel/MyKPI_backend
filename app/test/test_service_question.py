@@ -4,10 +4,8 @@ from unittest.mock import AsyncMock
 from dao.question import QuestionDAO
 
 from model.question import QuestionCreate, QuestionBase, QuestionUpdate
-from model.surveyquestion import SurveyQuestionBase
 
 from service.question import Question
-from service.surveyquestion import SurveyQuestion
 
 @pytest.mark.asyncio
 @pytest.mark.quest
