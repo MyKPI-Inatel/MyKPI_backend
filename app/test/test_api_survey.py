@@ -58,7 +58,7 @@ async def test_api_get_survey(access_token):
 @pytest.mark.asyncio
 @pytest.mark.survey
 @pytest.mark.functional
-@pytest.mark.orgadmin
+@pytest.mark.employee
 async def test_api_get_surveys_by_org(access_token):
     async with AsyncClient(transport=ASGITransport(app=appServer), base_url="http://test") as client:
         headers = {"Authorization": f"Bearer {access_token}"}
@@ -84,7 +84,7 @@ async def test_api_update_survey(access_token):
         create_response = await client.post("/api/v1/surveys/", json=survey_data, headers=headers)
         survey_id = create_response.json()["id"]
 
-        update_data = {"title": "Updated Survey", "orgid": 2}
+        update_data = {"title": "Updated Survey"}
         response = await client.put(f"/api/v1/surveys/{survey_id}", json=update_data, headers=headers)
         assert response.status_code == HTTPStatus.OK
         

@@ -77,7 +77,9 @@ async def get_surveys_by_org(orgid: int,
 async def update_survey(surveyid: int, survey: SurveyUpdate,
     current_user: CurrentUser = Depends(get_current_user)
 ):
-    verify_permissions(current_user, UserType.orgadmin, {'orgid': survey.orgid})
+    survey_data = await Survey.get_survey(surveyid)
+
+    verify_permissions(current_user, UserType.orgadmin, {'orgid': survey_data.orgid})
 
     result = await Survey.update_survey(surveyid, survey)
     if not result:
