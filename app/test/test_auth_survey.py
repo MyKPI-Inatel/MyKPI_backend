@@ -59,6 +59,17 @@ async def test_auth_get_survey_employee(access_token):
 @pytest.mark.survey
 @pytest.mark.functional
 @pytest.mark.auth
+async def test_auth_get_survey_unauthenticated():
+    async with AsyncClient(transport=ASGITransport(app=appServer), base_url="http://test") as client:
+
+        response = await client.get("/api/v1/surveys/1")
+        assert response.status_code == HTTPStatus.UNAUTHORIZED
+
+
+@pytest.mark.asyncio
+@pytest.mark.survey
+@pytest.mark.functional
+@pytest.mark.auth
 @pytest.mark.employee
 async def test_auth_get_surveys_by_wrong_org(access_token):
     async with AsyncClient(transport=ASGITransport(app=appServer), base_url="http://test") as client:
