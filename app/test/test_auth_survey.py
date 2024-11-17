@@ -107,7 +107,7 @@ async def test_auth_get_survey_unauthenticated():
 @pytest.mark.survey
 @pytest.mark.functional
 @pytest.mark.orgadmin
-async def test_api_get_survey_from_wrong_org(access_token):
+async def test_auth_get_survey_from_wrong_org(access_token):
     async with AsyncClient(transport=ASGITransport(app=appServer), base_url="http://test") as client:
         headers = {"Authorization": f"Bearer {access_token}"}
 
@@ -179,11 +179,27 @@ async def test_auth_update_survey_unauthenticated():
 @pytest.mark.asyncio
 @pytest.mark.survey
 @pytest.mark.functional
+@pytest.mark.auth
 @pytest.mark.orgadmin
-async def test_api_update_survey_from_wrong_org(access_token):
+async def test_auth_update_survey_from_wrong_org(access_token):
     async with AsyncClient(transport=ASGITransport(app=appServer), base_url="http://test") as client:
         headers = {"Authorization": f"Bearer {access_token}"}
 
         update_data = {"title": "Updated Survey"}
         response = await client.put("/api/v1/surveys/1", json=update_data, headers=headers)
+        assert response.status_code == HTTPStatus.FORBIDDEN
+
+# DELETE /api/v1/surveys/{surveyid}
+@pytest.mark.asyncio
+@pytest.mark.survey
+@pytest.mark.functional
+@pytest.mark.auth
+@pytest.mark.employee
+async def test_auth_delete_survey_employee(access_token):
+    async with AsyncClient(transport=ASGITransport(app=appServer), base_url="http://test") as client:
+        headers = {"Authorization": f"Bearer {access_token}"}
+
+        # delete the survey
+        response = await client.delete("/api/v1/surveys/2", headers=headers)
+
         assert response.status_code == HTTPStatus.FORBIDDEN
