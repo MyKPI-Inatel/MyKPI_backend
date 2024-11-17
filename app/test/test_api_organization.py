@@ -16,7 +16,7 @@ async def test_api_create_organization(access_token):
         }
         headers = {"Authorization": f"Bearer {access_token}"}
         
-        # Send a POST request to create a organization
+        # Send a POST request to create an organization
         response = await client.post("/api/v1/organizations/", json=organization_data, headers=headers)
 
         # Assert the response status code
@@ -39,13 +39,10 @@ async def test_api_get_organization(access_token):
         orgid = 2
         headers = {"Authorization": f"Bearer {access_token}"}
 
-        # Send a GET request to create a organization
         response = await client.get(f"/api/v1/organizations/{orgid}", headers=headers)
 
-        # Assert the response status code
         assert response.status_code == HTTPStatus.OK
         
-        # Assert the returned data matches the expected format
         assert response.json() == {
             "id": 2,
             "name": "INATEL"
@@ -61,13 +58,10 @@ async def test_api_get_all_organizations(access_token):
 
         headers = {"Authorization": f"Bearer {access_token}"}
 
-        # Send a GET request to create a organization
         response = await client.get("/api/v1/organizations/", headers=headers)
 
-        # Assert the response status code
         assert response.status_code == HTTPStatus.OK
         
-        # Assert the returned data matches the expected format
         assert response.json() == [
             {"id": 1, "name": "MY-KPI"},
             {"id": 2, "name": "INATEL"},
@@ -88,13 +82,10 @@ async def test_api_update_organization(access_token):
         }
         headers = {"Authorization": f"Bearer {access_token}"}
 
-        # Send a PUT request to create a organization
         response = await client.put(f"/api/v1/organizations/{orgid}", json=organization_data, headers=headers)
 
-        # Assert the response status code
         assert response.status_code == HTTPStatus.OK
         
-        # Assert the returned data matches the expected format
         assert response.json() == {
             "id": 2,
             "name": "Netflix"
@@ -130,12 +121,12 @@ async def test_api_delete_organization(access_token):
         orgname = "Netflix"
         headers = {"Authorization": f"Bearer {access_token}"}
 
-        # create organization
+        # Send a POST request to create an organization
         response = await client.post("/api/v1/organizations/", json={"name": orgname}, headers=headers)
 
         orgid = response.json()["id"]
 
-        # Send a DELETE request to create a organization
+        # Send a DELETE request
         response = await client.delete(f"/api/v1/organizations/{orgid}", headers=headers)
 
         # Assert the response status code

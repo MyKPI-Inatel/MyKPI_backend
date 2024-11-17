@@ -46,14 +46,11 @@ async def test_api_get_department(access_token):
     async with AsyncClient(transport=ASGITransport(app=appServer), base_url="http://test") as client:
 
         headers = {"Authorization": f"Bearer {access_token}"}
-
-        # Send a GET request to create a department
+    
         response = await client.get("/api/v1/departments/org/2/2", headers=headers)
 
-        # Assert the response status code
         assert response.status_code == HTTPStatus.OK
         
-        # Assert the returned data matches the expected format
         assert response.json() == {
             "id": 2,
             "name": "Recursos Humanos",
@@ -71,13 +68,10 @@ async def test_api_get_departments_by_org(access_token):
         orgid = 2
         headers = {"Authorization": f"Bearer {access_token}"}
 
-        # Send a GET request to create a department
         response = await client.get(f"/api/v1/departments/org/{orgid}", headers=headers)
 
-        # Assert the response status code
         assert response.status_code == HTTPStatus.OK
         
-        # Assert the returned data matches the expected format
         assert response.json() == [
             {"id": 2, "name": "Recursos Humanos", "orgid": orgid},
             {"id": 3, "name": "Desenvolvimento", "orgid": orgid},
@@ -144,11 +138,11 @@ async def test_api_delete_department(access_token):
         }
         headers = {"Authorization": f"Bearer {access_token}"}
 
-        # create a department
+        # Send a POST request to create a department
         response = await client.post("/api/v1/departments/", json=department_data, headers=headers)
         departmentid = response.json()["id"]
 
-        # delete the department
+        # Send a DELETE request
         response = await client.delete(f"/api/v1/departments/org/{orgid}/{departmentid}", headers=headers)
 
         assert response.status_code == HTTPStatus.OK

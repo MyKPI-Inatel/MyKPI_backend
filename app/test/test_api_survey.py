@@ -107,11 +107,11 @@ async def test_api_delete_survey(access_token):
         }
         headers = {"Authorization": f"Bearer {access_token}"}
 
-        # create a survey
+        # Send a POST request to create a survey
         response = await client.post("/api/v1/surveys/", json=survey_data, headers=headers)
         surveyid = response.json()["id"]
 
-        # delete the survey
+        # Send a DELETE request
         response = await client.delete(f"/api/v1/surveys/{surveyid}", headers=headers)
 
         assert response.status_code == HTTPStatus.OK
