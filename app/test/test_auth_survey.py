@@ -83,6 +83,19 @@ async def test_auth_get_surveys_unauthenticated():
 @pytest.mark.functional
 @pytest.mark.auth
 @pytest.mark.employee
+async def test_auth_get_surveys_by_wrong_org(access_token):
+    async with AsyncClient(transport=ASGITransport(app=appServer), base_url="http://test") as client:
+        headers = {"Authorization": f"Bearer {access_token}"}
+
+        response = await client.get("/api/v1/surveys/org/3", headers=headers)
+        assert response.status_code == HTTPStatus.FORBIDDEN
+        
+
+@pytest.mark.asyncio
+@pytest.mark.survey
+@pytest.mark.functional
+@pytest.mark.auth
+@pytest.mark.employee
 async def test_auth_get_survey_employee(access_token):
     async with AsyncClient(transport=ASGITransport(app=appServer), base_url="http://test") as client:
         headers = {"Authorization": f"Bearer {access_token}"}
@@ -105,15 +118,18 @@ async def test_auth_get_survey_unauthenticated():
 @pytest.mark.asyncio
 @pytest.mark.survey
 @pytest.mark.functional
-@pytest.mark.auth
-@pytest.mark.employee
-async def test_auth_get_surveys_by_wrong_org(access_token):
+@pytest.mark.orgadmin
+async def test_api_get_survey_wrong_org(access_token):
     async with AsyncClient(transport=ASGITransport(app=appServer), base_url="http://test") as client:
         headers = {"Authorization": f"Bearer {access_token}"}
 
-        response = await client.get("/api/v1/surveys/org/3", headers=headers)
-        assert response.status_code == HTTPStatus.FORBIDDEN
+        response = await client.get("/api/v1/surveys/1", headers=headers)
+        assert response.status_code == HTTPStatus.OK
         
+        response_json = response.json()
+        assert response_json["title"] == "Survey at Inatel"
+        assert response_json["orgid"] == 2
+
 
 @pytest.mark.asyncio
 @pytest.mark.survey
